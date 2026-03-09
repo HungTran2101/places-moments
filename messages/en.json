@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "PlaceMoments — Leave a thought anywhere on earth",
+    "description": "A quiet map where people leave small reflections tied to places around the world."
+  },
+  "nav": {
+    "myHistory": "My moments",
+    "writeFuture": "Write to future self",
+    "switchLanguage": "Tiếng Việt"
+  },
+  "map": {
+    "dropPin": "Drag the pin to where you want to leave a thought",
+    "loading": "Loading the world…"
+  },
+  "submission": {
+    "titleLabel": "Title",
+    "titlePlaceholder": "Give this moment a name",
+    "descriptionLabel": "What are you thinking?",
+    "descriptionPlaceholder": "A quiet thought, a feeling, a memory…",
+    "submit": "Leave this thought",
+    "submitting": "Sending…",
+    "success": "Your thought has been left here.",
+    "error": "Something went wrong. Please try again."
+  },
+  "popup": {
+    "atmosphereSuffix": ""
+  },
+  "history": {
+    "title": "Your moments",
+    "empty": "You haven't left any thoughts yet.",
+    "postedAt": "Posted at",
+    "weather": "Weather at the time"
+  },
+  "futureMessage": {
+    "title": "Write to your future self",
+    "messagePlaceholder": "What do you want your future self to know?",
+    "unlockLabel": "When should this unlock?",
+    "unlockOptions": {
+      "after_days:30": "In 30 days",
+      "after_days:90": "In 3 months",
+      "after_days:365": "In a year",
+      "random": "Surprise me"
+    },
+    "send": "Send to future self",
+    "locked": "Still waiting…",
+    "unlocked": "Open"
+  }
+}
