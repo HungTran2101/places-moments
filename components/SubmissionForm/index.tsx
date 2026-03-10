@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslations } from "next-intl";
 import { getOrCreateUUID } from "@/lib/uuid";
-import styles from "./SubmissionForm.module.scss";
+import { usePinStore } from "@/store/usePinStore";
 
 interface SubmissionFormProps {
-  lat: number;
-  lng: number;
   onSuccess?: () => void;
 }
 
-export default function SubmissionForm({ lat, lng, onSuccess }: SubmissionFormProps) {
+export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
   const t = useTranslations("submission");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const { lat, lng } = usePinStore();
 
-  async function handleSubmit(e: React.FormEvent) {
+  // We consider the marker "unplaced" if it's at the absolute default (or we could add a placed flag to the store)
+  // For now, let's assume if lat/lng are exactly 20/0, they haven't placed it.
+  // A better way is to update the store to have an `isPlaced` boolean.
+  const isPlaced = usePinStore((state) => state.isPlaced);
+
+  async function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault();
+    if (!isPlaced) return;
     setStatus("loading");
 
     try {
@@ -41,43 +46,49 @@ export default function SubmissionForm({ lat, lng, onSuccess }: SubmissionFormPr
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
-      <label className={styles.label}>
+    <form className="SubmissionForm" onSubmit={handleSubmit}>
+      <label className="SubmissionForm-label">
         {t("titleLabel")}
         <input
-          className={styles.input}
+          className="SubmissionForm-input"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder={t("titlePlaceholder")}
           maxLength={120}
           required
+          disabled={!isPlaced}
         />
       </label>
 
-      <label className={styles.label}>
+      <label className="SubmissionForm-label">
         {t("descriptionLabel")}
         <textarea
-          className={styles.textarea}
+          className="SubmissionForm-textarea"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder={t("descriptionPlaceholder")}
           maxLength={600}
           rows={4}
           required
+          disabled={!isPlaced}
         />
       </label>
 
       <button
-        className={styles.button}
+        className="SubmissionForm-button"
         type="submit"
-        disabled={status === "loading"}
+        disabled={status === "loading" || !isPlaced}
       >
-        {status === "loading" ? t("submitting") : t("submit")}
+        {status === "loading"
+          ? t("submitting")
+          : !isPlaced
+            ? "Click map to set location"
+            : t("submit")}
       </button>
 
-      {status === "success" && <p className={styles.success}>{t("success")}</p>}
-      {status === "error" && <p className={styles.error}>{t("error")}</p>}
+      {status === "success" && <p className="SubmissionForm-success">{t("success")}</p>}
+      {status === "error" && <p className="SubmissionForm-error">{t("error")}</p>}
     </form>
   );
 }

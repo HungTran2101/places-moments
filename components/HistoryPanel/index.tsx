@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { getUUID } from "@/lib/uuid";
-import styles from "./HistoryPanel.module.scss";
 
 interface Submission {
   id: string;
@@ -41,21 +40,21 @@ export default function HistoryPanel() {
   }, []);
 
   return (
-    <aside className={styles.panel}>
-      <h2 className={styles.heading}>{t("title")}</h2>
+    <aside className="HistoryPanel">
+      <h2 className="HistoryPanel-heading">{t("title")}</h2>
 
-      {loading && <p className={styles.muted}>…</p>}
+      {loading && <p className="HistoryPanel-muted">…</p>}
 
       {!loading && items.length === 0 && (
-        <p className={styles.muted}>{t("empty")}</p>
+        <p className="HistoryPanel-muted">{t("empty")}</p>
       )}
 
-      <ul className={styles.list}>
+      <ul className="HistoryPanel-list">
         {items.map((item) => (
-          <li key={item.id} className={styles.item}>
-            <p className={styles.itemTitle}>{item.title}</p>
-            <p className={styles.itemWeather}>{item.weather_summary}</p>
-            <p className={styles.itemCoords}>
+          <li key={item.id} className="HistoryPanel-item">
+            <p className="HistoryPanel-itemTitle">{item.title}</p>
+            <p className="HistoryPanel-itemWeather">{item.weather_summary}</p>
+            <p className="HistoryPanel-itemCoords">
               {item.lat.toFixed(3)}, {item.lng.toFixed(3)}
             </p>
           </li>

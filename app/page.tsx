@@ -2,36 +2,27 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import SubmissionForm from "@/components/submission/SubmissionForm";
-import HistoryPanel from "@/components/history/HistoryPanel";
-import styles from "./page.module.scss";
+import SubmissionForm from "@/components/SubmissionForm";
+import HistoryPanel from "@/components/HistoryPanel";
 
 // Dynamically import MapView to avoid SSR issues with MapLibre
-const MapView = dynamic(() => import("@/components/map/MapView"), {
+const MapView = dynamic(() => import("@/components/MapView"), {
   ssr: false,
 });
 
 export default function HomePage() {
-  const [pin, setPin] = useState({ lat: 20, lng: 0 });
   const [showHistory, setShowHistory] = useState(false);
 
   return (
-    <main className={styles.main}>
-      {/* Map — fills the viewport */}
-      <div className={styles.mapArea}>
-        <MapView onPinMoved={(lat, lng) => setPin({ lat, lng })} />
-      </div>
-
+    <main className="main">
       {/* Submission sidebar */}
-      <aside className={styles.sidebar}>
+      <aside className="sidebar">
         <SubmissionForm
-          lat={pin.lat}
-          lng={pin.lng}
           onSuccess={() => setShowHistory(false)}
         />
 
         <button
-          className={styles.historyToggle}
+          className="historyToggle"
           onClick={() => setShowHistory((v) => !v)}
         >
           {showHistory ? "← Back" : "My moments"}
@@ -39,6 +30,10 @@ export default function HomePage() {
 
         {showHistory && <HistoryPanel />}
       </aside>
+      {/* Map — fills the viewport */}
+      <div className="mapArea">
+        <MapView />
+      </div>
     </main>
   );
 }
