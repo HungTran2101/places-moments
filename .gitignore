@@ -45,7 +45,6 @@ next-env.d.ts
 .env
 
 # AI and Contexts
-.agents/rules
 contexts/
 .cursorrules
 AI.md
