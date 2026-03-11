@@ -1,0 +1,10 @@
+.sidebar {
+  position: absolute;
+  inset: 20px;
+  z-index: 1;
+  width: 100%;
+  max-width: 300px;
+  max-height: 100dvh;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}

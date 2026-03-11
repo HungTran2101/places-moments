@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { useTranslations } from "next-intl";
 import { getOrCreateUUID } from "@/lib/uuid";
 import { usePinStore } from "@/store/usePinStore";
+import { useTranslations } from "next-intl";
+import React, { useState } from "react";
+import { GlassButton } from "../ui/glass-button";
 
 interface SubmissionFormProps {
   onSuccess?: () => void;
@@ -46,7 +47,7 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
   }
 
   return (
-    <form className="SubmissionForm" onSubmit={handleSubmit}>
+    <form className="SubmissionForm " onSubmit={handleSubmit}>
       <label className="SubmissionForm-label">
         {t("titleLabel")}
         <input
@@ -74,18 +75,17 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
           disabled={!isPlaced}
         />
       </label>
-
-      <button
-        className="SubmissionForm-button"
+      <GlassButton
         type="submit"
         disabled={status === "loading" || !isPlaced}
+        primaryColor="purple"
       >
         {status === "loading"
           ? t("submitting")
           : !isPlaced
             ? "Click map to set location"
             : t("submit")}
-      </button>
+      </GlassButton>
 
       {status === "success" && <p className="SubmissionForm-success">{t("success")}</p>}
       {status === "error" && <p className="SubmissionForm-error">{t("error")}</p>}

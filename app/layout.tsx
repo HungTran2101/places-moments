@@ -6,7 +6,7 @@ import "./globals.css";
 import "../styles/import.scss";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
