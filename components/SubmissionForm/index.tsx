@@ -21,6 +21,7 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
   // For now, let's assume if lat/lng are exactly 20/0, they haven't placed it.
   // A better way is to update the store to have an `isPlaced` boolean.
   const isPlaced = usePinStore((state) => state.isPlaced);
+  console.log({ isPlaced });
 
   async function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault();
@@ -58,7 +59,6 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
           placeholder={t("titlePlaceholder")}
           maxLength={120}
           required
-          disabled={!isPlaced}
         />
       </label>
 
@@ -72,7 +72,6 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
           maxLength={600}
           rows={4}
           required
-          disabled={!isPlaced}
         />
       </label>
       <GlassButton

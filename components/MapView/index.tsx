@@ -57,7 +57,6 @@ export default function MapView() {
 
       // Create the marker and add it to the map immediately
       marker = new maplibre.Marker({
-        draggable: true,
         color: "#3b82f6",
       }).setLngLat([0, 0]) // Temporary coordinates
 

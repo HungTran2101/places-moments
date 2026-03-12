@@ -161,29 +161,48 @@ a {
 }
 
 @layer utilities {
-  .glass-style {
-    @apply backdrop-blur-sm;
+
+  .glass-style,
+  .glass-round-style {
+    @apply backdrop-blur-[2px];
     background-color: transparent;
-    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.3));
+    background-image: linear-gradient(to bottom, rgba(var(--color-glass-border-var), 0.5), rgba(var(--color-glass-border-var), 0.4), rgba(var(--color-glass-border-var), 0.5));
     position: relative;
+  }
+
+  .glass-round-style {
+    --color-glass-border-var: 225, 161, 255;
   }
 
   .glass-style::before {
     background-image: conic-gradient(from 150deg,
-        rgba(255, 255, 255, 0) 4%,
-        rgba(255, 255, 255, 1) 6% 10.5%,
-        rgba(255, 255, 255, 0) 12.5% 54%,
-        rgba(255, 255, 255, 1) 56% 60.5%,
-        rgba(255, 255, 255, 0) 62.5% 100%);
-    mask-image: linear-gradient(rgb(var(--color-glass-border-var)) 0 0),
-      linear-gradient(rgb(var(--color-glass-border-var)) 0 0);
+        rgba(var(--color-glass-border-var), 0) 4%,
+        rgba(var(--color-glass-border-var), 1) 5% 11.5%,
+        rgba(var(--color-glass-border-var), 0) 12.5% 54%,
+        rgba(var(--color-glass-border-var), 1) 55% 61.5%,
+        rgba(var(--color-glass-border-var), 0) 62.5% 100%);
+  }
+
+  .glass-round-style::before {
+    background-image: conic-gradient(from 100deg,
+        rgba(var(--color-glass-border-var), 0) 0% 2%,
+        rgba(var(--color-glass-border-var), 1) 6% 25%,
+        rgba(var(--color-glass-border-var), 0) 28% 51%,
+        rgba(var(--color-glass-border-var), 1) 55% 75%,
+        rgba(var(--color-glass-border-var), 0) 80% 90%);
+  }
+
+  .glass-style::before,
+  .glass-round-style::before {
+    mask-image: linear-gradient(rgb(var(--color-glass-border-var)) 0 0), linear-gradient(rgb(var(--color-glass-border-var)) 0 0);
     mask-composite: exclude;
     mask-clip: content-box, border-box;
     content: '';
     position: absolute;
     inset: 0px;
-    padding: 2px;
+    padding: 1px;
     border-radius: inherit;
+    z-index: -1;
   }
 
   /* .dark .glass-style {

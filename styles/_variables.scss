@@ -19,10 +19,10 @@
   --color-text-subtle: #9a96b2;
 
   /* Accent (lavender theme) */
-  --color-glass-border-var: 209, 122, 255;
   --color-accent: rgb(124 127 178);
   --color-accent-glow: rgb(124 127 178 / 20%);
   --color-accent-dark: #666aa0;
+  --color-glass-border-var: 255, 255, 255;
 
   /* Inputs */
   --color-input-bg: #f6f5fb;
@@ -42,7 +42,7 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   // Spacing & layout
-  --sidebar-width: 340px;
+  --sidebar-width: 300px;
   --header-height: 56px;
 }
 
