@@ -36,7 +36,7 @@ function GlassButton({ children,
       } as React.CSSProperties}
       className={cn(
         size === 'lg' && 'text-base has-[>svg]:px-6',
-        'relative inline-flex shrink-0 rounded-lg !bg-transparent bg-clip-padding text-[rgb(var(--glass-color))]',
+        'relative inline-flex shrink-0 rounded-lg !bg-transparent bg-clip-padding text-[rgb(var(--glass-color))] shadow-md',
 
         // Glass effect
         `bg-gradient-to-l from-[rgba(var(--glass-color),0.15)] to-[rgba(var(--glass-color),0.25)] backdrop-blur-sm`,

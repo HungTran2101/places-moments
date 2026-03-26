@@ -35,7 +35,7 @@ p {
 }
 
 a {
-  color: var(--color-accent);
+  color: var(--primary-color);
   text-decoration: none;
 
   &:hover {
@@ -73,7 +73,7 @@ a {
   display: none;
 }
 
-@layer base {
+/* @layer base {
   :root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -81,10 +81,10 @@ a {
     --card-foreground: oklch(0.145 0 0);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
+    --primary: var(--primary-color);
+    --primary-foreground: var(--primary-color);
+    --secondary: var(--secondary-color);
+    --secondary-foreground: var(--secondary-color);
     --muted: oklch(0.97 0 0);
     --muted-foreground: oklch(0.556 0 0);
     --accent: oklch(0.97 0 0);
@@ -116,10 +116,10 @@ a {
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.87 0.00 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
+    --primary: var(--primary-color);
+    --primary-foreground: var(--primary-color);
+    --secondary: var(--secondary-color);
+    --secondary-foreground: var(--secondary-color);
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
     --accent: oklch(0.371 0 0);
@@ -145,6 +145,8 @@ a {
 
   .theme {
     --font-sans: var(--font-sans);
+    --font-story-script: var(--font-story-script);
+    --font-lemonada: var(--font-lemonada);
   }
 
   * {
@@ -158,29 +160,40 @@ a {
   html {
     @apply font-sans;
   }
-}
+} */
 
 @layer utilities {
 
-  .glass-style,
+  .glass-style-vertical,
+  .glass-style-horizontal,
   .glass-round-style {
     @apply backdrop-blur-[2px];
     background-color: transparent;
-    background-image: linear-gradient(to bottom, rgba(var(--color-glass-border-var), 0.5), rgba(var(--color-glass-border-var), 0.4), rgba(var(--color-glass-border-var), 0.5));
-    position: relative;
+    background-image: linear-gradient(to bottom, rgba(var(--color-glass-border-var), 0.5), rgba(var(--color-glass-border-var), 0.3), rgba(var(--color-glass-border-var), 0.5));
+    box-shadow: inset 0 0 10px 0px rgba(var(--color-glass-border-var), 0.5);
+    /* position: relative; */
   }
 
   .glass-round-style {
     --color-glass-border-var: 225, 161, 255;
   }
 
-  .glass-style::before {
+  .glass-style-vertical::before {
     background-image: conic-gradient(from 150deg,
-        rgba(var(--color-glass-border-var), 0) 4%,
+        rgba(var(--color-glass-border-var), 0) 3%,
         rgba(var(--color-glass-border-var), 1) 5% 11.5%,
-        rgba(var(--color-glass-border-var), 0) 12.5% 54%,
+        rgba(var(--color-glass-border-var), 0) 13.5% 53%,
         rgba(var(--color-glass-border-var), 1) 55% 61.5%,
-        rgba(var(--color-glass-border-var), 0) 62.5% 100%);
+        rgba(var(--color-glass-border-var), 0) 63.5% 100%);
+  }
+
+  .glass-style-horizontal::before {
+    background-image: conic-gradient(from 90deg,
+        rgba(var(--color-glass-border-var), 0) 3%,
+        rgba(var(--color-glass-border-var), 1) 5% 44%,
+        rgba(var(--color-glass-border-var), 0) 46% 53%,
+        rgba(var(--color-glass-border-var), 1) 55% 94.5%,
+        rgba(var(--color-glass-border-var), 0) 96.5% 100%);
   }
 
   .glass-round-style::before {
@@ -192,7 +205,8 @@ a {
         rgba(var(--color-glass-border-var), 0) 80% 90%);
   }
 
-  .glass-style::before,
+  .glass-style-vertical::before,
+  .glass-style-horizontal::before,
   .glass-round-style::before {
     mask-image: linear-gradient(rgb(var(--color-glass-border-var)) 0 0), linear-gradient(rgb(var(--color-glass-border-var)) 0 0);
     mask-composite: exclude;

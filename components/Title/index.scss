@@ -1,0 +1,15 @@
+.title {
+  &-masking {
+    mask: radial-gradient(circle at calc(100% + 4px) 50%,
+        transparent 38px,
+        #fff 40px);
+    transform: translateX(35px);
+
+    &.reverse {
+      mask: radial-gradient(circle at -4px 50%,
+          transparent 38px,
+          #fff 40px);
+      transform: translateX(-35px);
+    }
+  }
+}

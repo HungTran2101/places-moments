@@ -19,9 +19,12 @@
   --color-text-subtle: #9a96b2;
 
   /* Accent (lavender theme) */
-  --color-accent: rgb(124 127 178);
-  --color-accent-glow: rgb(124 127 178 / 20%);
-  --color-accent-dark: #666aa0;
+  --primary-color-var: 124, 127, 178;
+  --primary-color: rgb(var(--primary-color-var));
+  --secondary-color-var: 184, 140, 211;
+  --secondary-color: rgb(var(--secondary-color-var));
+  --primary-color-glow: rgb(124 127 178 / 20%);
+  --primary-color-dark: #666aa0;
   --color-glass-border-var: 255, 255, 255;
 
   /* Inputs */
@@ -38,7 +41,7 @@
   --radius-xl: 20px;
 
   // Typography
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Lemonada', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   // Spacing & layout
@@ -64,9 +67,9 @@
   --color-text-subtle: #8e8ba8;
 
   /* Accent */
-  --color-accent: #8f93d6;
-  --color-accent-glow: rgb(143 147 214 / 25%);
-  --color-accent-dark: #7478c9;
+  --primary-color: #8f93d6;
+  --primary-color-glow: rgb(143 147 214 / 25%);
+  --primary-color-dark: #7478c9;
 
   /* Inputs */
   --color-input-bg: #20202b;

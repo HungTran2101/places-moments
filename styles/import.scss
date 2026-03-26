@@ -2,9 +2,11 @@
 @use "./variables";
 @use "./page";
 @use "./keyframes";
+@use "./custom";
 
 // Components
 @use "../components/MapView";
 @use "../components/SubmissionForm";
 @use "../components/HistoryPanel";
 @use "../components/Sidebar";
+@use "../components/Title";

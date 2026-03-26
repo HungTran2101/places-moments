@@ -1,17 +1,23 @@
-import type { Metadata } from "next";
-import { Inter, Geist } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getLocale } from "next-intl/server";
-import "./globals.css";
-import "../styles/import.scss";
 import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
+import { Lemonada, Mitr } from "next/font/google";
+import "../styles/import.scss";
+import "./globals.css";
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
-
-const inter = Inter({
+const lemonada = Lemonada({
   subsets: ["latin", "vietnamese"],
-  variable: "--font-inter",
+  variable: "--font-lemonada",
   display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const mitr = Mitr({
+  subsets: ["latin", "vietnamese"],
+  variable: "--font-mitr",
+  display: "swap",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,8 +38,8 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={cn("font-sans", geist.variable)}>
-      <body className={inter.variable}>
+    <html lang={locale}>
+      <body className={cn(mitr.variable, lemonada.variable)}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
