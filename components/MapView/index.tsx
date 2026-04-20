@@ -1,166 +1,167 @@
 "use client";
 
+import mapStyle from "@/styles/map-style.json";
+import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
-import type { Map as MapLibreMap, Marker, Point } from "maplibre-gl";
+import clsx from "clsx";
+import type { Map as MapLibreMap, Point, StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
+import MapLoading from "./MapLoading";
+
+const LOADER_EXIT_DELAY_MS = 2100;
+const INITIAL_MAP_ZOOM = 1;
+const MAP_ENTRY_ZOOM = 3;
+const MAP_ENTRY_ANIMATION_MS = 2500;
+const MARKER_ROTATION_RESET_MS = 400;
+const MAX_MARKER_ROTATION = 90;
+const MIN_ROTATION_DELTA = 2;
+const MAP_STYLE = mapStyle as StyleSpecification;
 
 export default function MapView() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
-  const mainMarkerRef = useRef<Marker | null>(null);
-  const mainMarkerAddedRef = useRef<boolean>(false);
+  const markerAddedRef = useRef(false);
   const markerRotationTimeoutRef = useRef<number | null>(null);
+  const markerTransitionTimeoutRef = useRef<number | null>(null);
   const lastPointRef = useRef<Point | null>(null);
-  const dragRafRef = useRef<number | null>(null);
 
-  const [ready, setReady] = useState(false);
-  const { setPin, setIsPlaced } = usePinStore((state) => state);
+  const setPin = usePinStore((state) => state.setPin);
+  const mapReady = useSystemStore((state) => state.mapReady);
+  const setMapReady = useSystemStore((state) => state.setMapReady);
+  const [showLoader, setShowLoader] = useState(true);
 
-  const calculateRotationByDistance = (newPoint: Point, rotateVelocity: number = 0.002) => {
-    const last = lastPointRef.current;
-    if (!last) return 0;
+  const clearMarkerRotationTimeout = () => {
+    if (markerRotationTimeoutRef.current) {
+      window.clearTimeout(markerRotationTimeoutRef.current);
+      markerRotationTimeoutRef.current = null;
+    }
+  };
 
-    const dx = last.x - newPoint.x;
-    if (Math.abs(dx) < 2) return 0;
+  const calculateRotationByDistance = (newPoint: Point, rotateVelocity = 0.002) => {
+    const lastPoint = lastPointRef.current;
+    if (!lastPoint) return 0;
 
-    const MAX_ROTATION = 90;
+    const dx = lastPoint.x - newPoint.x;
+    if (Math.abs(dx) < MIN_ROTATION_DELTA) return 0;
 
-    const angle = MAX_ROTATION * Math.tanh(dx * rotateVelocity);
-
-    const fixedAngle = Math.max(
-      -MAX_ROTATION,
-      Math.min(MAX_ROTATION, angle)
-    );
-
-    return fixedAngle;
-  }
+    const angle = MAX_MARKER_ROTATION * Math.tanh(dx * rotateVelocity);
+    return Math.max(-MAX_MARKER_ROTATION, Math.min(MAX_MARKER_ROTATION, angle));
+  };
 
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
-    let destroyed = false;
+    setMapReady(false);
+    markerAddedRef.current = false;
+    lastPointRef.current = null;
+    clearMarkerRotationTimeout();
 
-    let map: MapLibreMap;
-    let marker: Marker;
+    if (!containerRef.current || mapRef.current) return;
+
+    let destroyed = false;
 
     (async () => {
       const maplibre = await import("maplibre-gl");
       if (destroyed) return;
 
-      map = new maplibre.Map({
+      const map = new maplibre.Map({
         container: containerRef.current!,
-        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        style: MAP_STYLE,
         center: [0, 0],
-        zoom: 3,
+        zoom: INITIAL_MAP_ZOOM,
         attributionControl: false,
       });
 
-      // Create the marker and add it to the map immediately
-      marker = new maplibre.Marker({
-        color: "#3b82f6",
-      }).setLngLat([0, 0]) // Temporary coordinates
+      const marker = new maplibre.Marker({
+        color: "var(--marker-color)",
+      }).setLngLat([0, 0]);
 
-      map.on("load", () => {
-        setReady(true);
+      map.once("load", () => {
+        setMapReady(true);
+        map.easeTo({
+          zoom: MAP_ENTRY_ZOOM,
+          duration: MAP_ENTRY_ANIMATION_MS,
+          easing: (t) => 1 - Math.pow(1 - t, 3),
+        });
         lastPointRef.current = map.project(marker.getLngLat());
       });
 
-      map.on("click", (e) => {
-        const newPoint = e.point;
+      map.on("click", (event) => {
+        clearMarkerRotationTimeout();
+        marker.setLngLat(event.lngLat);
 
-        if (markerRotationTimeoutRef.current) {
-          clearTimeout(markerRotationTimeoutRef.current);
-        }
-
-        marker.setLngLat(e.lngLat);
-
-        if (!mainMarkerAddedRef.current) {
+        if (!markerAddedRef.current) {
           marker.addTo(map);
-          marker.addClassName('main-marker-move');
-          mainMarkerAddedRef.current = true;
+          marker.addClassName("main-marker-move");
+          markerAddedRef.current = true;
         } else {
-          const angle = calculateRotationByDistance(newPoint);
-          marker.setRotation(angle);
+          marker.setRotation(calculateRotationByDistance(event.point));
+          marker.addClassName("main-marker-moving");
           markerRotationTimeoutRef.current = window.setTimeout(() => {
             marker.setRotation(0);
-          }, 400);
+            markerRotationTimeoutRef.current = null;
+          }, MARKER_ROTATION_RESET_MS);
+          markerTransitionTimeoutRef.current = window.setTimeout(() => {
+            marker.removeClassName("main-marker-moving");
+            markerTransitionTimeoutRef.current = null;
+          }, MARKER_ROTATION_RESET_MS + 400);
         }
 
-        lastPointRef.current = newPoint;
-
-        const { lat, lng } = e.lngLat;
-        setPin(lat, lng);
-        setIsPlaced(true);
+        lastPointRef.current = event.point;
+        setPin(event.lngLat.lat, event.lngLat.lng);
       });
 
-      marker.on("dragstart", (e) => {
-        const markerLngLat = e.target.getLngLat();
-        lastPointRef.current = map.project(markerLngLat);
+      marker.on("click", (event) => {
+        event.originalEvent.stopPropagation();
       });
-
-      marker.on("drag", (markerEvent) => {
-        if (dragRafRef.current) return;
-
-        dragRafRef.current = requestAnimationFrame(() => {
-          dragRafRef.current = null;
-
-          const markerLngLat = markerEvent.target.getLngLat();
-          const newPoint = map.project(markerLngLat);
-
-          const angle = calculateRotationByDistance(newPoint, 0.5);
-
-          markerEvent.target.setRotation(angle);
-
-          lastPointRef.current = newPoint;
-        });
-      });
-
-      marker.on("dragend", (markerEvent) => {
-        const { lat, lng } = markerEvent.target.getLngLat();
-
-        marker.setRotation(0);
-
-        setPin(lat, lng);
-        setIsPlaced(true);
-      });
-
-      marker.on("click", (markerEvent) => {
-        markerEvent.originalEvent.stopPropagation();
-      })
 
       mapRef.current = map;
-      mainMarkerRef.current = marker;
+
+      if (destroyed) {
+        marker.remove();
+        map.remove();
+      }
     })();
 
     return () => {
       destroyed = true;
-
-      if (markerRotationTimeoutRef.current) {
-        clearTimeout(markerRotationTimeoutRef.current);
-      }
-
-      if (dragRafRef.current) {
-        cancelAnimationFrame(dragRafRef.current);
-      }
-
-      mainMarkerRef.current?.remove();
+      clearMarkerRotationTimeout();
       mapRef.current?.remove();
-
-      mainMarkerRef.current = null;
       mapRef.current = null;
+      markerAddedRef.current = false;
+      lastPointRef.current = null;
+      if (markerRotationTimeoutRef.current) {
+        window.clearTimeout(markerRotationTimeoutRef.current);
+        markerRotationTimeoutRef.current = null;
+      }
+      if (markerTransitionTimeoutRef.current) {
+        window.clearTimeout(markerTransitionTimeoutRef.current);
+        markerTransitionTimeoutRef.current = null;
+      }
     };
-  }, [setIsPlaced, setPin]);
+  }, [setMapReady, setPin]);
+
+  useEffect(() => {
+    if (!mapReady) {
+      setShowLoader(true);
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowLoader(false);
+    }, LOADER_EXIT_DELAY_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [mapReady]);
 
   return (
     <div className="MapView-wrapper">
-      <div ref={containerRef} className="MapView-map" />
-      {!ready && (
-        <div className="MapView-loader">
-          <span className="MapView-loaderDot" />
-          <span className="MapView-loaderDot" />
-          <span className="MapView-loaderDot" />
-        </div>
-      )}
+      <div
+        ref={containerRef}
+        className={clsx("MapView-map", mapReady && "is-ready")}
+      />
+      {showLoader && <MapLoading />}
     </div>
   );
 }

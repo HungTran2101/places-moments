@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "lint:script": "eslint \"**/*.tsx\"",
-    "lint:style": "stylelint \"**/*.scss\""
+    "lint:script": "eslint \"**/*.tsx\" --fix",
+    "lint:style": "stylelint \"**/*.scss\" --fix"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.2",

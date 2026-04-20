@@ -10,6 +10,7 @@ import SubmissionForm from "../SubmissionForm"
 const Sidebar = () => {
   const sw = useSystemStore((state) => state.sidebarWidth)
   const glassPrimaryColor = useSystemStore(state => state.primaryColor)
+  const mapReady = useSystemStore((state) => state.mapReady);
 
   const [open, setOpen] = useState(false)
   const viewport = useViewport();
@@ -42,10 +43,13 @@ const Sidebar = () => {
   return (
     <motion.aside
       className="sidebar"
-      initial={{ width: "0px" }}
-      animate={asideAnim}
+      initial={{ width: "0px", opacity: 0 }}
+      animate={mapReady ? { ...asideAnim, opacity: 1 } : {
+        width: "0px",
+        opacity: 0
+      }}
       transition={{
-        duration: open ? 0 : 0.1,
+        duration: mapReady && !open ? 2 : open ? 0 : 0.1,
         delay: open ? 0 : 0.6
       }}
     >

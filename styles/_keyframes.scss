@@ -10,3 +10,33 @@
     transform: scale(1);
   }
 }
+
+@keyframes cloud-fly-through {
+  0% {
+    opacity: 0;
+    transform:
+      translate3d(calc(-50% + var(--cloud-drift)), -50%, -1100px) scale(calc(var(--cloud-scale) * 0.34));
+    filter: blur(10px);
+  }
+
+  12% {
+    opacity: calc(var(--cloud-opacity) * 0.55);
+  }
+
+  38% {
+    opacity: var(--cloud-opacity);
+    filter: blur(2px);
+  }
+
+  72% {
+    opacity: calc(var(--cloud-opacity) * 0.92);
+    filter: blur(0.2px);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate3d(calc(-50% - var(--cloud-drift)), -50%, 900px) scale(calc(var(--cloud-scale) * 2.7));
+    filter: blur(6px);
+  }
+}

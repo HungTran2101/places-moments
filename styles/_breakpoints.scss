@@ -1,0 +1,67 @@
+@use "sass:map";
+
+$breakpoints: (
+  mobile: 767px,
+  tablet: 1023px,
+  desktop: 1279px,
+  large-screen: 1535px,
+) !default;
+
+@function breakpoint($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error "Unknown breakpoint `#{$name}`. Available: #{map.keys($breakpoints)}";
+  }
+
+  @return map.get($breakpoints, $name);
+}
+
+@function breakpoint-max($name) {
+  @return breakpoint($name);
+}
+
+@function breakpoint-min($name) {
+  @return breakpoint($name) + 1px;
+}
+
+@mixin max-width($width) {
+  @media (max-width: $width) {
+    @content;
+  }
+}
+
+@mixin min-width($width) {
+  @media (min-width: $width) {
+    @content;
+  }
+}
+
+@mixin between-width($min-width, $max-width) {
+  @media (min-width: $min-width) and (max-width: $max-width) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @include max-width(breakpoint-max(mobile)) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @include between-width(breakpoint-min(mobile), breakpoint-max(tablet)) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @include between-width(breakpoint-min(tablet), breakpoint-max(desktop)) {
+    @content;
+  }
+}
+
+@mixin large-screen {
+  @include min-width(breakpoint-min(desktop)) {
+    @content;
+  }
+}
+

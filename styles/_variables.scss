@@ -11,7 +11,8 @@
   --color-border: rgb(80 70 120 / 10%);
 
   /* Map */
-  --color-map-bg: #ece9f5;
+  --color-map-bg-var: 236, 233, 245;
+  --color-map-bg: rgb(var(--color-map-bg-var));
 
   /* Text */
   --color-text: #2b2a35;
@@ -29,6 +30,9 @@
 
   /* Inputs */
   --color-input-bg: #f6f5fb;
+
+  /* Marker */
+  --marker-color: #8f93d6;
 
   /* States */
   --color-success: #6bbf9f;
@@ -73,6 +77,9 @@
 
   /* Inputs */
   --color-input-bg: #20202b;
+
+  /* Marker */
+  --marker-color: #8f93d6;
 
   /* States */
   --color-success: #4ec9a6;

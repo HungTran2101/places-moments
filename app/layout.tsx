@@ -43,6 +43,7 @@ export default async function RootLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
         </NextIntlClientProvider>
+        {/* <a href='https://pngtree.com/freepng/cloud-weather-climate_8186751.html'>png image from pngtree.com/</a> */}
       </body>
     </html>
   );
