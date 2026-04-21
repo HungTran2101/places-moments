@@ -12,7 +12,6 @@ interface SubmissionFormProps {
 
 export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
   const t = useTranslations("submission");
-  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const { lat, lng } = usePinStore();
@@ -32,13 +31,12 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
       const res = await fetch("/api/submissions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, lat, lng, author_uuid }),
+        body: JSON.stringify({ description, lat, lng, author_uuid }),
       });
 
       if (!res.ok) throw new Error(await res.text());
 
       setStatus("success");
-      setTitle("");
       setDescription("");
       onSuccess?.();
     } catch {
@@ -48,19 +46,6 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
 
   return (
     <form className="SubmissionForm " onSubmit={handleSubmit}>
-      <label className="SubmissionForm-label">
-        {t("titleLabel")}
-        <input
-          className="SubmissionForm-input"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder={t("titlePlaceholder")}
-          maxLength={120}
-          required
-        />
-      </label>
-
       <label className="SubmissionForm-label">
         {t("descriptionLabel")}
         <textarea

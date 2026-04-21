@@ -14,7 +14,7 @@ Just moments scattered across the planet.
 
 Users can drop a message anywhere on Earth and explore messages left by others.
 
-Instead of timestamps, each message carries a **weather atmosphere** describing the moment it was written.
+Each message carries a **weather atmosphere** describing the moment it was written.
 
 Example:
 
@@ -38,7 +38,7 @@ The goal is not to create a social network, but to create a **space for reflecti
 * **PostgreSQL**
 * **Prisma ORM**
 * **MapLibre GL**
-* **GSAP**
+* **GSAP/Framer Motion**
 
 ## Philosophy
 

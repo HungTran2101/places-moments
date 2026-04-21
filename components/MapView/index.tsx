@@ -1,8 +1,8 @@
 "use client";
 
-import mapStyle from "@/styles/map-style.json";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
+import mapStyle from "@/styles/map-style.json";
 import clsx from "clsx";
 import type { Map as MapLibreMap, Point, StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -21,25 +21,32 @@ const MAP_STYLE = mapStyle as StyleSpecification;
 export default function MapView() {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
-  const markerAddedRef = useRef(false);
-  const markerRotationTimeoutRef = useRef<number | null>(null);
-  const markerTransitionTimeoutRef = useRef<number | null>(null);
-  const lastPointRef = useRef<Point | null>(null);
+  const pinAddedRef = useRef(false);
+  const pinRotationTimeoutRef = useRef<number | null>(null);
+  const pinTransitionTimeoutRef = useRef<number | null>(null);
+  const lastPinPositionRef = useRef<Point | null>(null);
 
   const setPin = usePinStore((state) => state.setPin);
   const mapReady = useSystemStore((state) => state.mapReady);
   const setMapReady = useSystemStore((state) => state.setMapReady);
   const [showLoader, setShowLoader] = useState(true);
 
-  const clearMarkerRotationTimeout = () => {
-    if (markerRotationTimeoutRef.current) {
-      window.clearTimeout(markerRotationTimeoutRef.current);
-      markerRotationTimeoutRef.current = null;
+  const clearPinRotationTimeout = () => {
+    if (pinRotationTimeoutRef.current) {
+      window.clearTimeout(pinRotationTimeoutRef.current);
+      pinRotationTimeoutRef.current = null;
+    }
+  };
+
+  const clearPinTransitionTimeout = () => {
+    if (pinTransitionTimeoutRef.current) {
+      window.clearTimeout(pinTransitionTimeoutRef.current);
+      pinTransitionTimeoutRef.current = null;
     }
   };
 
   const calculateRotationByDistance = (newPoint: Point, rotateVelocity = 0.002) => {
-    const lastPoint = lastPointRef.current;
+    const lastPoint = lastPinPositionRef.current;
     if (!lastPoint) return 0;
 
     const dx = lastPoint.x - newPoint.x;
@@ -51,9 +58,9 @@ export default function MapView() {
 
   useEffect(() => {
     setMapReady(false);
-    markerAddedRef.current = false;
-    lastPointRef.current = null;
-    clearMarkerRotationTimeout();
+    pinAddedRef.current = false;
+    lastPinPositionRef.current = null;
+    clearPinRotationTimeout();
 
     if (!containerRef.current || mapRef.current) return;
 
@@ -71,8 +78,9 @@ export default function MapView() {
         attributionControl: false,
       });
 
-      const marker = new maplibre.Marker({
+      const pin = new maplibre.Marker({
         color: "var(--marker-color)",
+        className: 'main-marker'
       }).setLngLat([0, 0]);
 
       map.once("load", () => {
@@ -82,60 +90,60 @@ export default function MapView() {
           duration: MAP_ENTRY_ANIMATION_MS,
           easing: (t) => 1 - Math.pow(1 - t, 3),
         });
-        lastPointRef.current = map.project(marker.getLngLat());
+        lastPinPositionRef.current = map.project(pin.getLngLat());
       });
 
       map.on("click", (event) => {
-        clearMarkerRotationTimeout();
-        marker.setLngLat(event.lngLat);
+        clearPinRotationTimeout();
+        pin.setLngLat(event.lngLat);
 
-        if (!markerAddedRef.current) {
-          marker.addTo(map);
-          marker.addClassName("main-marker-move");
-          markerAddedRef.current = true;
+        if (!pinAddedRef.current) {
+          pin.addTo(map);
+          pinAddedRef.current = true;
         } else {
-          marker.setRotation(calculateRotationByDistance(event.point));
-          marker.addClassName("main-marker-moving");
-          markerRotationTimeoutRef.current = window.setTimeout(() => {
-            marker.setRotation(0);
-            markerRotationTimeoutRef.current = null;
+          clearPinTransitionTimeout();
+          pin.setRotation(calculateRotationByDistance(event.point));
+          pin.addClassName("main-marker-move");
+          pinRotationTimeoutRef.current = window.setTimeout(() => {
+            pin.setRotation(0);
+            pinRotationTimeoutRef.current = null;
           }, MARKER_ROTATION_RESET_MS);
-          markerTransitionTimeoutRef.current = window.setTimeout(() => {
-            marker.removeClassName("main-marker-moving");
-            markerTransitionTimeoutRef.current = null;
+          pinTransitionTimeoutRef.current = window.setTimeout(() => {
+            pin.removeClassName("main-marker-move");
+            pinTransitionTimeoutRef.current = null;
           }, MARKER_ROTATION_RESET_MS + 400);
         }
 
-        lastPointRef.current = event.point;
+        lastPinPositionRef.current = event.point;
         setPin(event.lngLat.lat, event.lngLat.lng);
       });
 
-      marker.on("click", (event) => {
+      pin.on("click", (event) => {
         event.originalEvent.stopPropagation();
       });
 
       mapRef.current = map;
 
       if (destroyed) {
-        marker.remove();
+        pin.remove();
         map.remove();
       }
     })();
 
     return () => {
       destroyed = true;
-      clearMarkerRotationTimeout();
+      clearPinRotationTimeout();
       mapRef.current?.remove();
       mapRef.current = null;
-      markerAddedRef.current = false;
-      lastPointRef.current = null;
-      if (markerRotationTimeoutRef.current) {
-        window.clearTimeout(markerRotationTimeoutRef.current);
-        markerRotationTimeoutRef.current = null;
+      pinAddedRef.current = false;
+      lastPinPositionRef.current = null;
+      if (pinRotationTimeoutRef.current) {
+        window.clearTimeout(pinRotationTimeoutRef.current);
+        pinRotationTimeoutRef.current = null;
       }
-      if (markerTransitionTimeoutRef.current) {
-        window.clearTimeout(markerTransitionTimeoutRef.current);
-        markerTransitionTimeoutRef.current = null;
+      if (pinTransitionTimeoutRef.current) {
+        window.clearTimeout(pinTransitionTimeoutRef.current);
+        pinTransitionTimeoutRef.current = null;
       }
     };
   }, [setMapReady, setPin]);

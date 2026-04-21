@@ -44,5 +44,27 @@
     "send": "Send to future self",
     "locked": "Still waiting…",
     "unlocked": "Open"
+  },
+  "weather": {
+    "0": "Posted on a clear, still day",
+    "1": "Posted on a mostly clear day",
+    "2": "Posted on a partly cloudy afternoon",
+    "3": "Posted beneath heavy overcast skies",
+    "45": "Posted in a soft fog",
+    "48": "Posted in a thick, icy fog",
+    "51": "Posted in a gentle drizzle",
+    "53": "Posted in a steady drizzle",
+    "55": "Posted in a dense drizzle",
+    "61": "Posted during a light rain shower",
+    "63": "Posted during a steady rain",
+    "65": "Posted during a heavy downpour",
+    "71": "Posted in light snowfall",
+    "73": "Posted in steady snow",
+    "75": "Posted in a heavy snowstorm",
+    "80": "Posted during a brief rain shower",
+    "81": "Posted during passing showers",
+    "82": "Posted during a heavy rain burst",
+    "95": "Posted during a thunderstorm",
+    "99": "Posted during a violent storm"
   }
 }

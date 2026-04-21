@@ -31,11 +31,11 @@
         }
       }
 
-      &.main-marker-move {
+      &.main-marker {
         transform-origin: 50% 100%;
       }
 
-      &.main-marker-moving {
+      &.main-marker-move {
         transition: transform ease-in-out 0.4s;
       }
     }
@@ -105,7 +105,7 @@
     }
   }
 
-  @media (width <= 768px) {
+  @media (width <=768px) {
     &-loaderCloud {
       width: 22rem;
     }
@@ -128,4 +128,9 @@
       filter: blur(1px);
     }
   }
+}
+
+.marker-icon {
+  color: var(--secondary-color);
+  text-shadow: 1px 1px 1px rgb(0 0 0 / 20%);
 }

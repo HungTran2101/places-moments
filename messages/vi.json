@@ -44,5 +44,27 @@
     "send": "Gửi cho tương lai",
     "locked": "Vẫn đang chờ…",
     "unlocked": "Mở"
+  },
+  "weather": {
+    "0": "Gửi vào một ngày trong vắt, trời quang",
+    "1": "Gửi vào một ngày trời xanh mây trắng",
+    "2": "Gửi vào một chiều mây vàng nhẹ",
+    "3": "Gửi lúc bầu trời u ám nặng nề",
+    "45": "Gửi trong màn sương nhẹ",
+    "48": "Gửi trong màn sương dày",
+    "51": "Gửi trong cơn mưa phùn nhẹ",
+    "53": "Gửi trong cơn mưa ngâu",
+    "55": "Gửi trong cơn mưa phùn dày đặc",
+    "61": "Lúc đó là cơn mưa rào nhẹ",
+    "63": "Lúc đó là cơn mưa trút đều",
+    "65": "Gửi vào lúc cơn mưa trút ào",
+    "71": "Gửi vào một ngày tuyết nhẹ",
+    "73": "Gửi vào một ngày tuyết",
+    "75": "Gửi vào một ngày tuyết dày",
+    "80": "Gửi trong một cơn mưa rào",
+    "81": "Gửi khi có cơn mưa rào thoáng qua",
+    "82": "Gửi trong cơn mưa rào mạnh",
+    "95": "Gửi trong cơn giông",
+    "99": "Gửi trong cơn bão dữ dội"
   }
 }

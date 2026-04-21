@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "react-hooks/set-state-in-effect": "off",
+      "@typescript-eslint/ban-ts-comment": "off"
     },
   },
 ]);

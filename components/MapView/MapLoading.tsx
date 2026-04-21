@@ -158,6 +158,7 @@ const MapLoading = () => {
             height={500}
             className={`MapView-loaderCloud MapView-loaderCloud--${cloud.depth}`}
             style={cloudStyle}
+            loading="eager"
           />
         );
       })}

@@ -1,5 +1,6 @@
 'use client'
 
+import { useViewport } from "@/hooks/useViewport";
 import { useSystemStore } from "@/store/systemStore";
 import { motion } from "framer-motion";
 import { Earth, Map } from "lucide-react";
@@ -21,6 +22,9 @@ const Title = () => {
 
   const t = useTranslations('meta');
 
+  const viewport = useViewport();
+  const vw = viewport?.width;
+
   const primaryColor = useSystemStore(state => state.primaryColor)
   const mapState = useSystemStore(state => state.mapState)
   const mapReady = useSystemStore((state) => state.mapReady);
@@ -29,15 +33,16 @@ const Title = () => {
   const setMapState = useSystemStore(state => state.setMapState)
 
   const titleAnimate = useMemo(() => {
-    if (mapReady && !sidebarOpen) return { opacity: 1 }
-    return { opacity: 0 }
-  }, [sidebarOpen, mapReady])
+    if (!mapReady) return { opacity: 0 }
+    if (vw && vw <= 1300 && sidebarOpen) return { opacity: 0 }
+    return { opacity: 1 }
+  }, [sidebarOpen, mapReady, vw])
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={titleAnimate}
-      transition={{ duration: 1 }}
+      transition={{ duration: 0.5 }}
       className="title fixed z-10 left-1/2 -translate-x-1/2 top-6"
     >
       <div className="liquid-glass w-fit px-4 py-2 rounded-[30px] flex flex-col justify-center items-center">
@@ -49,7 +54,7 @@ const Title = () => {
               className="relative p-1 rounded-full"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.5 }}
-              animate={{ color: mapState === ms.value ? 'white' : `rgb(${primaryColor})` }}
+              animate={{ color: mapState === ms.value ? '#fff' : `rgb(${primaryColor})` }}
             >
               {
                 mapState === ms.value && <motion.div
