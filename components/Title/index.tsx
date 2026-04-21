@@ -4,6 +4,7 @@ import { useSystemStore } from "@/store/systemStore";
 import { motion } from "framer-motion";
 import { Earth, Map } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useMemo } from "react";
 
 const mapStates = [
   {
@@ -22,14 +23,21 @@ const Title = () => {
 
   const primaryColor = useSystemStore(state => state.primaryColor)
   const mapState = useSystemStore(state => state.mapState)
-  const setMapState = useSystemStore(state => state.setMapState)
   const mapReady = useSystemStore((state) => state.mapReady);
+  const sidebarOpen = useSystemStore((state) => state.sidebarOpen);
+
+  const setMapState = useSystemStore(state => state.setMapState)
+
+  const titleAnimate = useMemo(() => {
+    if (mapReady && !sidebarOpen) return { opacity: 1 }
+    return { opacity: 0 }
+  }, [sidebarOpen, mapReady])
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
-      animate={{ opacity: mapReady ? 1 : 0 }}
-      transition={{ duration: 2 }}
+      animate={titleAnimate}
+      transition={{ duration: 1 }}
       className="title fixed z-10 left-1/2 -translate-x-1/2 top-6"
     >
       <div className="liquid-glass w-fit px-4 py-2 rounded-[30px] flex flex-col justify-center items-center">
