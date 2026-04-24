@@ -10,7 +10,8 @@
   },
   "map": {
     "dropPin": "Kéo ghim đến nơi bạn muốn để lại suy nghĩ",
-    "loading": "Đang tải thế giới…"
+    "loading": "Đang tải thế giới…",
+    "disclaimer": "Dữ liệu bản đồ © Những người đóng góp cho OpenStreetMap.\nRanh giới và tên gọi có thể không phản ánh vị trí chính thức."
   },
   "submission": {
     "titleLabel": "Tiêu đề",

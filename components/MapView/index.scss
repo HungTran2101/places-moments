@@ -42,6 +42,26 @@
 
   }
 
+  &-disclaimer {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    max-width: min(22rem, calc(100% - 2rem));
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.75rem;
+    color: #5f6176;
+    opacity: 0.5;
+    font-size: 0.7rem;
+    transform: scale(0.5);
+    transform-origin: bottom right;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
   &-loader {
     position: absolute;
     inset: 0;

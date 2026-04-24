@@ -10,7 +10,8 @@
   },
   "map": {
     "dropPin": "Drag the pin to where you want to leave a thought",
-    "loading": "Loading the world…"
+    "loading": "Loading the world…",
+    "disclaimer": "Map data © OpenStreetMap contributors.\nBoundaries and names may not reflect official positions."
   },
   "submission": {
     "titleLabel": "Title",

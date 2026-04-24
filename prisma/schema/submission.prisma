@@ -1,6 +1,5 @@
 model Submission {
   id              String   @id @default(cuid())
-  title           String   @db.VarChar(120)
   description     String   @db.VarChar(600)
   lat             Float
   lng             Float

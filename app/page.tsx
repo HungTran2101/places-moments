@@ -1,5 +1,6 @@
 "use client";
 
+import LanguagesDropdown from "@/components/LanguagesDropdown";
 import Sidebar from "@/components/Sidebar";
 import Title from "@/components/Title";
 import dynamic from "next/dynamic";
@@ -14,6 +15,8 @@ export default function HomePage() {
   return (
     <main className="main">
       <Title />
+      <LanguagesDropdown />
+
       {/* Submission sidebar */}
       <Sidebar />
       {/* Map — fills the viewport */}

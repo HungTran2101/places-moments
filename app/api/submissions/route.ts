@@ -3,13 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { fetchWeatherAtmosphere } from "@/lib/weather";
 import { rateLimit } from "@/lib/rateLimit";
 import { z } from "zod";
+import { constants } from "../constant";
 
 const CreateSubmissionSchema = z.object({
-  title: z.string().min(1).max(120),
-  description: z.string().min(1).max(600),
+  // title: z.string().min(1).max(120),
+  description: z.string().min(1).max(constants.MAX_DESCRIPTION_LENGTH),
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
-  author_uuid: z.string().uuid(),
+  author_uuid: z.uuid(),
 });
 
 // GET /api/submissions - list all public submissions
@@ -18,7 +19,6 @@ export async function GET() {
     const submissions = await prisma.submission.findMany({
       select: {
         id: true,
-        title: true,
         description: true,
         lat: true,
         lng: true,
@@ -38,7 +38,7 @@ export async function GET() {
 
 // POST /api/submissions - create a new submission
 export async function POST(request: NextRequest) {
-  const limited = rateLimit(request, { maxRequests: 3, windowMs: 60_000 });
+  const limited = rateLimit(request, { maxRequests: 10, windowMs: 0 });
   if (limited) return limited;
 
   let body: unknown;
@@ -53,13 +53,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues }, { status: 422 });
   }
 
-  const { title, description, lat, lng, author_uuid } = parsed.data;
+  const { description, lat, lng, author_uuid } = parsed.data;
 
   const { summary, code } = await fetchWeatherAtmosphere(lat, lng);
 
   const submission = await prisma.submission.create({
     data: {
-      title,
+      // title,
       description,
       lat,
       lng,

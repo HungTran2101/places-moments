@@ -39,15 +39,15 @@ const Title = () => {
   }, [sidebarOpen, mapReady, vw])
 
   return (
-    <motion.div
+    <motion.header
       initial={{ opacity: 0 }}
       animate={titleAnimate}
       transition={{ duration: 0.5 }}
-      className="title fixed z-10 left-1/2 -translate-x-1/2 top-6"
+      className="title fixed z-10 left-1/2 -translate-x-1/2 top-2"
     >
       <div className="liquid-glass w-fit px-4 py-2 rounded-[30px] flex flex-col justify-center items-center">
         <div className="gradient-text font-mitr text-[22px] text-nowrap md:text-[30px] lg:text-[40px] font-semibold uppercase">{t('title')}</div>
-        <div className="flex items-center p-1 md:p-2 rounded-[20px] gap-3">
+        <div className="flex items-center p-1 md:p-2 !pt-0 rounded-[20px] gap-3">
           {mapStates.map(ms => (
             <motion.div
               key={ms.value}
@@ -119,7 +119,7 @@ const Title = () => {
             </motion.span>
           </div> */}
       </div>
-    </motion.div>
+    </motion.header>
   );
 }
 

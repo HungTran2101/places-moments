@@ -73,6 +73,15 @@ a {
   display: none;
 }
 
+@layer base {
+  :root {
+    --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin);
+    --radix-context-menu-content-transform-origin: var(--radix-popper-transform-origin);
+    --radix-popover-content-transform-origin: var(--radix-popper-transform-origin);
+    --radix-tooltip-content-transform-origin: var(--radix-popper-transform-origin);
+  }
+}
+
 /* @layer base {
   :root {
     --background: oklch(1 0 0);
@@ -164,14 +173,13 @@ a {
 
 @layer utilities {
 
-  .glass-style-vertical,
+  /* .glass-style-vertical,
   .glass-style-horizontal,
   .glass-round-style {
     @apply backdrop-blur-[2px];
     background-color: transparent;
     background-image: linear-gradient(to bottom, rgba(var(--color-glass-border-var), 0.5), rgba(var(--color-glass-border-var), 0.3), rgba(var(--color-glass-border-var), 0.5));
     box-shadow: inset 0 0 10px 0px rgba(var(--color-glass-border-var), 0.5);
-    /* position: relative; */
   }
 
   .glass-round-style {
@@ -217,7 +225,7 @@ a {
     padding: 1px;
     border-radius: inherit;
     z-index: -1;
-  }
+  } */
 
   /* .dark .glass-style {
     @apply backdrop-blur-sm;

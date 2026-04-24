@@ -35,8 +35,8 @@
             "geometry": {
               "type": "Point",
               "coordinates": [
-                114.0,
-                10.2
+                115.5,
+                10.5
               ]
             }
           }
@@ -118,12 +118,9 @@
       "source-layer": "park",
       "minzoom": 9,
       "filter": [
-        "all",
-        [
-          "==",
-          "class",
-          "national_park"
-        ]
+        "==",
+        "class",
+        "national_park"
       ],
       "layout": {
         "visibility": "visible"
@@ -164,12 +161,9 @@
       "source-layer": "park",
       "minzoom": 0,
       "filter": [
-        "all",
-        [
-          "==",
-          "class",
-          "nature_reserve"
-        ]
+        "==",
+        "class",
+        "nature_reserve"
       ],
       "layout": {
         "visibility": "visible"
@@ -607,12 +601,9 @@
       "source-layer": "aeroway",
       "minzoom": 12,
       "filter": [
-        "all",
-        [
-          "==",
-          "class",
-          "runway"
-        ]
+        "==",
+        "class",
+        "runway"
       ],
       "layout": {
         "line-cap": "square"
@@ -652,12 +643,9 @@
       "source-layer": "aeroway",
       "minzoom": 13,
       "filter": [
-        "all",
-        [
-          "==",
-          "class",
-          "taxiway"
-        ]
+        "==",
+        "class",
+        "taxiway"
       ],
       "paint": {
         "line-color": "#e8e8e8",
@@ -1331,6 +1319,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "==",
           "class",
           "minor"
@@ -1442,6 +1444,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "==",
           "class",
           "primary"
@@ -1507,6 +1523,20 @@
       "maxzoom": 24,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -1574,6 +1604,20 @@
       "maxzoom": 24,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -1643,6 +1687,20 @@
       "minzoom": 13,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -4537,16 +4595,33 @@
       "minzoom": 12,
       "maxzoom": 16,
       "filter": [
-        "any",
+        "all",
         [
-          "==",
-          "class",
-          "neighbourhood"
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
         ],
         [
-          "==",
-          "class",
-          "hamlet"
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "any",
+          [
+            "==",
+            "class",
+            "neighbourhood"
+          ],
+          [
+            "==",
+            "class",
+            "hamlet"
+          ]
         ]
       ],
       "layout": {
@@ -4628,6 +4703,20 @@
       "maxzoom": 16,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -4722,6 +4811,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "==",
           "class",
           "village"
@@ -4803,6 +4906,20 @@
       "maxzoom": 14,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -4886,6 +5003,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "==",
           "class",
           "country"
@@ -4965,6 +5096,20 @@
       "maxzoom": 7,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -5069,6 +5214,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "==",
           "class",
           "state"
@@ -5119,6 +5278,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "==",
           "class",
           "continent"
@@ -5155,6 +5328,20 @@
       "maxzoom": 15,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -5242,6 +5429,20 @@
       "maxzoom": 15,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -5331,6 +5532,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "==",
           "class",
           "city"
@@ -5382,6 +5597,20 @@
       "maxzoom": 7,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           "==",
           "class",
@@ -5435,6 +5664,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "==",
           "class",
           "city"
@@ -5487,6 +5730,20 @@
       "filter": [
         "all",
         [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
           "!has",
           "capital"
         ],
@@ -5538,6 +5795,20 @@
       "maxzoom": 8,
       "filter": [
         "all",
+        [
+          "!in",
+          "name_en",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
+        [
+          "!in",
+          "name",
+          "Yongle Qundao",
+          "SANSHA",
+          "Qilianyu"
+        ],
         [
           ">",
           "capital",
@@ -5964,19 +6235,52 @@
       }
     },
     {
-      "id": "vn-disputed-islands-labels",
+      "id": "vn-disputed-islands-label-mask",
+      "type": "circle",
+      "source": "vn-disputed-labels",
+      "minzoom": 4,
+      "maxzoom": 24,
+      "paint": {
+        "circle-color": "rgba(230, 232, 240, 0.98)",
+        "circle-radius": {
+          "stops": [
+            [
+              4,
+              34
+            ],
+            [
+              6,
+              48
+            ],
+            [
+              8,
+              64
+            ]
+          ]
+        },
+        "circle-blur": 0.2,
+        "circle-opacity": 1
+      }
+    },
+    {
+      "id": "vn-disputed-islands-labels-hoang-sa",
       "type": "symbol",
       "source": "vn-disputed-labels",
       "minzoom": 4,
       "maxzoom": 24,
+      "filter": [
+        "==",
+        "name",
+        "Quần đảo Hoàng Sa"
+      ],
       "layout": {
         "text-field": [
           "get",
           "name"
         ],
         "text-font": [
-          "Montserrat SemiBold",
-          "Open Sans Semibold",
+          "Montserrat Medium",
+          "Open Sans Bold",
           "Noto Sans Regular",
           "HanWangHeiLight Regular",
           "NanumBarunGothic Regular"
@@ -5985,28 +6289,80 @@
           "stops": [
             [
               4,
-              11
+              10
             ],
             [
               6,
-              13
+              12
             ],
             [
               8,
-              15
+              14
             ]
           ]
         },
         "text-letter-spacing": 0.02,
         "text-anchor": "center",
         "text-justify": "center",
-        "text-allow-overlap": true,
-        "text-ignore-placement": true
+        "text-allow-overlap": false,
+        "text-ignore-placement": false
       },
       "paint": {
         "text-color": "#5f6176",
         "text-halo-color": "rgba(255, 255, 255, 0.95)",
-        "text-halo-width": 1.5,
+        "text-halo-width": 1.25,
+        "text-halo-blur": 0.4
+      }
+    },
+    {
+      "id": "vn-disputed-islands-labels-truong-sa",
+      "type": "symbol",
+      "source": "vn-disputed-labels",
+      "minzoom": 4,
+      "maxzoom": 24,
+      "filter": [
+        "==",
+        "name",
+        "Quần đảo Trường Sa"
+      ],
+      "layout": {
+        "text-field": [
+          "get",
+          "name"
+        ],
+        "text-font": [
+          "Montserrat Medium",
+          "Open Sans Bold",
+          "Noto Sans Regular",
+          "HanWangHeiLight Regular",
+          "NanumBarunGothic Regular"
+        ],
+        "text-size": {
+          "stops": [
+            [
+              4,
+              10
+            ],
+            [
+              6,
+              12
+            ],
+            [
+              8,
+              14
+            ]
+          ]
+        },
+        "text-letter-spacing": 0.02,
+        "text-anchor": "center",
+        "text-justify": "center",
+        "text-allow-overlap": false,
+        "text-ignore-placement": false
+      },
+      "paint": {
+        "text-color": "#5f6176",
+        "text-halo-color": "rgba(255, 255, 255, 0.95)",
+        "text-halo-width": 1.25,
         "text-halo-blur": 0.5
       }
     }

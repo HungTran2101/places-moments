@@ -8,6 +8,7 @@ import type { Map as MapLibreMap, Point, StyleSpecification } from "maplibre-gl"
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef, useState } from "react";
 import MapLoading from "./MapLoading";
+import { useTranslations } from "next-intl";
 
 const LOADER_EXIT_DELAY_MS = 2100;
 const INITIAL_MAP_ZOOM = 1;
@@ -19,6 +20,8 @@ const MIN_ROTATION_DELTA = 2;
 const MAP_STYLE = mapStyle as StyleSpecification;
 
 export default function MapView() {
+  const t = useTranslations("map");
+
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const pinAddedRef = useRef(false);
@@ -169,6 +172,9 @@ export default function MapView() {
         ref={containerRef}
         className={clsx("MapView-map", mapReady && "is-ready")}
       />
+      <div className="MapView-disclaimer liquid-glass" aria-label="Map disclaimer">
+        <p>{t('disclaimer')}</p>
+      </div>
       {showLoader && <MapLoading />}
     </div>
   );
