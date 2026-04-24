@@ -6,7 +6,9 @@
   "nav": {
     "myHistory": "Khoảnh khắc của tôi",
     "writeFuture": "Viết cho tương lai",
-    "switchLanguage": "English"
+    "switchLanguage": "English",
+    "vi": "Tiếng việt",
+    "en": "Tiếng anh"
   },
   "map": {
     "dropPin": "Kéo ghim đến nơi bạn muốn để lại suy nghĩ",

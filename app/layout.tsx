@@ -2,9 +2,11 @@ import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
-import { Lemonada, Mitr } from "next/font/google";
+import { Lemonada, Mitr, Geist } from "next/font/google";
 import "../styles/import.scss";
 import "./globals.css";
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const lemonada = Lemonada({
   subsets: ["latin", "vietnamese"],
@@ -38,7 +40,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} className={cn("font-sans", geist.variable)}>
       <body className={cn(mitr.variable, lemonada.variable)}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}

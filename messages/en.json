@@ -6,7 +6,9 @@
   "nav": {
     "myHistory": "My moments",
     "writeFuture": "Write to future self",
-    "switchLanguage": "Tiếng Việt"
+    "switchLanguage": "Tiếng Việt",
+    "vi": "Vietnamese",
+    "en": "English"
   },
   "map": {
     "dropPin": "Drag the pin to where you want to leave a thought",
