@@ -6,13 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "postinstall": "prisma generate",
     "lint": "eslint .",
     "lint:script": "eslint \"**/*.tsx\" --fix",
-    "lint:style": "stylelint \"**/*.scss\" --fix"
+    "lint:style": "stylelint \"**/*.scss\" --fix",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.4.2",
-    "@prisma/client": "^7.4.2",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.2",

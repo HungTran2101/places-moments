@@ -128,7 +128,7 @@ const cloudAssetOrder = Array.from({ length: clouds.length }, () => {
   return order;
 });
 
-const MapLoading = () => {
+const MapLoading = ({ children }: { children?: React.ReactNode }) => {
   const mapReady = useSystemStore((state) => state.mapReady);
 
   return (
@@ -136,6 +136,7 @@ const MapLoading = () => {
       className={clsx("MapView-loader", mapReady && "is-exiting")}
       aria-hidden={mapReady}
     >
+      {children ? <div className="relative z-10">{children}</div> : null}
       <div className="MapView-loaderSky" />
       {clouds.map((cloud, index) => {
         const cloudStyle = {

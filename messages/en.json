@@ -22,8 +22,20 @@
     "descriptionPlaceholder": "A quiet thought, a feeling, a memory…",
     "submit": "Leave this thought",
     "submitting": "Sending…",
+    "clickMapToSubmit": "Select a location",
+    "clickMapToSubmitTooltip": "Please select a location on the map where you want to leave this thought :3",
     "success": "Your thought has been left here.",
     "error": "Something went wrong. Please try again."
+  },
+  "errorBoundary": {
+    "title": "Oh no! We hit an unexpected problem :(",
+    "description": "The page ran into an error we could not recover from automatically. Please try again, or send us the details so we can fix it.",
+    "retry": "Try again",
+    "report": "Report",
+    "reportSubject": "Places Moments error report",
+    "reportUnavailable": "Set NEXT_PUBLIC_ERROR_REPORT_EMAIL to enable report.",
+    "reportTooltip": "The email content will be pre-filled, you just need to send it :3",
+    "reportThanks": "Thank you for sending the report! We will look into it and fix it as soon as possible."
   },
   "popup": {
     "atmosphereSuffix": ""

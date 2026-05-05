@@ -22,8 +22,20 @@
     "descriptionPlaceholder": "Một suy nghĩ nhỏ, một cảm xúc, một ký ức…",
     "submit": "Để lại suy nghĩ này",
     "submitting": "Đang gửi…",
+    "clickMapToSubmit": "Chọn địa điểm",
+    "clickMapToSubmitTooltip": "Hãy chọn địa điểm trên bản đồ mà bạn muốn gửi gắm khoảnh khắc này :3",
     "success": "Suy nghĩ của bạn đã được lưu lại.",
     "error": "Có lỗi xảy ra. Vui lòng thử lại."
+  },
+  "errorBoundary": {
+    "title": "Ôi thôi chết, đã có lỗi ngoài ý muốn xảy ra :(",
+    "description": "Xin lỗi vì đã làm gián đoạn trải nghiệm chia sẻ của bạn. Bạn hãy thử lại hoặc báo lỗi để mình khắc phục sớm nhất có thể nhé!",
+    "retry": "Thử lại",
+    "report": "Báo lỗi",
+    "reportSubject": "Places Moments error report",
+    "reportUnavailable": "Hãy cấu hình NEXT_PUBLIC_ERROR_REPORT_EMAIL để báo lỗi.",
+    "reportTooltip": "Nội dung email sẽ được điền sẵn, bạn chỉ cần gửi đi là xong nhé :3",
+    "reportThanks": "Cảm ơn bạn đã gửi báo lỗi! Chúng mình sẽ xem xét và khắc phục sớm nhất có thể."
   },
   "popup": {
     "atmosphereSuffix": ""

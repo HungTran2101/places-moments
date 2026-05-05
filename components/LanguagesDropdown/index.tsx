@@ -2,6 +2,7 @@
 
 import { Languages } from "lucide-react";
 import { Locale, locales } from "@/i18n/config";
+import { setLocale } from "@/services/locale";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "../ui/button";
@@ -15,39 +16,33 @@ const LanguagesDropdown = () => {
   const handleChangeLanguage = async (nextLocale: Locale) => {
     if (nextLocale === locale) return;
 
-    await fetch("/api/locale", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ locale: nextLocale }),
-    });
+    await setLocale(nextLocale);
 
     router.refresh();
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div className="fixed z-10 top-2 right-2">
+    <div className="fixed z-10 top-2 right-2">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
           <Button variant={"link"} className="liquid-glass2">
             <Languages />
           </Button>
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-transparent liquid-glass2">
-        {locales.map((itemLocale) => (
-          <DropdownMenuItem
-            key={itemLocale}
-            active={locale === itemLocale}
-            className="text-[12px] cursor-pointer"
-            onClick={() => handleChangeLanguage(itemLocale)}
-          >
-            {itemLocale === "vi" ? "🇻🇳" : "🇺🇸"} <span>{t(itemLocale)}</span>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="bg-transparent liquid-glass2">
+          {locales.map((itemLocale) => (
+            <DropdownMenuItem
+              key={itemLocale}
+              active={locale === itemLocale}
+              className="text-[12px] cursor-pointer"
+              onClick={() => handleChangeLanguage(itemLocale)}
+            >
+              {itemLocale === "vi" ? "🇻🇳" : "🇺🇸"} <span>{t(itemLocale)}</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 };
 

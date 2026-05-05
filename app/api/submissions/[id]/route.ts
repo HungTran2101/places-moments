@@ -19,7 +19,7 @@ export async function GET(
     where: { id },
     select: {
       id: true,
-      title: true,
+      // title: true,
       description: true,
       lat: true,
       lng: true,
