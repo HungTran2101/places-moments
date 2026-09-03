@@ -25,7 +25,7 @@ The goal is not to create a social network, but to create a **space for reflecti
 ## Core Features
 
 * 🌍 Interactive world map
-* 📍 Drag a pin to leave a message
+* 📍 Click the map to place a pin and leave a message
 * 🌦 Weather-based atmosphere instead of timestamps
 * 🧭 Anonymous identity using local UUID
 * 🗂 Personal history of your own posts

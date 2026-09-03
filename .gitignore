@@ -43,8 +43,3 @@ next-env.d.ts
 
 /app/generated/prisma
 .env
-
-# AI and Contexts
-contexts/
-.cursorrules
-AI.md
