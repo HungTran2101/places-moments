@@ -49,3 +49,4 @@ next-env.d.ts
 /AGENTS.md
 /AI.md
 /contexts/
+/.agents/rules/context.md
