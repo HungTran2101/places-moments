@@ -1,21 +1,22 @@
 "use client";
 
+import thoughtBubbleImg from "@/public/assets/thought_bubble.png";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
 import mapStyle from "@/styles/map-style.json";
 import clsx from "clsx";
 import type { Map as MapLibreMap, Point, StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import MapLoading from "./MapLoading";
-import { useTranslations } from "next-intl";
 
 const LOADER_EXIT_DELAY_MS = 2100;
 const INITIAL_MAP_ZOOM = 1;
 const MAP_ENTRY_ZOOM = 3;
 const MAP_ENTRY_ANIMATION_MS = 2500;
 const MARKER_ROTATION_RESET_MS = 400;
-const MAX_MARKER_ROTATION = 90;
+const MAX_MARKER_ROTATION = 45;
 const MIN_ROTATION_DELTA = 2;
 const MAP_STYLE = mapStyle as StyleSpecification;
 
@@ -52,7 +53,7 @@ export default function MapView() {
     const lastPoint = lastPinPositionRef.current;
     if (!lastPoint) return 0;
 
-    const dx = lastPoint.x - newPoint.x;
+    const dx = newPoint.x - lastPoint.x;
     if (Math.abs(dx) < MIN_ROTATION_DELTA) return 0;
 
     const angle = MAX_MARKER_ROTATION * Math.tanh(dx * rotateVelocity);
@@ -81,9 +82,17 @@ export default function MapView() {
         attributionControl: false,
       });
 
+      const pinElement = document.createElement("img");
+      pinElement.src = thoughtBubbleImg.src;
+      pinElement.width = 40;
+      pinElement.height = 40;
+      pinElement.alt = "";
+
       const pin = new maplibre.Marker({
+        anchor: "bottom-left",
         color: "var(--marker-color)",
-        className: 'main-marker'
+        className: "main-marker",
+        element: pinElement,
       }).setLngLat([0, 0]);
 
       map.once("load", () => {

@@ -4,7 +4,7 @@ import { useViewport } from "@/hooks/useViewport"
 import { useSystemStore } from "@/store/systemStore"
 import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
-import { useMemo } from "react"
+import { useMemo, useRef, useState } from "react"
 import SubmissionForm from "../SubmissionForm"
 
 const Sidebar = () => {
@@ -13,6 +13,9 @@ const Sidebar = () => {
   const mapReady = useSystemStore((state) => state.mapReady);
   const sidebarOpen = useSystemStore((state) => state.sidebarOpen);
   const setSidebarOpen = useSystemStore((state) => state.setSidebarOpen);
+  const isToggleAnimatingRef = useRef(false);
+
+  const [closing, setClosing] = useState(sidebarOpen);
 
   const viewport = useViewport();
   const vh = viewport?.height;
@@ -41,19 +44,35 @@ const Sidebar = () => {
     }
 
   const buttonAnim = sidebarOpen
-    ? { rotate: 90, offsetDistance: "100%" }
-    : { rotate: 70, offsetDistance: "0%" }
+    ? { rotate: 85, offsetDistance: "100%" }
+    : { rotate: 67, offsetDistance: "0%" }
+
+  const handleSidebarToggle = () => {
+    if (isToggleAnimatingRef.current) return;
+
+    isToggleAnimatingRef.current = true;
+    setSidebarOpen(!sidebarOpen);
+    setClosing(false);
+  }
+
+  const handleAsideAnimationComplete = () => {
+    if (isToggleAnimatingRef.current) isToggleAnimatingRef.current = false;
+    if (!sidebarOpen) setClosing(true);
+  }
 
   return (
     <motion.aside
       className="sidebar"
+      style={{
+        padding: closing ? '0' : undefined
+      }}
       initial={{ width: "0px", opacity: 0 }}
       animate={mapReady ? { ...asideAnim, opacity: 1 } : {
         width: "0px",
         opacity: 0
       }}
       transition={{
-        duration: mapReady && !sidebarOpen ? 2 : sidebarOpen ? 0 : 0.1,
+        duration: 0,
         delay: sidebarOpen ? 0 : 0.6
       }}
     >
@@ -84,7 +103,7 @@ const Sidebar = () => {
 
       <motion.span
         className="sidebar-button"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
+        onClick={handleSidebarToggle}
         animate={buttonAnim}
         transition={{
           duration: 0.7,
@@ -94,6 +113,7 @@ const Sidebar = () => {
             : [0.14, 0.95, 1, 0.84]
         }}
         style={{ offsetPath: path }}
+        onAnimationComplete={handleAsideAnimationComplete}
       >
         <motion.div
           style={{
