@@ -20,10 +20,11 @@
     "titlePlaceholder": "Đặt tên cho khoảnh khắc này",
     "descriptionLabel": "Bạn đang nghĩ gì?",
     "descriptionPlaceholder": "Một suy nghĩ nhỏ, một cảm xúc, một ký ức…",
+    "descriptionRequired": "Bạn hãy điền suy nghĩ của mình nhé",
     "submit": "Để lại suy nghĩ này",
     "submitting": "Đang gửi…",
     "clickMapToSubmit": "Chọn địa điểm",
-    "clickMapToSubmitTooltip": "Hãy chọn địa điểm trên bản đồ mà bạn muốn gửi gắm khoảnh khắc này :3",
+    "clickMapToSubmitTooltip": "Hãy chọn một địa điểm trên bản đồ mà bạn muốn gửi gắm suy nghĩ này :3",
     "success": "Suy nghĩ của bạn đã được lưu lại.",
     "error": "Có lỗi xảy ra. Vui lòng thử lại."
   },

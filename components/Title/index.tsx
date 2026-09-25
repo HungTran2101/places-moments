@@ -46,14 +46,14 @@ const Title = () => {
       className="title fixed z-10 left-1/2 -translate-x-1/2 top-2"
     >
       <div className="liquid-glass w-fit px-4 py-2 rounded-[30px] flex flex-col justify-center items-center">
-        <div className="gradient-text font-lemonada text-[22px] text-nowrap md:text-[30px] lg:text-[40px] font-semibold uppercase">{t('title')}</div>
-        <div className="flex items-center p-1 md:p-2 pt-0! rounded-[20px] gap-3">
+        <div className="gradient-text font-lemonada text-nowrap text-[20px] lg:text-[30px] font-semibold uppercase">{t('title')}</div>
+        <div className="flex items-center p-1 md:p-2 pb-0! rounded-[20px] gap-1 md:gap-3">
           {mapStates.map(ms => (
             <motion.div
               key={ms.value}
               className="relative p-1 rounded-full"
               whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.5 }}
+              whileTap={{ scale: 0.9 }}
               animate={{ color: mapState === ms.value ? '#fff' : `rgb(${primaryColor})` }}
             >
               {

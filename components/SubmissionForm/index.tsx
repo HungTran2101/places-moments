@@ -4,9 +4,11 @@ import { getOrCreateUUID } from "@/lib/uuid";
 import { createSubmission } from "@/services/submissions";
 import { usePinStore } from "@/store/usePinStore";
 import { useTranslations } from "next-intl";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { GlassButton } from "../ui/glass-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import thoughtBubbleImg from '@/public/assets/thought_bubble.png'
+import Image from "next/image";
 
 interface SubmissionFormProps {
   onSuccess?: () => void;
@@ -15,19 +17,27 @@ interface SubmissionFormProps {
 export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
   const t = useTranslations("submission");
   const [description, setDescription] = useState("");
+  const [hasDescriptionError, setHasDescriptionError] = useState(false);
+  const [isDescriptionFlashing, setIsDescriptionFlashing] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const { lat, lng } = usePinStore();
-
-  // We consider the marker "unplaced" if it's at the absolute default (or we could add a placed flag to the store)
-  // For now, let's assume if lat/lng are exactly 20/0, they haven't placed it.
-  // A better way is to update the store to have an `isPlaced` boolean.
   const isPlaced = usePinStore((state) => state.isPlaced);
   const isSubmitDisabled = status === "loading" || !isPlaced;
 
   async function handleSubmit(e: React.SubmitEvent) {
     e.preventDefault();
     if (!isPlaced) return;
+
+    if (!description.trim()) {
+      setHasDescriptionError(true);
+      setIsDescriptionFlashing(false);
+      descriptionRef.current?.focus();
+      window.requestAnimationFrame(() => setIsDescriptionFlashing(true));
+      return;
+    }
+
     setStatus("loading");
 
     try {
@@ -51,34 +61,56 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
       <label className="SubmissionForm-label">
         {t("descriptionLabel")}
         <textarea
-          className="SubmissionForm-textarea"
+          ref={descriptionRef}
+          className={`SubmissionForm-textarea${isDescriptionFlashing ? " SubmissionForm-textarea--flash-error" : ""}`}
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) => {
+            const nextDescription = e.target.value;
+            setDescription(nextDescription);
+            if (nextDescription.trim()) setHasDescriptionError(false);
+          }}
+          onAnimationEnd={() => setIsDescriptionFlashing(false)}
           placeholder={t("descriptionPlaceholder")}
           maxLength={600}
           rows={4}
-          required
+          aria-invalid={hasDescriptionError}
+          aria-describedby={hasDescriptionError ? "description-error" : undefined}
         />
+        {hasDescriptionError && (
+          <div id="description-error" className="SubmissionForm-validation-error" role="alert">
+            {t("descriptionRequired")}
+          </div>
+        )}
       </label>
       <Tooltip
-        open={isSubmitDisabled ? isTooltipOpen : false}
+        open={!isPlaced ? isTooltipOpen : false}
         onOpenChange={setIsTooltipOpen}
       >
         <TooltipTrigger asChild>
-          <span className="w-full">
+          <div className="w-full">
             <GlassButton
               type="submit"
               disabled={isSubmitDisabled}
               primaryColor="purple"
               className="w-full"
+              suffix={
+                <Image
+                  src={thoughtBubbleImg}
+                  alt=""
+                  width={20}
+                  height={20}
+                />
+              }
             >
-              {status === "loading"
-                ? t("submitting")
-                : !isPlaced
-                  ? t("clickMapToSubmit")
-                  : t("submit")}
+              <div className="ml-2">
+                {status === "loading"
+                  ? t("submitting")
+                  : !isPlaced
+                    ? t("clickMapToSubmit")
+                    : t("submit")}
+              </div>
             </GlassButton>
-          </span>
+          </div>
         </TooltipTrigger>
         <TooltipContent>
           <p>{t("clickMapToSubmitTooltip")}</p>

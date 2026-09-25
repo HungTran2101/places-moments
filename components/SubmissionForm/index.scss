@@ -37,6 +37,19 @@
     }
   }
 
+  &-textarea--flash-error {
+    animation: submission-field-error 0.45s ease-out;
+  }
+
+  &-validation-error {
+    color: var(--color-error);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: normal;
+    text-transform: none;
+    text-align: center;
+  }
+
   &-button {
     padding: 0.75rem 1.25rem;
     background: var(--primary-color);
@@ -69,5 +82,24 @@
     color: var(--color-error);
     font-size: 0.875rem;
     margin: 0;
+  }
+}
+
+@keyframes submission-field-error {
+  0%,
+  100% {
+    border-color: var(--color-border);
+    box-shadow: none;
+  }
+
+  35% {
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-error) 25%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .SubmissionForm-textarea--flash-error {
+    animation-duration: 0.01ms;
   }
 }

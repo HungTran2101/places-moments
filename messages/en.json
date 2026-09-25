@@ -20,6 +20,7 @@
     "titlePlaceholder": "Give this moment a name",
     "descriptionLabel": "What are you thinking?",
     "descriptionPlaceholder": "A quiet thought, a feeling, a memory…",
+    "descriptionRequired": "Please share what is on your mind",
     "submit": "Leave this thought",
     "submitting": "Sending…",
     "clickMapToSubmit": "Select a location",

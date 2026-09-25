@@ -11,6 +11,7 @@ import { Button, type buttonVariants } from '@/components/ui/button'
 interface GlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: VariantProps<typeof buttonVariants>['size']
   children: React.ReactNode
+  suffix?: React.ReactNode
   className?: string
   asChild?: boolean
   primaryColor?: 'purple' | 'blue'
@@ -22,6 +23,7 @@ const glassColors = {
 }
 
 function GlassButton({ children,
+  suffix,
   size,
   asChild = false,
   className,
@@ -36,6 +38,7 @@ function GlassButton({ children,
       } as React.CSSProperties}
       className={cn(
         size === 'lg' && 'text-base has-[>svg]:px-6',
+        suffix && 'justify-between',
         'relative inline-flex shrink-0 rounded-lg bg-transparent! bg-clip-padding text-[rgb(var(--glass-color))] shadow-md',
 
         // Glass effect
@@ -56,7 +59,16 @@ function GlassButton({ children,
       )}
       {...props}
     >
-      {children}
+      {suffix ? (
+        <>
+          <div className='flex-1'>
+            {children}
+          </div>
+          {suffix}
+        </>
+      ) : (
+        children
+      )}
     </Button>
   )
 }
