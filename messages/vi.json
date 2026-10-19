@@ -24,11 +24,9 @@
     "descriptionPlaceholder": "Một suy nghĩ nhỏ, một cảm xúc, một ký ức…",
     "descriptionRequired": "Hãy điền suy nghĩ của mình nhé",
     "submit": "Gửi đi",
-    "submitting": "Đang gửi…",
     "clickMapToSubmit": "Chọn địa điểm",
     "clickMapToSubmitTooltip": "Hãy chọn một địa điểm trên bản đồ mà bạn muốn gửi gắm suy nghĩ này :3",
-    "success": "Suy nghĩ của bạn đã được lưu lại.",
-    "error": "Có lỗi xảy ra. Vui lòng thử lại."
+    "sendingThought": "Tâm tư của bạn đang được gửi đi"
   },
   "errorBoundary": {
     "title": "Ôi thôi chết, đã có lỗi ngoài ý muốn xảy ra :(",
@@ -87,5 +85,19 @@
     "82": "Gửi trong cơn mưa rào mạnh",
     "95": "Gửi trong cơn giông",
     "99": "Gửi trong cơn bão dữ dội"
+  },
+  "errors": {
+    "title": "Một chút gián đoạn",
+    "dismiss": "Mình hiểu rồi",
+    "invalidSubmission": "Bạn hãy xem lại lời nhắn và nơi đã chọn, rồi thử gửi tâm tư một lần nữa nhé.",
+    "rateLimited": "Không cần vội đâu. Bạn hãy chờ một chút trước khi gửi thêm tâm tư nhé.",
+    "submissionFailed": "Chưa thể gửi tâm tư đến nơi bạn chọn. Những lời bạn viết vẫn ở đây, bạn hãy thử lại nhé.",
+    "refreshFailed": "Tâm tư của bạn đã tìm được nơi dừng chân. Bạn hãy tải lại trang để thấy tâm tư trên bản đồ nhé.",
+    "network": "Có chút ngắt quãng nên chưa rõ tâm tư đã đến nơi chưa. Những lời bạn viết vẫn ở đây. Bạn hãy tải lại trang và xem bản đồ trước khi gửi lại nhé.",
+    "storage": "Chưa thể ghi nhớ những khoảnh khắc của bạn trên trình duyệt này. Bạn hãy cho phép trang lưu dữ liệu rồi thử lại nhé.",
+    "mapUnavailable": "Thế giới vẫn đang dần hiện ra. Bạn hãy chờ bản đồ một chút rồi thử lại nhé.",
+    "unexpected": "Khoảnh khắc yên bình này vừa bị gián đoạn một chút. Bạn hãy thử lại hoặc tải lại trang để tiếp tục nhé.",
+    "windowError": "Góc nhỏ này cần một khởi đầu mới. Bạn hãy tải lại trang rồi thử lại nhé.",
+    "unhandledPromise": "Mọi thứ vừa lỡ nhịp một chút. Bạn hãy thử lại hoặc tải lại trang nhé."
   }
 }

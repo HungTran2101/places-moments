@@ -7,6 +7,7 @@ import {
   toAppError,
 } from "@/services/shared/errors";
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import ErrorModal from "@/components/shared/ErrorModal";
 
 interface ErrorContextValue {
   activeError: AppError | null;
@@ -78,8 +79,11 @@ export function ErrorProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ErrorContext.Provider value={value}>
-      {/* Placeholder nay danh dau vi tri de sau nay gan error modal top-level. */}
-      {value.isErrorOpen ? <div data-error-modal-root="" aria-hidden="true" /> : null}
+      <ErrorModal
+        open={value.isErrorOpen}
+        error={activeError}
+        onOpenChange={(open) => { if (!open) clearError(); }}
+      />
       {/* Loi render/root se do Next.js `error.tsx` va `global-error.tsx` xu ly. */}
       {children}
     </ErrorContext.Provider>

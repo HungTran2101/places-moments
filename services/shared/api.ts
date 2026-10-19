@@ -1,11 +1,11 @@
-import { APP_ERROR_EVENT, ApiError, toAppError } from "@/services/shared/errors";
+import { APP_ERROR_EVENT, ApiError, RUNTIME_ERROR_STATUS, toAppError } from "@/services/shared/errors";
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: BodyInit | object;
   reportGlobalError?: boolean;
 };
 
-export type ApiRequestOptions = Pick<RequestOptions, "reportGlobalError">;
+export type ApiRequestOptions = Pick<RequestOptions, "reportGlobalError" | "signal">;
 
 async function parseResponse(response: Response) {
   const contentType = response.headers.get("content-type") ?? "";
@@ -35,6 +35,10 @@ export async function apiRequest<T>(input: RequestInfo | URL, init: RequestOptio
       ...headers,
     },
     body: isJsonBody ? JSON.stringify(body) : body,
+  }).catch((error: unknown) => {
+    // Hủy do tháo component không phải lỗi mạng cần thông báo cho người dùng.
+    if (rest.signal?.aborted) throw error;
+    throw new ApiError("Network request failed", RUNTIME_ERROR_STATUS.NETWORK);
   });
 
   const data = await parseResponse(response);

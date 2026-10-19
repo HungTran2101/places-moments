@@ -4,6 +4,7 @@ import ThoughtModal from "@/components/ThoughtModal";
 import type { Submission } from "@/services/submissions";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
+import { useSubmissionMapStore } from "@/store/useSubmissionMapStore";
 import mapStyle from "@/styles/map-style.json";
 import clsx from "clsx";
 import type { Map as MapLibreMap, Point, StyleSpecification } from "maplibre-gl";
@@ -13,6 +14,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import MapLoading from "./MapLoading";
 import {
   addSubmissionLayers,
+  loadSubmissionAssets,
   SUBMISSION_CLUSTER_LAYER,
   SUBMISSION_MARKER_LAYER,
 } from "./submissionsLayer";
@@ -31,10 +33,12 @@ export default function MapView() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  const pinRef = useRef<import("maplibre-gl").Marker | null>(null);
   const pinAddedRef = useRef(false);
   const pinRotationTimeoutRef = useRef<number | null>(null);
   const pinTransitionTimeoutRef = useRef<number | null>(null);
   const lastPinPositionRef = useRef<Point | null>(null);
+  const initialAssetsRef = useRef<ReturnType<typeof loadSubmissionAssets> | null>(null);
 
   const setPin = usePinStore((state) => state.setPin);
   const mapReady = useSystemStore((state) => state.mapReady);
@@ -86,6 +90,7 @@ export default function MapView() {
     if (!containerRef.current || mapRef.current) return;
 
     let destroyed = false;
+    const controller = new AbortController();
 
     (async () => {
       const maplibre = await import("maplibre-gl");
@@ -99,10 +104,17 @@ export default function MapView() {
         attributionControl: false,
       });
 
+      // Tải suy nghĩ và ảnh song song với basemap, nhưng chỉ thêm layer khi style sẵn sàng.
+      const assets = loadSubmissionAssets(map, controller.signal);
+      initialAssetsRef.current = assets;
+      // API có thể lỗi trước sự kiện load; lỗi vẫn được effect thêm layer hiển thị sau đó.
+      void assets.catch(() => {});
+
       const pin = new maplibre.Marker({
         color: "var(--marker-color)",
         className: "main-marker",
       }).setLngLat([0, 0]);
+      pinRef.current = pin;
 
       map.once("load", () => {
         setMapReady(true);
@@ -115,6 +127,7 @@ export default function MapView() {
       });
 
       map.on("click", (event) => {
+        if (useSubmissionMapStore.getState().isSubmitting) return;
         // Nhấn vào cụm hoặc suy nghĩ có sẵn không được di chuyển ghim soạn bài.
         const submissionLayers = [SUBMISSION_CLUSTER_LAYER, SUBMISSION_MARKER_LAYER]
           .filter((layer) => map.getLayer(layer));
@@ -160,9 +173,12 @@ export default function MapView() {
 
     return () => {
       destroyed = true;
+      controller.abort();
+      initialAssetsRef.current = null;
       clearPinRotationTimeout();
       mapRef.current?.remove();
       mapRef.current = null;
+      pinRef.current = null;
       pinAddedRef.current = false;
       lastPinPositionRef.current = null;
       if (pinRotationTimeoutRef.current) {
@@ -181,13 +197,71 @@ export default function MapView() {
     if (!mapReady || !map) return;
 
     let cancelled = false;
-    let removeSubmissionLayers: (() => void) | undefined;
+    const controller = new AbortController();
+    let submissionLayers: Awaited<ReturnType<typeof addSubmissionLayers>>;
+    const assets = initialAssetsRef.current ?? loadSubmissionAssets(map, controller.signal);
+    initialAssetsRef.current = null;
     setSubmissionsError(false);
     // Chỉ thêm nguồn và layer sau khi style sẵn sàng; lỗi tải không chặn thao tác đặt ghim.
-    void addSubmissionLayers(map, () => cancelled, handleSubmissionClick)
-      .then((cleanup) => {
-        if (cancelled) cleanup?.();
-        else removeSubmissionLayers = cleanup;
+    void addSubmissionLayers({
+      map,
+      isCancelled: () => cancelled,
+      onSubmissionClick: handleSubmissionClick,
+      isInteractionBlocked: () => useSubmissionMapStore.getState().isSubmitting,
+      assets,
+    })
+      .then((layers) => {
+        if (cancelled) { layers?.destroy(); return; }
+        if (!layers) return;
+        submissionLayers = layers;
+        useSubmissionMapStore.getState().setMap({
+          getPinPosition() {
+            const pin = pinRef.current;
+            if (!pin) throw new Error("Pin is not available");
+            const point = map.project(pin.getLngLat());
+            const rect = map.getContainer().getBoundingClientRect();
+            return { x: rect.left + point.x, y: rect.top + point.y };
+          },
+          prepareMarkerRefresh: layers.prepareRefresh,
+          subscribeToResize(listener) {
+            const subscription = map.on("resize", listener);
+            return () => subscription.unsubscribe();
+          },
+          beginSubmission() {
+            const pin = pinRef.current;
+            if (!pin || !pinAddedRef.current) throw new Error("Pin is not available");
+            const element = pin.getElement();
+            const previousVisibility = element.style.visibility;
+            // Chỉ ẩn ghim để giữ nguyên tọa độ đích của bubble và khôi phục đúng chỗ nếu lưu lỗi.
+            element.style.visibility = "hidden";
+            map.stop();
+            // Ghi nhớ từng handler để trả lại đúng trạng thái trước lúc gửi, kể cả bàn phím và cảm ứng.
+            const handlers = [map.dragPan, map.scrollZoom, map.boxZoom, map.dragRotate,
+              map.keyboard, map.doubleClickZoom, map.touchZoomRotate, map.touchPitch];
+            const enabledHandlers = handlers.filter((handler) => handler.isEnabled());
+            enabledHandlers.forEach((handler) => handler.disable());
+            const canvas = map.getCanvasContainer();
+            const wasInert = canvas.inert;
+            canvas.inert = true;
+            return (saved) => {
+              if (cancelled) return;
+              element.style.visibility = previousVisibility;
+              if (saved) {
+                // API lưu đã thành công thì bỏ ghim soạn bài, kể cả khi tải lại marker bị lỗi.
+                clearPinRotationTimeout();
+                clearPinTransitionTimeout();
+                pin.removeClassName("main-marker-move");
+                pin.setRotation(0);
+                pin.remove();
+                pinAddedRef.current = false;
+                lastPinPositionRef.current = null;
+                usePinStore.getState().setIsPlaced(false);
+              }
+              enabledHandlers.forEach((handler) => handler.enable());
+              canvas.inert = wasInert;
+            };
+          },
+        });
       })
       .catch((error) => {
         if (cancelled) return;
@@ -197,8 +271,10 @@ export default function MapView() {
 
     return () => {
       cancelled = true;
+      controller.abort();
+      useSubmissionMapStore.getState().setMap(null);
       // Dọn cả layer và listener trước khi thử lại, tránh nguồn trùng hoặc callback đã bị hủy.
-      removeSubmissionLayers?.();
+      submissionLayers?.destroy();
     };
   }, [mapReady, submissionsRetry, handleSubmissionClick]);
 

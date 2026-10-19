@@ -55,7 +55,8 @@ export async function fetchWeatherAtmosphere(
     const summary = `Posted ${weatherCodeToProse(code)}.`;
 
     return { summary, code };
-  } catch {
+  } catch (error) {
+    console.error({ error });
     return { summary: "Posted on a quiet day.", code: 0 };
   }
 }

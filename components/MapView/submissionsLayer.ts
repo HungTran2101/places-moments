@@ -19,15 +19,40 @@ const CLUSTER_RADIUS = 30;
 const CLUSTER_MIN_WIDTH = 40;
 const CLUSTER_MAX_WIDTH = 60;
 
-export async function addSubmissionLayers(
-  map: MapLibreMap,
-  isCancelled: () => boolean,
-  onSubmissionClick: (submission: Submission, origin: { x: number; y: number }) => void,
-) {
-  const [submissions, image] = await Promise.all([
-    getSubmissions(),
+function toFeatureCollection(submissions: Submission[]): GeoJSON.FeatureCollection {
+  return {
+    type: "FeatureCollection",
+    features: submissions.map((submission) => ({
+      type: "Feature",
+      properties: { submissionId: submission.id },
+      geometry: { type: "Point", coordinates: [submission.lng, submission.lat] },
+    })),
+  };
+}
+
+export function loadSubmissionAssets(map: MapLibreMap, signal?: AbortSignal) {
+  return Promise.all([
+    getSubmissions({ signal }),
     map.loadImage(thoughtBubbleImg.src),
   ]);
+}
+
+interface AddSubmissionLayersOptions {
+  map: MapLibreMap;
+  isCancelled: () => boolean;
+  onSubmissionClick: (submission: Submission, origin: { x: number; y: number }) => void;
+  isInteractionBlocked: () => boolean;
+  assets?: ReturnType<typeof loadSubmissionAssets>;
+}
+
+export async function addSubmissionLayers({
+  map,
+  isCancelled,
+  onSubmissionClick,
+  isInteractionBlocked,
+  assets = loadSubmissionAssets(map),
+}: AddSubmissionLayersOptions) {
+  const [submissions, image] = await assets;
 
   // Không cập nhật bản đồ nếu component đã unmount trong lúc tải dữ liệu hoặc ảnh.
   if (isCancelled()) return;
@@ -56,18 +81,7 @@ export async function addSubmissionLayers(
       cluster: true,
       clusterMaxZoom: CLUSTER_MAX_ZOOM,
       clusterRadius: CLUSTER_RADIUS,
-      data: {
-        type: "FeatureCollection",
-        features: submissions.map((submission) => ({
-          type: "Feature",
-          properties: { submissionId: submission.id },
-          geometry: {
-            type: "Point",
-            // GeoJSON dùng thứ tự kinh độ trước, vĩ độ sau.
-            coordinates: [submission.lng, submission.lat],
-          },
-        })),
-      },
+      data: toFeatureCollection(submissions),
     });
 
     map.addLayer({
@@ -145,10 +159,21 @@ export async function addSubmissionLayers(
     }
   };
 
-  subscriptions.push(map.on("mousemove", SUBMISSION_MARKER_LAYER, (event) => {
-    const feature = event.features?.[0];
+  subscriptions.push(map.on("mousemove", (event) => {
+    if (isInteractionBlocked()) { clearHover(); return; }
+    // Một lần hit-test chung cho điểm lẻ và cụm, tránh bốn truy vấn cho mỗi lần rê chuột.
+    const features = map.queryRenderedFeatures(event.point, {
+      layers: [SUBMISSION_MARKER_LAYER, SUBMISSION_CLUSTER_LAYER],
+    });
+    const feature = features.find((feature) => feature.layer.id === SUBMISSION_MARKER_LAYER);
     const id = feature?.properties.submissionId;
-    if (typeof id !== "string" || feature?.geometry.type !== "Point") return;
+    if (typeof id !== "string" || feature?.geometry.type !== "Point") {
+      clearHover();
+      if (features.some((feature) => feature.layer.id === SUBMISSION_CLUSTER_LAYER)) {
+        map.getCanvas().style.cursor = "pointer";
+      }
+      return;
+    }
     if (id === hoveredId) return;
     clearHover();
     hoveredId = id;
@@ -188,8 +213,9 @@ export async function addSubmissionLayers(
       if (hoveredId !== id) removeOverlay(id);
     };
   }));
-  subscriptions.push(map.on("mouseleave", SUBMISSION_MARKER_LAYER, clearHover));
+  subscriptions.push(map.on("mouseout", clearHover));
   subscriptions.push(map.on("click", SUBMISSION_MARKER_LAYER, (event) => {
+    if (isInteractionBlocked()) return;
     const id = event.features?.[0]?.properties.submissionId;
     const submission = typeof id === "string" ? submissionsById.get(id) : undefined;
     if (!submission || isCancelled()) return;
@@ -210,13 +236,8 @@ export async function addSubmissionLayers(
   subscriptions.push(map.on("movestart", () => clearOverlays(true)));
   subscriptions.push(map.on("remove", () => clearOverlays(false)));
 
-  subscriptions.push(map.on("mouseenter", SUBMISSION_CLUSTER_LAYER, () => {
-    map.getCanvas().style.cursor = "pointer";
-  }));
-  subscriptions.push(map.on("mouseleave", SUBMISSION_CLUSTER_LAYER, () => {
-    map.getCanvas().style.cursor = "";
-  }));
   subscriptions.push(map.on("click", SUBMISSION_CLUSTER_LAYER, async (event) => {
+    if (isInteractionBlocked()) return;
     // Khi ảnh chồng nhau, ưu tiên suy nghĩ lẻ đang được vẽ trên cụm thay vì vừa mở modal vừa zoom.
     if (map.queryRenderedFeatures(event.point, { layers: [SUBMISSION_MARKER_LAYER] }).length) return;
     const feature = event.features?.[0];
@@ -225,7 +246,7 @@ export async function addSubmissionLayers(
     try {
       const source = map.getSource(SOURCE_ID) as GeoJSONSource;
       const zoom = await source.getClusterExpansionZoom(feature.properties.cluster_id);
-      if (isCancelled()) return;
+      if (isCancelled() || isInteractionBlocked()) return;
 
       const [lng, lat] = feature.geometry.coordinates;
       // Chọn đúng bản sao của cụm khi bản đồ lặp lại qua kinh tuyến 180 độ.
@@ -236,9 +257,48 @@ export async function addSubmissionLayers(
     }
   }));
 
-  return () => {
-    for (const subscription of subscriptions) subscription.unsubscribe();
-    clearOverlays(false);
-    removeLayers();
+  return {
+    async prepareRefresh(signal: AbortSignal) {
+      const submissions = await getSubmissions({ signal });
+      signal.throwIfAborted();
+      if (isCancelled()) throw new Error("Map is no longer available");
+
+      // Giữ dữ liệu đã tải ngoài source để marker mới hoặc cụm chưa xuất hiện trước bubble đang bay.
+      return async () => {
+        signal.throwIfAborted();
+        if (isCancelled()) throw new Error("Map is no longer available");
+        clearOverlays(true);
+        const source = map.getSource(SOURCE_ID) as GeoJSONSource;
+        // Chờ worker cập nhật nguồn trước khi bỏ bubble đang gửi; không dựng lại toàn bộ layer.
+        await source.setData(toFeatureCollection(submissions), true);
+        signal.throwIfAborted();
+        if (isCancelled()) throw new Error("Map is no longer available");
+        submissionsById.clear();
+        for (const submission of submissions) submissionsById.set(submission.id, submission);
+        map.triggerRepaint();
+        await new Promise<void>((resolve, reject) => {
+          const cleanup = () => {
+            map.off("render", onRender);
+            map.off("remove", onRemove);
+            signal.removeEventListener("abort", onAbort);
+          };
+          const onRender = () => {
+            if (!map.isSourceLoaded(SOURCE_ID)) return;
+            cleanup();
+            resolve();
+          };
+          const onRemove = () => { cleanup(); reject(new Error("Map was removed")); };
+          const onAbort = () => { cleanup(); reject(signal.reason); };
+          map.on("render", onRender);
+          map.once("remove", onRemove);
+          signal.addEventListener("abort", onAbort, { once: true });
+        });
+      };
+    },
+    destroy() {
+      for (const subscription of subscriptions) subscription.unsubscribe();
+      clearOverlays(false);
+      removeLayers();
+    },
   };
 }

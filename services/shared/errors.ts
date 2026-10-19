@@ -27,15 +27,30 @@ export type AppErrorStatus = ApiErrorStatus | RuntimeErrorStatus;
 
 export type AppErrorSource = "api" | "runtime" | "unknown";
 
+export type ErrorMessageKey =
+  | "invalidSubmission" | "rateLimited" | "submissionFailed" | "refreshFailed"
+  | "network" | "storage" | "mapUnavailable" | "unexpected"
+  | "windowError" | "unhandledPromise";
+
 export interface AppError {
   name: string;
   message: string;
   status: AppErrorStatus;
   source: AppErrorSource;
+  messageKey?: ErrorMessageKey;
   details?: unknown;
   stack?: string;
   cause?: unknown;
   timestamp: number;
+}
+
+// Giữ thông điệp thân thiện tách khỏi lỗi kỹ thuật để có thể sửa riêng trong hai locale.
+export function getErrorMessageKey(error: AppError): ErrorMessageKey {
+  if (error.messageKey) return error.messageKey;
+  if (error.status === RUNTIME_ERROR_STATUS.NETWORK) return "network";
+  if (error.status === RUNTIME_ERROR_STATUS.WINDOW) return "windowError";
+  if (error.status === RUNTIME_ERROR_STATUS.UNHANDLED_PROMISE) return "unhandledPromise";
+  return "unexpected";
 }
 
 export class ApiError extends Error {

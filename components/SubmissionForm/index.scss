@@ -72,16 +72,88 @@
     }
   }
 
-  &-success {
-    color: var(--color-success);
-    font-size: 0.875rem;
-    margin: 0;
+  &-suffix {
+    display: inline-flex;
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.SubmissionFlight {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform;
+
+  &-bubble {
+    display: block;
+
+    &.is-waiting {
+      animation: submission-bubble-wait 1.8s ease-in-out infinite;
+    }
   }
 
-  &-error {
-    color: var(--color-error);
+  &-notification {
+    position: fixed;
+    z-index: 51;
+    right: 1rem;
+    bottom: max(1.5rem, env(safe-area-inset-bottom));
+    left: 1rem;
+    width: fit-content;
+    max-width: calc(100% - 2rem);
+    margin: 0 auto;
+    padding: 0.875rem 1.25rem;
+    border-radius: 1rem;
+    color: var(--color-text);
     font-size: 0.875rem;
-    margin: 0;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  &-dots {
+    white-space: nowrap;
+    font-size: 1.75rem;
+    margin-left: 0.1rem;
+    line-height: 0.5;
+
+    span {
+      animation: submission-dot 1.2s ease-in-out infinite;
+
+      &:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      &:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+    }
+  }
+}
+
+@keyframes submission-bubble-wait {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes submission-dot {
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
   }
 }
 
@@ -101,5 +173,10 @@
 @media (prefers-reduced-motion: reduce) {
   .SubmissionForm-textarea--flash-error {
     animation-duration: 0.01ms;
+  }
+
+  .SubmissionFlight-bubble.is-waiting,
+  .SubmissionFlight-dots span {
+    animation: none;
   }
 }
