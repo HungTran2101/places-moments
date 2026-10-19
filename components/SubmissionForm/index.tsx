@@ -5,6 +5,7 @@ import { getOrCreateUUID } from "@/lib/uuid";
 import thoughtBubbleImg from "@/public/assets/thought_bubble.png";
 import { ApiError, RUNTIME_ERROR_STATUS, type ErrorMessageKey } from "@/services/shared/errors";
 import { createSubmission } from "@/services/submissions";
+import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
 import { useSubmissionMapStore, type ScreenPoint } from "@/store/useSubmissionMapStore";
 import Image from "next/image";
@@ -60,6 +61,14 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
   const { lat, lng } = usePinStore();
   const isPlaced = usePinStore((state) => state.isPlaced);
   const isSubmitDisabled = isSubmitting || !isPlaced || !submissionMap;
+
+  useEffect(() => usePinStore.subscribe((state) => {
+    if (!state.isPlaced || !useSystemStore.getState().sidebarOpen
+      || useSubmissionMapStore.getState().isSubmitting) return;
+
+    // Focus ngay khi đặt hoặc di chuyển ghim, kể cả khi chọn lại cùng tọa độ.
+    descriptionRef.current?.focus({ preventScroll: true });
+  }), []);
 
   useEffect(() => () => {
     // Hủy request và mở lại bản đồ khi form bị tháo giữa lúc gửi.
@@ -144,6 +153,8 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
         useSubmissionMapStore.getState().setIsSubmitting(false);
         setFlight(null);
         setIsWaiting(false);
+        // Chỉ trả focus sau khi bubble bay, marker tải xong và bản đồ đã được mở khóa.
+        if (stage === "complete") submissionMap?.focus();
       }
     }
   }

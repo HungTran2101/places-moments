@@ -19,7 +19,7 @@ interface SubmissionAnimationProps {
 const BUBBLE_WIDTH = 35;
 const BUBBLE_HEIGHT = BUBBLE_WIDTH * thoughtBubbleImg.height / thoughtBubbleImg.width;
 const START_SCALE = 20 / BUBBLE_WIDTH;
-const PEAK_SCALE = 2.5;
+const PEAK_SCALE = 2;
 const PEAK_PROGRESS = 0.2;
 
 const ANIMATE_DURATION = 1500

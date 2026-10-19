@@ -215,6 +215,9 @@ export default function MapView() {
         if (!layers) return;
         submissionLayers = layers;
         useSubmissionMapStore.getState().setMap({
+          focus() {
+            if (!cancelled) map.getCanvas().focus({ preventScroll: true });
+          },
           getPinPosition() {
             const pin = pinRef.current;
             if (!pin) throw new Error("Pin is not available");
