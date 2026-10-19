@@ -88,6 +88,7 @@
   },
   "errors": {
     "title": "A little pause",
+    "rateLimitedTitle": "Hold on a second",
     "dismiss": "Okay",
     "invalidSubmission": "Your thought needs one more look. Please check your words and the place you've chosen, then try again.",
     "rateLimited": "There's no rush. Please wait a little before leaving another thought.",

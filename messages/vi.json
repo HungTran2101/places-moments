@@ -88,9 +88,10 @@
   },
   "errors": {
     "title": "Một chút gián đoạn",
+    "rateLimitedTitle": "Từ từ đã nàooo",
     "dismiss": "Mình hiểu rồi",
     "invalidSubmission": "Bạn hãy xem lại lời nhắn và nơi đã chọn, rồi thử gửi tâm tư một lần nữa nhé.",
-    "rateLimited": "Không cần vội đâu. Bạn hãy chờ một chút trước khi gửi thêm tâm tư nhé.",
+    "rateLimited": "Không cần vội đâu. Bạn nên dành thêm thời gian trước khi gửi thêm tâm tư nhé.",
     "submissionFailed": "Chưa thể gửi tâm tư đến nơi bạn chọn. Những lời bạn viết vẫn ở đây, bạn hãy thử lại nhé.",
     "refreshFailed": "Tâm tư của bạn đã tìm được nơi dừng chân. Bạn hãy tải lại trang để thấy tâm tư trên bản đồ nhé.",
     "network": "Có chút ngắt quãng nên chưa rõ tâm tư đã đến nơi chưa. Những lời bạn viết vẫn ở đây. Bạn hãy tải lại trang và xem bản đồ trước khi gửi lại nhé.",

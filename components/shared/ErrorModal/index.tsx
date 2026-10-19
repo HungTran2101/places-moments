@@ -2,7 +2,8 @@
 
 import { GlassButton } from "@/components/ui/glass-button";
 import { getErrorMessageKey, type AppError } from "@/services/shared/errors";
-import { TriangleAlert } from "lucide-react";
+import clsx from "clsx";
+import { ClockFading, TriangleAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Dialog } from "radix-ui";
 
@@ -15,13 +16,19 @@ interface ErrorModalProps {
 export default function ErrorModal({ open, error, onOpenChange }: ErrorModalProps) {
   const t = useTranslations("errors");
 
+  const isRateLimitError = error?.status === 429;
+
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="ErrorModal-overlay" />
         <Dialog.Content className="ErrorModal-content liquid-glass2">
-          <TriangleAlert className="ErrorModal-icon" size={32} aria-hidden="true" />
-          <Dialog.Title className="ErrorModal-title">{t("title")}</Dialog.Title>
+          {isRateLimitError ? (
+            <ClockFading className={clsx("ErrorModal-icon", "ErrorModal-icon--rateLimited")} size={32} aria-hidden="true" />
+          ) : (
+            <TriangleAlert className="ErrorModal-icon" size={32} aria-hidden="true" />
+          )}
+          <Dialog.Title className="ErrorModal-title">{isRateLimitError ? t('rateLimitedTitle') : t("title")}</Dialog.Title>
           <Dialog.Description className="ErrorModal-description">
             {t(error ? getErrorMessageKey(error) : "unexpected")}
           </Dialog.Description>

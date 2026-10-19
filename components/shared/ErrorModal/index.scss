@@ -3,7 +3,7 @@
     position: fixed;
     z-index: 100;
     inset: 0;
-    background: rgb(37 36 58 / 25%);
+    background: rgb(255 255 255 / 25%);
     backdrop-filter: blur(5px);
   }
 
@@ -22,6 +22,10 @@
   &-icon {
     margin: 0 auto 1rem;
     color: var(--color-error);
+
+    &--rateLimited {
+      color: var(--color-warning);
+    }
   }
 
   &-title {
