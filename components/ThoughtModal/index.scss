@@ -1,0 +1,197 @@
+.thoughtModal {
+  &-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgb(68 61 94 / 24%);
+    backdrop-filter: blur(4px);
+    animation: thought-overlay-in 180ms ease-out both;
+
+    &[data-state="closed"] {
+      animation: thought-overlay-out 140ms ease-in both;
+    }
+  }
+
+  &-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 51;
+    display: flex;
+    flex-direction: column;
+    width: min(34rem, calc(100vw - 2rem));
+    max-height: min(44rem, calc(100dvh - 2rem));
+    padding: 2rem;
+    border: 1px solid rgb(255 255 255 / 85%);
+    border-radius: 2rem;
+    outline: none;
+    color: var(--color-text);
+    font-family: var(--font-mitr), sans-serif;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    animation: thought-modal-in 400ms ease-out both;
+
+    &[data-state="closed"] {
+      animation: thought-modal-out 300ms ease-in both;
+    }
+  }
+
+  &-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  &-bubble {
+    flex-shrink: 0;
+    width: 44px;
+    height: auto;
+    opacity: 0.8;
+  }
+
+  &-title {
+    flex: 1;
+    margin: 0;
+    color: var(--primary-color-dark);
+    font-family: var(--font-lemonada), cursive;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  &-close {
+    flex-shrink: 0;
+    border-radius: 50%;
+    color: var(--primary-color-dark);
+  }
+
+  &-thought {
+    min-height: 0;
+    margin: 1rem 0;
+    padding-right: 0.5rem;
+    font-size: 1.0625rem;
+    font-weight: 300;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow: auto;
+    overflow-wrap: anywhere;
+    overscroll-behavior: contain;
+  }
+
+  &-footer {
+    display: flex;
+    flex-shrink: 0;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(var(--primary-color-var), 0.16);
+  }
+
+  &-weather {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.8125rem;
+    font-weight: 300;
+    line-height: 1.7;
+
+    svg {
+      flex-shrink: 0;
+      color: var(--primary-color-dark);
+    }
+  }
+
+  &-return {
+    align-self: flex-end;
+    gap: 0.5rem;
+    height: auto;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.875rem;
+    font-family: inherit;
+    font-weight: 400;
+  }
+
+  &-close:focus-visible,
+  &-return:focus-visible {
+    outline: 2px solid var(--primary-color-dark);
+    outline-offset: 4px;
+  }
+
+  @media (width <=480px) {
+    &-content {
+      padding: 1.5rem;
+    }
+
+    &-header {
+      gap: 0.625rem;
+    }
+
+    &-title {
+      font-size: 0.875rem;
+    }
+
+    &-return {
+      align-self: stretch;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &-overlay,
+    &-content {
+      animation-duration: 0.01ms;
+    }
+  }
+}
+
+@keyframes thought-overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes thought-overlay-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes thought-modal-in {
+  from {
+    opacity: 0;
+
+    // Dịch tâm hộp thoại đến điểm nhấn rồi phóng lên, chỉ animate transform và opacity.
+    transform: translate(calc(-50% + var(--thought-origin-x, 50vw) - 50vw),
+        calc(-50% + var(--thought-origin-y, 50vh) - 50vh)) scale(0.08);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes thought-modal-out {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+
+    // Thu nhỏ về đúng điểm nhấn đã dùng khi mở hộp thoại.
+    transform: translate(calc(-50% + var(--thought-origin-x, 50vw) - 50vw),
+        calc(-50% + var(--thought-origin-y, 50vh) - 50vh)) scale(0.08);
+  }
+}

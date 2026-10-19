@@ -32,7 +32,7 @@
       }
 
       &.main-marker {
-        transform-origin: 0% 100%;
+        transform-origin: 50% 100%;
       }
 
       &.main-marker-move {
@@ -40,6 +40,26 @@
       }
     }
 
+  }
+
+  &-submissionsError {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    width: max-content;
+    max-width: calc(100% - 2rem);
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    color: #45465f;
+    font-size: 0.875rem;
+    text-align: center;
+    transform: translateX(-50%);
+
+    button {
+      margin-top: 0.25rem;
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 
   &-disclaimer {

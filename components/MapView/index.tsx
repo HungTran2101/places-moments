@@ -1,6 +1,7 @@
 "use client";
 
-import thoughtBubbleImg from "@/public/assets/thought_bubble.png";
+import ThoughtModal from "@/components/ThoughtModal";
+import type { Submission } from "@/services/submissions";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
 import mapStyle from "@/styles/map-style.json";
@@ -8,15 +9,20 @@ import clsx from "clsx";
 import type { Map as MapLibreMap, Point, StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MapLoading from "./MapLoading";
+import {
+  addSubmissionLayers,
+  SUBMISSION_CLUSTER_LAYER,
+  SUBMISSION_MARKER_LAYER,
+} from "./submissionsLayer";
 
 const LOADER_EXIT_DELAY_MS = 2100;
 const INITIAL_MAP_ZOOM = 1;
 const MAP_ENTRY_ZOOM = 3;
 const MAP_ENTRY_ANIMATION_MS = 2500;
 const MARKER_ROTATION_RESET_MS = 400;
-const MAX_MARKER_ROTATION = 45;
+const MAX_MARKER_ROTATION = 90;
 const MIN_ROTATION_DELTA = 2;
 const MAP_STYLE = mapStyle as StyleSpecification;
 
@@ -34,6 +40,17 @@ export default function MapView() {
   const mapReady = useSystemStore((state) => state.mapReady);
   const setMapReady = useSystemStore((state) => state.setMapReady);
   const [showLoader, setShowLoader] = useState(true);
+  const [submissionsError, setSubmissionsError] = useState(false);
+  const [submissionsRetry, setSubmissionsRetry] = useState(0);
+  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [thoughtModalOpen, setThoughtModalOpen] = useState(false);
+  const [thoughtOrigin, setThoughtOrigin] = useState<{ x: number; y: number } | null>(null);
+
+  const handleSubmissionClick = useCallback((submission: Submission, origin: { x: number; y: number }) => {
+    setSelectedSubmission(submission);
+    setThoughtOrigin(origin);
+    setThoughtModalOpen(true);
+  }, []);
 
   const clearPinRotationTimeout = () => {
     if (pinRotationTimeoutRef.current) {
@@ -53,7 +70,7 @@ export default function MapView() {
     const lastPoint = lastPinPositionRef.current;
     if (!lastPoint) return 0;
 
-    const dx = newPoint.x - lastPoint.x;
+    const dx = lastPoint.x - newPoint.x;
     if (Math.abs(dx) < MIN_ROTATION_DELTA) return 0;
 
     const angle = MAX_MARKER_ROTATION * Math.tanh(dx * rotateVelocity);
@@ -82,17 +99,9 @@ export default function MapView() {
         attributionControl: false,
       });
 
-      const pinElement = document.createElement("img");
-      pinElement.src = thoughtBubbleImg.src;
-      pinElement.width = 40;
-      pinElement.height = 40;
-      pinElement.alt = "";
-
       const pin = new maplibre.Marker({
-        anchor: "bottom-left",
         color: "var(--marker-color)",
         className: "main-marker",
-        element: pinElement,
       }).setLngLat([0, 0]);
 
       map.once("load", () => {
@@ -106,6 +115,13 @@ export default function MapView() {
       });
 
       map.on("click", (event) => {
+        // Nhấn vào cụm hoặc suy nghĩ có sẵn không được di chuyển ghim soạn bài.
+        const submissionLayers = [SUBMISSION_CLUSTER_LAYER, SUBMISSION_MARKER_LAYER]
+          .filter((layer) => map.getLayer(layer));
+        if (submissionLayers.length && map.queryRenderedFeatures(event.point, {
+          layers: submissionLayers,
+        }).length) return;
+
         clearPinRotationTimeout();
         pin.setLngLat(event.lngLat);
 
@@ -161,6 +177,32 @@ export default function MapView() {
   }, [setMapReady, setPin]);
 
   useEffect(() => {
+    const map = mapRef.current;
+    if (!mapReady || !map) return;
+
+    let cancelled = false;
+    let removeSubmissionLayers: (() => void) | undefined;
+    setSubmissionsError(false);
+    // Chỉ thêm nguồn và layer sau khi style sẵn sàng; lỗi tải không chặn thao tác đặt ghim.
+    void addSubmissionLayers(map, () => cancelled, handleSubmissionClick)
+      .then((cleanup) => {
+        if (cancelled) cleanup?.();
+        else removeSubmissionLayers = cleanup;
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        console.error("Failed to load map submissions", error);
+        setSubmissionsError(true);
+      });
+
+    return () => {
+      cancelled = true;
+      // Dọn cả layer và listener trước khi thử lại, tránh nguồn trùng hoặc callback đã bị hủy.
+      removeSubmissionLayers?.();
+    };
+  }, [mapReady, submissionsRetry, handleSubmissionClick]);
+
+  useEffect(() => {
     if (!mapReady) {
       setShowLoader(true);
       return;
@@ -184,7 +226,22 @@ export default function MapView() {
       <div className="MapView-disclaimer liquid-glass" aria-label="Map disclaimer">
         <p>{t('disclaimer')}</p>
       </div>
+      {submissionsError && (
+        <div className="MapView-submissionsError liquid-glass" role="status">
+          <p>{t("submissionsLoadError")}</p>
+          <button type="button" onClick={() => setSubmissionsRetry((value) => value + 1)}>
+            {t("retry")}
+          </button>
+        </div>
+      )}
       {showLoader && <MapLoading />}
+      <ThoughtModal
+        open={thoughtModalOpen}
+        submission={selectedSubmission}
+        origin={thoughtOrigin}
+        onOpenChange={setThoughtModalOpen}
+        onReturnFocus={() => mapRef.current?.getCanvas().focus({ preventScroll: true })}
+      />
     </div>
   );
 }

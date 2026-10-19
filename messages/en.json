@@ -11,6 +11,8 @@
     "en": "English"
   },
   "map": {
+    "submissionsLoadError": "Could not load thoughts on the map.",
+    "retry": "Try again",
     "dropPin": "Drag the pin to where you want to leave a thought",
     "loading": "Loading the world…",
     "disclaimer": "Map data © OpenStreetMap contributors.\nBoundaries and names may not reflect official positions."
@@ -39,6 +41,9 @@
     "reportThanks": "Thank you for sending the report! We will look into it and fix it as soon as possible."
   },
   "popup": {
+    "title": "A thought left here",
+    "close": "Close thought",
+    "backToMap": "Back to the map",
     "atmosphereSuffix": ""
   },
   "history": {

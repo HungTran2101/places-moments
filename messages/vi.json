@@ -11,6 +11,8 @@
     "en": "Tiếng anh"
   },
   "map": {
+    "submissionsLoadError": "Không thể tải các suy nghĩ trên bản đồ.",
+    "retry": "Thử lại",
     "dropPin": "Kéo ghim đến nơi bạn muốn để lại suy nghĩ",
     "loading": "Đang tải thế giới…",
     "disclaimer": "Dữ liệu bản đồ © Những người đóng góp cho OpenStreetMap.\nRanh giới và tên gọi có thể không phản ánh vị trí chính thức."
@@ -20,8 +22,8 @@
     "titlePlaceholder": "Đặt tên cho khoảnh khắc này",
     "descriptionLabel": "Bạn đang nghĩ gì?",
     "descriptionPlaceholder": "Một suy nghĩ nhỏ, một cảm xúc, một ký ức…",
-    "descriptionRequired": "Bạn hãy điền suy nghĩ của mình nhé",
-    "submit": "Để lại suy nghĩ này",
+    "descriptionRequired": "Hãy điền suy nghĩ của mình nhé",
+    "submit": "Gửi đi",
     "submitting": "Đang gửi…",
     "clickMapToSubmit": "Chọn địa điểm",
     "clickMapToSubmitTooltip": "Hãy chọn một địa điểm trên bản đồ mà bạn muốn gửi gắm suy nghĩ này :3",
@@ -39,6 +41,9 @@
     "reportThanks": "Cảm ơn bạn đã gửi báo lỗi! Chúng mình sẽ xem xét và khắc phục sớm nhất có thể."
   },
   "popup": {
+    "title": "Ở đây có tâm tư",
+    "close": "Đóng suy nghĩ",
+    "backToMap": "Trở lại bản đồ",
     "atmosphereSuffix": ""
   },
   "history": {

@@ -13,7 +13,7 @@ const CreateSubmissionSchema = z.object({
   author_uuid: z.uuid(),
 });
 
-// GET /api/submissions - list all public submissions
+// Lấy toàn bộ suy nghĩ công khai để bản đồ không bỏ sót các bài cũ.
 export async function GET() {
   try {
     const submissions = await prisma.submission.findMany({
@@ -24,10 +24,9 @@ export async function GET() {
         lng: true,
         weather_summary: true,
         weather_code: true,
-        // Do NOT expose: created_at, author_uuid (public view)
+        // Không trả về thời gian chính xác hoặc danh tính tác giả cho người xem công khai.
       },
       orderBy: { created_at: "desc" },
-      take: 500,
     });
 
     return NextResponse.json(submissions);
