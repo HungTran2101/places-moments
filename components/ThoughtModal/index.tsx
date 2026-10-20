@@ -2,16 +2,17 @@
 
 import { GlassButton } from "@/components/ui/glass-button";
 import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
-import type { Submission } from "@/services/submissions";
+import { getSubmissionById, type Submission } from "@/services/submissions";
+import { ApiError } from "@/services/shared/errors";
 import { ArrowLeft, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSun, Snowflake, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Dialog } from "radix-ui";
-import type { CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 interface ThoughtModalProps {
   open: boolean;
-  submission: Submission | null;
+  submissionId: string | null;
   origin: { x: number; y: number } | null;
   onOpenChange: (open: boolean) => void;
   onReturnFocus: () => void;
@@ -29,10 +30,36 @@ function WeatherIcon({ code }: { code: number }) {
   return <Cloud {...props} />;
 }
 
-export default function ThoughtModal({ open, submission, origin, onOpenChange, onReturnFocus }: ThoughtModalProps) {
+type DetailState =
+  | { id: string; status: "loading" }
+  | { id: string; status: "ready"; submission: Submission }
+  | { id: string; status: "error"; notFound: boolean };
+
+export default function ThoughtModal({ open, submissionId, origin, onOpenChange, onReturnFocus }: ThoughtModalProps) {
   const t = useTranslations("popup");
   const weather = useTranslations("weather");
+  const [detail, setDetail] = useState<DetailState | null>(null);
+  const [retry, setRetry] = useState(0);
 
+  useEffect(() => {
+    if (!open || !submissionId) return;
+    const controller = new AbortController();
+    setDetail({ id: submissionId, status: "loading" });
+    // Mỗi lần chọn suy nghĩ chỉ tải chi tiết của ID đó; hủy phản hồi khi đóng hoặc chọn ID khác.
+    void getSubmissionById(submissionId, { signal: controller.signal })
+      .then((submission) => {
+        if (!controller.signal.aborted) setDetail({ id: submissionId, status: "ready", submission });
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+        setDetail({ id: submissionId, status: "error", notFound: error instanceof ApiError && error.status === 404 });
+      });
+    return () => controller.abort();
+  }, [open, submissionId, retry]);
+
+  const currentDetail = detail?.id === submissionId ? detail : null;
+  const submission = currentDetail?.status === "ready" ? currentDetail.submission : null;
+  const loading = !currentDetail || currentDetail.status === "loading";
 
   const weatherKey = submission?.weather_code == null ? "" : String(submission.weather_code);
   // Ưu tiên câu thời tiết theo ngôn ngữ hiện tại; chỉ dùng mô tả từ API khi mã chưa có bản dịch.
@@ -45,7 +72,7 @@ export default function ThoughtModal({ open, submission, origin, onOpenChange, o
       <Dialog.Portal>
         {/* <Dialog.Overlay className="thoughtModal-overlay" /> */}
         <Dialog.Content
-          key={submission?.id}
+          key={submissionId}
           className="liquid-glass2 thoughtModal-content"
           style={{
             ...(origin ? {
@@ -73,9 +100,17 @@ export default function ThoughtModal({ open, submission, origin, onOpenChange, o
             </Dialog.Close> */}
           </div>
 
-          <Dialog.Description className="thoughtModal-thought">
-            {submission?.description}
+          <Dialog.Description className="thoughtModal-thought" aria-live="polite" aria-busy={loading}>
+            {loading ? t("loading")
+              : currentDetail.status === "error"
+                ? t(currentDetail.notFound ? "notFound" : "loadError")
+                : submission?.description}
           </Dialog.Description>
+          {currentDetail?.status === "error" && !currentDetail.notFound && (
+            <GlassButton type="button" onClick={() => setRetry((value) => value + 1)}>
+              {t("retry")}
+            </GlassButton>
+          )}
 
           <div className="thoughtModal-footer">
             {atmosphere && (

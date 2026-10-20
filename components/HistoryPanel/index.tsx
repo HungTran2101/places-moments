@@ -1,32 +1,15 @@
 "use client";
 
-import { getUUID } from "@/lib/uuid";
-import { getSubmissions, type Submission } from "@/services/submissions";
-import { useEffect, useState } from "react";
+import type { Submission } from "@/services/submissions";
 import { useTranslations } from "next-intl";
 
-export default function HistoryPanel() {
+interface HistoryPanelProps {
+  items?: Submission[];
+  loading?: boolean;
+}
+
+export default function HistoryPanel({ items = [], loading = false }: HistoryPanelProps) {
   const t = useTranslations("history");
-  const [items, setItems] = useState<Submission[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const uuid = getUUID();
-    if (!uuid) {
-      setLoading(false);
-      return;
-    }
-
-    // Author fetches all submissions and filters by own uuid client-side.
-    // In a real app, add a GET /api/submissions?author=<uuid> endpoint.
-    getSubmissions()
-      .then((all) => {
-        // This stub shows all — replace with private endpoint in Phase 2
-        setItems(all);
-      })
-      .catch(() => setItems([]))
-      .finally(() => setLoading(false));
-  }, []);
 
   return (
     <aside className="HistoryPanel">

@@ -4,6 +4,7 @@ import { fetchWeatherAtmosphere } from "@/lib/weather";
 import { rateLimit } from "@/lib/rateLimit";
 import { z } from "zod";
 import { constants } from "../constant";
+import type { Prisma } from "@prisma/client";
 
 const CreateSubmissionSchema = z.object({
   // title: z.string().min(1).max(120),
@@ -13,20 +14,43 @@ const CreateSubmissionSchema = z.object({
   author_uuid: z.uuid(),
 });
 
-// Lấy toàn bộ suy nghĩ công khai để bản đồ không bỏ sót các bài cũ.
-export async function GET() {
+const coordinate = (min: number, max: number) => z.string().trim().min(1)
+  .transform(Number).pipe(z.number().min(min).max(max));
+
+const BoundsSchema = z.object({
+  west: coordinate(-180, 180),
+  south: coordinate(-90, 90),
+  east: coordinate(-180, 180),
+  north: coordinate(-90, 90),
+}).refine((bounds) => bounds.south <= bounds.north);
+
+// Chỉ lấy vị trí trong vùng đang xem; nội dung được tải riêng khi mở suy nghĩ.
+export async function GET(request: NextRequest) {
+  const parsed = BoundsSchema.safeParse(Object.fromEntries(request.nextUrl.searchParams));
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Valid viewport bounds are required" }, { status: 400 });
+  }
+
+  const { west, south, east, north } = parsed.data;
+  const longitudeRanges: Prisma.SubmissionWhereInput[] = west > east
+    ? [{ lng: { gte: west } }, { lng: { lte: east } }]
+    : [{ lng: { gte: west, lte: east } }];
+  // -180 và +180 là cùng một kinh tuyến, kể cả khi nó nằm đúng trên mép viewport.
+  if (west === -180) longitudeRanges.push({ lng: { gte: 180 } });
+  if (east === 180) longitudeRanges.push({ lng: { lte: -180 } });
+
   try {
     const submissions = await prisma.submission.findMany({
+      where: {
+        lat: { gte: south, lte: north },
+        // Khi vùng nhìn cắt kinh tuyến 180°, lấy cả hai dải kinh độ ở hai mép bản đồ.
+        OR: longitudeRanges,
+      },
       select: {
         id: true,
-        description: true,
         lat: true,
         lng: true,
-        weather_summary: true,
-        weather_code: true,
-        // Không trả về thời gian chính xác hoặc danh tính tác giả cho người xem công khai.
       },
-      orderBy: { created_at: "desc" },
     });
 
     return NextResponse.json(submissions);

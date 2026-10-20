@@ -128,7 +128,9 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
       const signal = controller.signal;
       // Hai API vẫn chạy trong lúc bubble bay; chỉ đưa dữ liệu mới lên bản đồ sau khi đến ghim.
       stage = "create";
-      submissionMap.zoomToPin(signal);
+      const zoomDone = submissionMap.zoomToPin(signal);
+      // Zoom và lưu chạy song song; lỗi zoom vẫn được xử lý sau khi biết bài đã lưu hay chưa.
+      void zoomDone.catch(() => { });
       await createSubmission(
         { description: description.trim(), lat, lng, author_uuid },
         { reportGlobalError: false, signal },
@@ -138,6 +140,8 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
       stage = "refresh";
       // Bài đã lưu thì xóa bản nháp, kể cả khi tải marker lỗi, tránh gửi trùng khi thử lại.
       setDescription("");
+      // Chụp viewport sau khi zoom xong để tải đúng vị trí của suy nghĩ vừa gửi.
+      await zoomDone;
       const revealMarkers = await submissionMap.prepareMarkerRefresh(signal);
       refreshReady = true;
       await animationDone;

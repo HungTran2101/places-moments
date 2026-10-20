@@ -1,10 +1,14 @@
 import { ApiRequestOptions, apiRequest } from "@/services/shared/api";
+import type { SubmissionBounds } from "@/lib/submissionBounds";
 
-export interface Submission {
+export interface SubmissionPin {
   id: string;
-  description: string;
   lat: number;
   lng: number;
+}
+
+export interface Submission extends SubmissionPin {
+  description: string;
   weather_summary: string | null;
   weather_code?: string | number | null;
   created_at?: string;
@@ -23,8 +27,14 @@ export interface UpdateSubmissionPayload {
   author_uuid: string;
 }
 
-export function getSubmissions(options?: ApiRequestOptions) {
-  return apiRequest<Submission[]>("/api/submissions", options);
+export function getSubmissions(bounds: SubmissionBounds, options?: ApiRequestOptions) {
+  const query = new URLSearchParams({
+    west: String(bounds.west),
+    south: String(bounds.south),
+    east: String(bounds.east),
+    north: String(bounds.north),
+  });
+  return apiRequest<SubmissionPin[]>(`/api/submissions?${query}`, options);
 }
 
 export function getSubmissionById(id: string, options?: ApiRequestOptions) {

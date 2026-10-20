@@ -42,7 +42,11 @@
     "title": "Ở đây có tâm tư",
     "close": "Đóng suy nghĩ",
     "backToMap": "Trở lại bản đồ",
-    "atmosphereSuffix": ""
+    "atmosphereSuffix": "",
+    "loading": "Đang mở tâm tư…",
+    "loadError": "Không thể tải tâm tư này.",
+    "notFound": "Tâm tư này không còn ở đây.",
+    "retry": "Thử lại"
   },
   "history": {
     "title": "Khoảnh khắc của bạn",

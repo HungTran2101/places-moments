@@ -2,7 +2,6 @@
 
 import ThoughtModal from "@/components/ThoughtModal";
 import { cn } from "@/lib/utils";
-import type { Submission } from "@/services/submissions";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
 import { useSubmissionMapStore } from "@/store/useSubmissionMapStore";
@@ -49,12 +48,12 @@ export default function MapView() {
   const [showLoader, setShowLoader] = useState(true);
   const [submissionsError, setSubmissionsError] = useState(false);
   const [submissionsRetry, setSubmissionsRetry] = useState(0);
-  const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null);
+  const [selectedSubmissionId, setSelectedSubmissionId] = useState<string | null>(null);
   const [thoughtModalOpen, setThoughtModalOpen] = useState(false);
   const [thoughtOrigin, setThoughtOrigin] = useState<{ x: number; y: number } | null>(null);
 
-  const handleSubmissionClick = useCallback((submission: Submission, origin: { x: number; y: number }) => {
-    setSelectedSubmission(submission);
+  const handleSubmissionClick = useCallback((submissionId: string, origin: { x: number; y: number }) => {
+    setSelectedSubmissionId(submissionId);
     setThoughtOrigin(origin);
     setThoughtModalOpen(true);
   }, []);
@@ -93,7 +92,6 @@ export default function MapView() {
     if (!containerRef.current || mapRef.current) return;
 
     let destroyed = false;
-    const controller = new AbortController();
 
     (async () => {
       const maplibre = await import("maplibre-gl");
@@ -107,10 +105,10 @@ export default function MapView() {
         attributionControl: false,
       });
 
-      // Tải suy nghĩ và ảnh song song với basemap, nhưng chỉ thêm layer khi style sẵn sàng.
-      const assets = loadSubmissionAssets(map, controller.signal);
+      // Tải ảnh song song với basemap; vị trí chỉ tải theo viewport khi camera dừng.
+      const assets = loadSubmissionAssets(map);
       initialAssetsRef.current = assets;
-      // API có thể lỗi trước sự kiện load; lỗi vẫn được effect thêm layer hiển thị sau đó.
+      // Ảnh có thể lỗi trước sự kiện load; effect thêm layer sẽ hiển thị lỗi sau đó.
       void assets.catch(() => { });
 
       const pin = new maplibre.Marker({
@@ -176,7 +174,6 @@ export default function MapView() {
 
     return () => {
       destroyed = true;
-      controller.abort();
       initialAssetsRef.current = null;
       clearPinRotationTimeout();
       mapRef.current?.remove();
@@ -200,9 +197,8 @@ export default function MapView() {
     if (!mapReady || !map) return;
 
     let cancelled = false;
-    const controller = new AbortController();
     let submissionLayers: Awaited<ReturnType<typeof addSubmissionLayers>>;
-    const assets = initialAssetsRef.current ?? loadSubmissionAssets(map, controller.signal);
+    const assets = initialAssetsRef.current ?? loadSubmissionAssets(map);
     initialAssetsRef.current = null;
     setSubmissionsError(false);
     // Chỉ thêm nguồn và layer sau khi style sẵn sàng; lỗi tải không chặn thao tác đặt ghim.
@@ -210,6 +206,7 @@ export default function MapView() {
       map,
       isCancelled: () => cancelled,
       onSubmissionClick: handleSubmissionClick,
+      onLoadError: setSubmissionsError,
       isInteractionBlocked: () => useSubmissionMapStore.getState().isSubmitting,
       isEntryReady: () => entryAnimationsReadyRef.current,
       assets,
@@ -308,7 +305,6 @@ export default function MapView() {
 
     return () => {
       cancelled = true;
-      controller.abort();
       useSubmissionMapStore.getState().setMap(null);
       // Dọn cả layer và listener trước khi thử lại, tránh nguồn trùng hoặc callback đã bị hủy.
       submissionLayers?.destroy();
@@ -354,7 +350,7 @@ export default function MapView() {
       {showLoader && <MapLoading />}
       <ThoughtModal
         open={thoughtModalOpen}
-        submission={selectedSubmission}
+        submissionId={selectedSubmissionId}
         origin={thoughtOrigin}
         onOpenChange={setThoughtModalOpen}
         onReturnFocus={() => mapRef.current?.getCanvas().focus({ preventScroll: true })}

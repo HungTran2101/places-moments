@@ -1,6 +1,7 @@
 import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import clusterBubbleImg from "@/public/assets/cluster_bubble.webp";
-import { getSubmissions, type Submission } from "@/services/submissions";
+import { normalizeSubmissionBounds } from "@/lib/submissionBounds";
+import { getSubmissions, type SubmissionPin } from "@/services/submissions";
 import { Marker, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
 import { addEntryAnimations, CLUSTER_WIDTH_STOPS } from "./entryAnimations";
 
@@ -20,7 +21,7 @@ export const SUBMISSION_MARKER_LAYER = "submission-markers";
 export const CLUSTER_MAX_ZOOM = 5;
 const CLUSTER_RADIUS = 30;
 
-function toFeatureCollection(submissions: Submission[]): GeoJSON.FeatureCollection {
+function toFeatureCollection(submissions: SubmissionPin[]): GeoJSON.FeatureCollection {
   return {
     type: "FeatureCollection",
     features: submissions.map((submission) => ({
@@ -31,9 +32,8 @@ function toFeatureCollection(submissions: Submission[]): GeoJSON.FeatureCollecti
   };
 }
 
-export function loadSubmissionAssets(map: MapLibreMap, signal?: AbortSignal) {
+export function loadSubmissionAssets(map: MapLibreMap) {
   return Promise.all([
-    getSubmissions({ signal }),
     map.loadImage(thoughtBubbleImg.src),
     map.loadImage(clusterBubbleImg.src),
   ]);
@@ -42,7 +42,8 @@ export function loadSubmissionAssets(map: MapLibreMap, signal?: AbortSignal) {
 interface AddSubmissionLayersOptions {
   map: MapLibreMap;
   isCancelled: () => boolean;
-  onSubmissionClick: (submission: Submission, origin: { x: number; y: number }) => void;
+  onSubmissionClick: (submissionId: string, origin: { x: number; y: number }) => void;
+  onLoadError: (hasError: boolean) => void;
   isInteractionBlocked: () => boolean;
   isEntryReady: () => boolean;
   assets?: ReturnType<typeof loadSubmissionAssets>;
@@ -52,17 +53,15 @@ export async function addSubmissionLayers({
   map,
   isCancelled,
   onSubmissionClick,
+  onLoadError,
   isInteractionBlocked,
   isEntryReady,
   assets = loadSubmissionAssets(map),
 }: AddSubmissionLayersOptions) {
-  const [submissions, image, clusterImage] = await assets;
+  const [image, clusterImage] = await assets;
 
   // Không cập nhật bản đồ nếu component đã unmount trong lúc tải dữ liệu hoặc ảnh.
   if (isCancelled()) return;
-
-  // Tra cứu dữ liệu đã tải bằng ID, không gọi lại API hoặc đưa nội dung suy nghĩ vào vector tile.
-  const submissionsById = new Map(submissions.map((submission) => [submission.id, submission]));
 
   const subscriptions: { unsubscribe: () => void }[] = [];
   const removeLayers = () => {
@@ -87,7 +86,7 @@ export async function addSubmissionLayers({
       cluster: true,
       clusterMaxZoom: CLUSTER_MAX_ZOOM,
       clusterRadius: CLUSTER_RADIUS,
-      data: toFeatureCollection(submissions),
+      data: toFeatureCollection([]),
     });
 
     map.addLayer({
@@ -106,7 +105,8 @@ export async function addSubmissionLayers({
         "icon-ignore-placement": true,
       },
       paint: {
-        "icon-opacity": ["case", ["boolean", ["feature-state", "entered"], false], MARKER_OPACITY, 0],
+        // Layer giữ vùng hit-test; bubble cụm luôn ở DOM để không nháy khi ID WebGL đổi.
+        "icon-opacity": 0,
         "icon-opacity-transition": { duration: 0 },
       },
     });
@@ -154,6 +154,78 @@ export async function addSubmissionLayers({
   let hoveredId: string | null = null;
   const overlays = new Map<string, { marker: Marker; animation: Animation }>();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let viewportController: AbortController | null = null;
+  let pendingBoundsKey: string | null = null;
+  let loadedBoundsKey: string | null = null;
+
+  const getViewportBounds = () => {
+    const bounds = map.getBounds();
+    return normalizeSubmissionBounds({
+      west: bounds.getWest(), south: bounds.getSouth(),
+      east: bounds.getEast(), north: bounds.getNorth(),
+    });
+  };
+
+  const cancelViewportRequest = () => {
+    viewportController?.abort();
+    viewportController = null;
+    pendingBoundsKey = null;
+  };
+
+  const applySubmissions = async (submissions: SubmissionPin[], signal: AbortSignal) => {
+    signal.throwIfAborted();
+    if (isCancelled()) throw new Error("Map is no longer available");
+    clearOverlays(true);
+    loadedBoundsKey = null;
+    const source = map.getSource(SOURCE_ID) as GeoJSONSource;
+    await source.setData(toFeatureCollection(submissions), true);
+    signal.throwIfAborted();
+    if (isCancelled()) throw new Error("Map is no longer available");
+    await new Promise<void>((resolve, reject) => {
+      const cleanup = () => {
+        map.off("render", onRender);
+        map.off("remove", onRemove);
+        signal.removeEventListener("abort", onAbort);
+      };
+      const onRender = () => {
+        if (!map.isSourceLoaded(SOURCE_ID)) return;
+        cleanup();
+        resolve();
+      };
+      const onRemove = () => { cleanup(); reject(new Error("Map was removed")); };
+      const onAbort = () => { cleanup(); reject(signal.reason); };
+      map.on("render", onRender);
+      map.once("remove", onRemove);
+      signal.addEventListener("abort", onAbort, { once: true });
+      map.triggerRepaint();
+    });
+  };
+
+  const loadViewport = async () => {
+    if (isCancelled() || isInteractionBlocked() || map.isMoving()) return;
+    const bounds = getViewportBounds();
+    const boundsKey = JSON.stringify(bounds);
+    if (boundsKey === loadedBoundsKey || boundsKey === pendingBoundsKey) return;
+    cancelViewportRequest();
+    const controller = new AbortController();
+    viewportController = controller;
+    pendingBoundsKey = boundsKey;
+    onLoadError(false);
+    try {
+      const submissions = await getSubmissions(bounds, { signal: controller.signal });
+      await applySubmissions(submissions, controller.signal);
+      loadedBoundsKey = boundsKey;
+    } catch (error) {
+      if (controller.signal.aborted || isCancelled()) return;
+      console.error("Failed to load viewport submissions", error);
+      onLoadError(true);
+    } finally {
+      if (viewportController === controller) {
+        viewportController = null;
+        pendingBoundsKey = null;
+      }
+    }
+  };
 
   const removeOverlay = (id: string, restoreIcon = true) => {
     const overlay = overlays.get(id);
@@ -240,11 +312,10 @@ export async function addSubmissionLayers({
   subscriptions.push(map.on("click", SUBMISSION_MARKER_LAYER, (event) => {
     if (isInteractionBlocked()) return;
     const id = event.features?.[0]?.properties.submissionId;
-    const submission = typeof id === "string" ? submissionsById.get(id) : undefined;
-    if (!submission || isCancelled()) return;
+    if (typeof id !== "string" || isCancelled()) return;
     clearOverlays(true);
     // Lưu tọa độ chuột trong viewport để hiệu ứng mở bắt đầu đúng nơi vừa nhấn.
-    onSubmissionClick(submission, {
+    onSubmissionClick(id, {
       x: event.originalEvent.clientX,
       y: event.originalEvent.clientY,
     });
@@ -256,9 +327,15 @@ export async function addSubmissionLayers({
     for (const id of overlays.keys()) removeOverlay(id, restoreIcons);
   };
   // Dọn ảnh và animation khi đổi vùng nhìn hoặc tháo bản đồ, tránh giữ DOM không còn dùng.
-  subscriptions.push(map.on("movestart", () => clearOverlays(true)));
+  subscriptions.push(map.on("movestart", () => {
+    clearOverlays(true);
+    // Hủy ngay khi người xem di chuyển tiếp để phản hồi cũ không ghi đè vùng nhìn mới.
+    cancelViewportRequest();
+  }));
+  subscriptions.push(map.on("moveend", () => { void loadViewport(); }));
   subscriptions.push(map.on("remove", () => {
     clearOverlays(false);
+    cancelViewportRequest();
     entryAnimations.destroy();
   }));
 
@@ -283,48 +360,29 @@ export async function addSubmissionLayers({
     }
   }));
 
+  // Chờ camera mở đầu dừng rồi mới tải vị trí, tránh tải cả thế giới ở mức zoom ban đầu.
+  void loadViewport();
+
   return {
     waitForEntryAnimations: entryAnimations.waitForIdle,
     async prepareRefresh(signal: AbortSignal) {
-      const submissions = await getSubmissions({ signal });
+      cancelViewportRequest();
+      const bounds = getViewportBounds();
+      const submissions = await getSubmissions(bounds, { signal });
       signal.throwIfAborted();
       if (isCancelled()) throw new Error("Map is no longer available");
 
       // Giữ dữ liệu đã tải ngoài source để marker mới hoặc cụm chưa xuất hiện trước bubble đang bay.
       return async () => {
-        signal.throwIfAborted();
-        if (isCancelled()) throw new Error("Map is no longer available");
-        clearOverlays(true);
-        const source = map.getSource(SOURCE_ID) as GeoJSONSource;
-        // Chờ worker cập nhật nguồn trước khi bỏ bubble đang gửi; không dựng lại toàn bộ layer.
-        await source.setData(toFeatureCollection(submissions), true);
-        signal.throwIfAborted();
-        if (isCancelled()) throw new Error("Map is no longer available");
-        entryAnimations.resetClusters();
-        submissionsById.clear();
-        for (const submission of submissions) submissionsById.set(submission.id, submission);
-        map.triggerRepaint();
-        await new Promise<void>((resolve, reject) => {
-          const cleanup = () => {
-            map.off("render", onRender);
-            map.off("remove", onRemove);
-            signal.removeEventListener("abort", onAbort);
-          };
-          const onRender = () => {
-            if (!map.isSourceLoaded(SOURCE_ID)) return;
-            cleanup();
-            resolve();
-          };
-          const onRemove = () => { cleanup(); reject(new Error("Map was removed")); };
-          const onAbort = () => { cleanup(); reject(signal.reason); };
-          map.on("render", onRender);
-          map.once("remove", onRemove);
-          signal.addEventListener("abort", onAbort, { once: true });
-        });
+        // Chờ worker cập nhật vùng nhìn trước khi bỏ bubble đang bay; không dựng lại layer.
+        await applySubmissions(submissions, signal);
+        loadedBoundsKey = JSON.stringify(bounds);
+        onLoadError(false);
       };
     },
     destroy() {
       for (const subscription of subscriptions) subscription.unsubscribe();
+      cancelViewportRequest();
       entryAnimations.destroy();
       clearOverlays(false);
       removeLayers();

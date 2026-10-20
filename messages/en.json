@@ -42,7 +42,11 @@
     "title": "A thought left here",
     "close": "Close thought",
     "backToMap": "Back to the map",
-    "atmosphereSuffix": ""
+    "atmosphereSuffix": "",
+    "loading": "Loading this thought…",
+    "loadError": "Could not load this thought.",
+    "notFound": "This thought is no longer here.",
+    "retry": "Try again"
   },
   "history": {
     "title": "Your moments",
