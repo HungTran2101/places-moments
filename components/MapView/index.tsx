@@ -14,6 +14,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import MapLoading from "./MapLoading";
 import {
   addSubmissionLayers,
+  CLUSTER_MAX_ZOOM,
   loadSubmissionAssets,
   SUBMISSION_CLUSTER_LAYER,
   SUBMISSION_MARKER_LAYER,
@@ -23,6 +24,7 @@ const LOADER_EXIT_DELAY_MS = 2100;
 const INITIAL_MAP_ZOOM = 1;
 const MAP_ENTRY_ZOOM = 3;
 const MAP_ENTRY_ANIMATION_MS = 2500;
+const SUBMISSION_ZOOM_DURATION_MS = 700;
 const MARKER_ROTATION_RESET_MS = 400;
 const MAX_MARKER_ROTATION = 90;
 const MIN_ROTATION_DELTA = 2;
@@ -217,6 +219,35 @@ export default function MapView() {
         useSubmissionMapStore.getState().setMap({
           focus() {
             if (!cancelled) map.getCanvas().focus({ preventScroll: true });
+          },
+          async zoomToPin(signal) {
+            signal.throwIfAborted();
+            const pin = pinRef.current;
+            if (cancelled || !pin) throw new Error("Pin is not available");
+
+            // Zoom qua ngưỡng gom cụm để suy nghĩ vừa gửi luôn hiện thành marker riêng.
+            await new Promise<void>((resolve, reject) => {
+              const cleanup = () => {
+                map.off("moveend", onMoveEnd);
+                map.off("remove", onRemove);
+                signal.removeEventListener("abort", onAbort);
+              };
+              const onMoveEnd = () => { cleanup(); resolve(); };
+              const onRemove = () => { cleanup(); reject(new Error("Map was removed")); };
+              const onAbort = () => {
+                cleanup();
+                map.stop();
+                reject(signal.reason);
+              };
+              map.once("moveend", onMoveEnd);
+              map.once("remove", onRemove);
+              signal.addEventListener("abort", onAbort, { once: true });
+              map.easeTo({
+                center: pin.getLngLat(),
+                zoom: Math.max(map.getZoom(), CLUSTER_MAX_ZOOM + 1),
+                duration: SUBMISSION_ZOOM_DURATION_MS,
+              });
+            });
           },
           getPinPosition() {
             const pin = pinRef.current;

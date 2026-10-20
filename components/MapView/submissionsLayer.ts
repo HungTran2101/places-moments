@@ -16,7 +16,7 @@ const MARKER_OPACITY = 0.5;
 export const SUBMISSION_CLUSTER_LAYER = "submission-clusters";
 export const SUBMISSION_MARKER_LAYER = "submission-markers";
 
-const CLUSTER_MAX_ZOOM = 5;
+export const CLUSTER_MAX_ZOOM = 5;
 const CLUSTER_RADIUS = 30;
 const CLUSTER_MIN_WIDTH = 50;
 const CLUSTER_MAX_WIDTH = 80;

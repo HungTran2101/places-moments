@@ -7,6 +7,7 @@ export interface ScreenPoint {
 
 export interface SubmissionMap {
   focus: () => void;
+  zoomToPin: (signal: AbortSignal) => Promise<void>;
   getPinPosition: () => ScreenPoint;
   subscribeToResize: (listener: () => void) => () => void;
   prepareMarkerRefresh: (signal: AbortSignal) => Promise<() => Promise<void>>;

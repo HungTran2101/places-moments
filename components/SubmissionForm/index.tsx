@@ -126,6 +126,7 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
       const signal = controller.signal;
       // Hai API vẫn chạy trong lúc bubble bay; chỉ đưa dữ liệu mới lên bản đồ sau khi đến ghim.
       stage = "create";
+      submissionMap.zoomToPin(signal);
       await createSubmission(
         { description: description.trim(), lat, lng, author_uuid },
         { reportGlobalError: false, signal },
@@ -140,6 +141,9 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
       await animationDone;
       signal.throwIfAborted();
       await revealMarkers();
+      // Bỏ bubble đã đến nơi trước khi di chuyển bản đồ để ảnh không đứng lại giữa màn hình.
+      setFlight(null);
+      setIsWaiting(false);
       stage = "complete";
       onSuccess?.();
     } catch (error) {
@@ -153,7 +157,7 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
         useSubmissionMapStore.getState().setIsSubmitting(false);
         setFlight(null);
         setIsWaiting(false);
-        // Chỉ trả focus sau khi bubble bay, marker tải xong và bản đồ đã được mở khóa.
+        // Chỉ trả focus sau khi bubble bay, marker tải xong, zoom kết thúc và bản đồ đã mở khóa.
         if (stage === "complete") submissionMap?.focus();
       }
     }
