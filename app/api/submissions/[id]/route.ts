@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { compressedJson } from "@/lib/compressedJson";
 
 const UpdateSchema = z.object({
   title: z.string().min(1).max(120).optional(),
@@ -10,7 +11,7 @@ const UpdateSchema = z.object({
 
 // GET /api/submissions/:id
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -32,7 +33,7 @@ export async function GET(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  return NextResponse.json(submission);
+  return compressedJson(submission, request);
 }
 
 // PATCH /api/submissions/:id

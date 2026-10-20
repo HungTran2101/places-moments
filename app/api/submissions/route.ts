@@ -5,6 +5,7 @@ import { rateLimit } from "@/lib/rateLimit";
 import { z } from "zod";
 import { constants } from "../constant";
 import type { Prisma } from "@prisma/client";
+import { compressedJson } from "@/lib/compressedJson";
 
 const CreateSubmissionSchema = z.object({
   // title: z.string().min(1).max(120),
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(submissions);
+    return await compressedJson(submissions, request);
   } catch {
     return NextResponse.json({ error: "Failed to fetch submissions" }, { status: 500 });
   }
