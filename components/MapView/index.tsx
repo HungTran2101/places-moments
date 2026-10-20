@@ -41,6 +41,7 @@ export default function MapView() {
   const pinTransitionTimeoutRef = useRef<number | null>(null);
   const lastPinPositionRef = useRef<Point | null>(null);
   const initialAssetsRef = useRef<ReturnType<typeof loadSubmissionAssets> | null>(null);
+  const entryAnimationsReadyRef = useRef(false);
 
   const setPin = usePinStore((state) => state.setPin);
   const mapReady = useSystemStore((state) => state.mapReady);
@@ -210,6 +211,7 @@ export default function MapView() {
       isCancelled: () => cancelled,
       onSubmissionClick: handleSubmissionClick,
       isInteractionBlocked: () => useSubmissionMapStore.getState().isSubmitting,
+      isEntryReady: () => entryAnimationsReadyRef.current,
       assets,
     })
       .then((layers) => {
@@ -257,6 +259,7 @@ export default function MapView() {
             return { x: rect.left + point.x, y: rect.top + point.y };
           },
           prepareMarkerRefresh: layers.prepareRefresh,
+          waitForMarkerAnimations: layers.waitForEntryAnimations,
           subscribeToResize(listener) {
             const subscription = map.on("resize", listener);
             return () => subscription.unsubscribe();
@@ -314,12 +317,16 @@ export default function MapView() {
 
   useEffect(() => {
     if (!mapReady) {
+      entryAnimationsReadyRef.current = false;
       setShowLoader(true);
       return;
     }
 
     const timeoutId = window.setTimeout(() => {
+      // Bắt đầu hiệu ứng bubble sau màn mây để người xem thấy trọn chuyển động xuất hiện.
+      entryAnimationsReadyRef.current = true;
       setShowLoader(false);
+      mapRef.current?.triggerRepaint();
     }, LOADER_EXIT_DELAY_MS);
 
     return () => {

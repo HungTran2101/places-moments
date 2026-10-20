@@ -11,6 +11,7 @@ export interface SubmissionMap {
   getPinPosition: () => ScreenPoint;
   subscribeToResize: (listener: () => void) => () => void;
   prepareMarkerRefresh: (signal: AbortSignal) => Promise<() => Promise<void>>;
+  waitForMarkerAnimations: (signal: AbortSignal) => Promise<void>;
   beginSubmission: () => (saved: boolean) => void;
 }
 

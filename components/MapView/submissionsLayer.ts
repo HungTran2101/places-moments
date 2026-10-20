@@ -2,6 +2,7 @@ import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import clusterBubbleImg from "@/public/assets/cluster_bubble.webp";
 import { getSubmissions, type Submission } from "@/services/submissions";
 import { Marker, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
+import { addEntryAnimations, CLUSTER_WIDTH_STOPS } from "./entryAnimations";
 
 const SOURCE_ID = "submissions";
 const IMAGE_ID = "submission-thought-bubble";
@@ -18,8 +19,6 @@ export const SUBMISSION_MARKER_LAYER = "submission-markers";
 
 export const CLUSTER_MAX_ZOOM = 5;
 const CLUSTER_RADIUS = 30;
-const CLUSTER_MIN_WIDTH = 50;
-const CLUSTER_MAX_WIDTH = 80;
 
 function toFeatureCollection(submissions: Submission[]): GeoJSON.FeatureCollection {
   return {
@@ -45,6 +44,7 @@ interface AddSubmissionLayersOptions {
   isCancelled: () => boolean;
   onSubmissionClick: (submission: Submission, origin: { x: number; y: number }) => void;
   isInteractionBlocked: () => boolean;
+  isEntryReady: () => boolean;
   assets?: ReturnType<typeof loadSubmissionAssets>;
 }
 
@@ -53,6 +53,7 @@ export async function addSubmissionLayers({
   isCancelled,
   onSubmissionClick,
   isInteractionBlocked,
+  isEntryReady,
   assets = loadSubmissionAssets(map),
 }: AddSubmissionLayersOptions) {
   const [submissions, image, clusterImage] = await assets;
@@ -96,19 +97,18 @@ export async function addSubmissionLayers({
       filter: ["has", "point_count"],
       layout: {
         "icon-image": CLUSTER_IMAGE_ID,
-        // Cụm càng nhiều suy nghĩ càng lớn, tối đa 60 px và giữ nguyên tỉ lệ ảnh gốc.
+        // Cụm càng nhiều suy nghĩ càng lớn, tối đa 80 px và giữ nguyên tỉ lệ ảnh gốc.
         "icon-size": ["/", ["interpolate", ["linear"], ["get", "point_count"],
-          2, CLUSTER_MIN_WIDTH,
-          25, 55,
-          50, 65,
-          75, 75,
-          100, CLUSTER_MAX_WIDTH,
+          ...CLUSTER_WIDTH_STOPS,
         ], clusterBubbleImg.width],
         "icon-anchor": "bottom",
         "icon-allow-overlap": true,
         "icon-ignore-placement": true,
       },
-      paint: { "icon-opacity": MARKER_OPACITY },
+      paint: {
+        "icon-opacity": ["case", ["boolean", ["feature-state", "entered"], false], MARKER_OPACITY, 0],
+        "icon-opacity-transition": { duration: 0 },
+      },
     });
     map.addLayer({
       id: SUBMISSION_MARKER_LAYER,
@@ -125,7 +125,11 @@ export async function addSubmissionLayers({
       },
       paint: {
         // Tạm ẩn ảnh WebGL khi ảnh DOM ở cùng vị trí đang chạy hiệu ứng hover.
-        "icon-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0, MARKER_OPACITY],
+        "icon-opacity": ["case",
+          ["boolean", ["feature-state", "hover"], false], 0,
+          ["boolean", ["feature-state", "entered"], false], MARKER_OPACITY,
+          0,
+        ],
         "icon-opacity-transition": { duration: 0 },
       },
     });
@@ -134,6 +138,18 @@ export async function addSubmissionLayers({
     removeLayers();
     throw error;
   }
+
+  const entryAnimations = addEntryAnimations({
+    map,
+    sourceId: SOURCE_ID,
+    markerLayer: SUBMISSION_MARKER_LAYER,
+    clusterLayer: SUBMISSION_CLUSTER_LAYER,
+    markerImage: thoughtBubbleImg,
+    clusterImage: clusterBubbleImg,
+    markerWidth: MARKER_WIDTH,
+    opacity: MARKER_OPACITY,
+    isReady: isEntryReady,
+  });
 
   let hoveredId: string | null = null;
   const overlays = new Map<string, { marker: Marker; animation: Animation }>();
@@ -181,6 +197,8 @@ export async function addSubmissionLayers({
     }
     if (id === hoveredId) return;
     clearHover();
+    // Để hiệu ứng xuất hiện kết thúc trước khi chuyển sang phóng to khi hover.
+    if (!map.getFeatureState({ source: SOURCE_ID, id }).entered) return;
     hoveredId = id;
     map.getCanvas().style.cursor = "pointer";
 
@@ -239,7 +257,10 @@ export async function addSubmissionLayers({
   };
   // Dọn ảnh và animation khi đổi vùng nhìn hoặc tháo bản đồ, tránh giữ DOM không còn dùng.
   subscriptions.push(map.on("movestart", () => clearOverlays(true)));
-  subscriptions.push(map.on("remove", () => clearOverlays(false)));
+  subscriptions.push(map.on("remove", () => {
+    clearOverlays(false);
+    entryAnimations.destroy();
+  }));
 
   subscriptions.push(map.on("click", SUBMISSION_CLUSTER_LAYER, async (event) => {
     if (isInteractionBlocked()) return;
@@ -263,6 +284,7 @@ export async function addSubmissionLayers({
   }));
 
   return {
+    waitForEntryAnimations: entryAnimations.waitForIdle,
     async prepareRefresh(signal: AbortSignal) {
       const submissions = await getSubmissions({ signal });
       signal.throwIfAborted();
@@ -278,6 +300,7 @@ export async function addSubmissionLayers({
         await source.setData(toFeatureCollection(submissions), true);
         signal.throwIfAborted();
         if (isCancelled()) throw new Error("Map is no longer available");
+        entryAnimations.resetClusters();
         submissionsById.clear();
         for (const submission of submissions) submissionsById.set(submission.id, submission);
         map.triggerRepaint();
@@ -302,6 +325,7 @@ export async function addSubmissionLayers({
     },
     destroy() {
       for (const subscription of subscriptions) subscription.unsubscribe();
+      entryAnimations.destroy();
       clearOverlays(false);
       removeLayers();
     },

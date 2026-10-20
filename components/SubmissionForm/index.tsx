@@ -146,6 +146,7 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
       // Bỏ bubble đã đến nơi trước khi di chuyển bản đồ để ảnh không đứng lại giữa màn hình.
       setFlight(null);
       setIsWaiting(false);
+      await submissionMap.waitForMarkerAnimations(signal);
       stage = "complete";
       onSuccess?.();
     } catch (error) {
