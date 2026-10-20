@@ -2,6 +2,7 @@
 
 import { useViewport } from "@/hooks/useViewport"
 import { useSystemStore } from "@/store/systemStore"
+import { useSubmissionMapStore } from "@/store/useSubmissionMapStore"
 import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
 import { useMemo, useRef, useState } from "react"
@@ -14,6 +15,7 @@ const Sidebar = () => {
   const sidebarOpen = useSystemStore((state) => state.sidebarOpen);
   const setSidebarOpen = useSystemStore((state) => state.setSidebarOpen);
   const isToggleAnimatingRef = useRef(false);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const [closing, setClosing] = useState(sidebarOpen);
 
@@ -60,6 +62,13 @@ const Sidebar = () => {
     if (!sidebarOpen) setClosing(true);
   }
 
+  const handlePanelAnimationComplete = () => {
+    if (!sidebarOpen || !mapReady || useSubmissionMapStore.getState().isSubmitting) return;
+
+    // Chỉ focus khi panel đã mở hết để không đưa bàn phím vào ô nhập còn bị che.
+    descriptionRef.current?.focus({ preventScroll: true });
+  }
+
   return (
     <motion.aside
       className="sidebar"
@@ -96,8 +105,9 @@ const Sidebar = () => {
           duration: 0.6,
           delay: sidebarOpen ? 0.7 : 0
         }}
+        onAnimationComplete={handlePanelAnimationComplete}
       >
-        <SubmissionForm />
+        <SubmissionForm inputRef={descriptionRef} />
       </motion.div>
       {/* </motion.div> */}
 

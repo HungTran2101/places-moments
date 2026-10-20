@@ -17,6 +17,7 @@ import SubmissionAnimation from "./SubmissionAnimation";
 
 interface SubmissionFormProps {
   onSuccess?: () => void;
+  inputRef?: React.RefObject<HTMLTextAreaElement | null>;
 }
 
 type SubmissionStage = "map" | "identity" | "create" | "refresh" | "complete";
@@ -34,7 +35,7 @@ function submissionErrorKey(error: unknown, stage: SubmissionStage): ErrorMessag
   return "submissionFailed";
 }
 
-export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
+export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormProps) {
   const t = useTranslations("submission");
   const [description, setDescription] = useState("");
   const [hasDescriptionError, setHasDescriptionError] = useState(false);
@@ -47,7 +48,8 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
   } | null>(null);
   const [isWaiting, setIsWaiting] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const localDescriptionRef = useRef<HTMLTextAreaElement>(null);
+  const descriptionRef = inputRef ?? localDescriptionRef;
   const suffixRef = useRef<HTMLSpanElement>(null);
   const activeRunRef = useRef<{
     controller: AbortController;
@@ -68,7 +70,7 @@ export default function SubmissionForm({ onSuccess }: SubmissionFormProps) {
 
     // Focus ngay khi đặt hoặc di chuyển ghim, kể cả khi chọn lại cùng tọa độ.
     descriptionRef.current?.focus({ preventScroll: true });
-  }), []);
+  }), [descriptionRef]);
 
   useEffect(() => () => {
     // Hủy request và mở lại bản đồ khi form bị tháo giữa lúc gửi.
