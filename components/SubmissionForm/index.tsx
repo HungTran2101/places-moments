@@ -2,7 +2,7 @@
 
 import { useError } from "@/components/ErrorProvider";
 import { getOrCreateUUID } from "@/lib/uuid";
-import thoughtBubbleImg from "@/public/assets/thought_bubble.png";
+import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import { ApiError, RUNTIME_ERROR_STATUS, type ErrorMessageKey } from "@/services/shared/errors";
 import { createSubmission } from "@/services/submissions";
 import { useSystemStore } from "@/store/systemStore";

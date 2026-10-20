@@ -37,7 +37,10 @@ export async function GET() {
 
 // POST /api/submissions - create a new submission
 export async function POST(request: NextRequest) {
-  const limited = rateLimit(request, { maxRequests: 1, windowMs: 30_000 });
+  const limited = rateLimit(request, {
+    maxRequests: constants.RATE_LIMIT_MAX_REQUESTS,
+    windowMs: constants.RATE_LIMIT_WINDOW_MS,
+  });
   if (limited) return limited;
 
   let body: unknown;

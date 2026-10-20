@@ -1,7 +1,7 @@
 "use client";
 
 import { GlassButton } from "@/components/ui/glass-button";
-import thoughtBubbleImg from "@/public/assets/thought_bubble.png";
+import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import type { Submission } from "@/services/submissions";
 import { ArrowLeft, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSun, Snowflake, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";

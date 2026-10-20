@@ -1,5 +1,5 @@
+import { cn } from "@/lib/utils";
 import { useSystemStore } from "@/store/systemStore";
-import clsx from "clsx";
 import Image from "next/image";
 import { CSSProperties } from "react";
 
@@ -107,33 +107,31 @@ const clouds = [
 ];
 
 const cloudAssets = [
-  "/assets/clouds/cloud_1.png",
-  "/assets/clouds/cloud_2.png",
-  "/assets/clouds/cloud_3.png",
-  "/assets/clouds/cloud_4.png",
-  "/assets/clouds/cloud_5.png",
-  "/assets/clouds/cloud_6.png",
-  "/assets/clouds/cloud_7.png",
-  "/assets/clouds/cloud_8.png",
-  "/assets/clouds/cloud_9.png",
-  "/assets/clouds/cloud_10.png",
-]
-const existedOrder = new Set<number>();
-const cloudAssetOrder = Array.from({ length: clouds.length }, () => {
-  let order = Math.floor(Math.random() * cloudAssets.length);
-  while (existedOrder.has(order)) {
-    order = Math.floor(Math.random() * cloudAssets.length);
-  }
-  existedOrder.add(order);
-  return order;
-});
+  "/assets/clouds/cloud_1.webp",
+  "/assets/clouds/cloud_2.webp",
+  "/assets/clouds/cloud_3.webp",
+  "/assets/clouds/cloud_4.webp",
+  "/assets/clouds/cloud_5.webp",
+  "/assets/clouds/cloud_6.webp",
+  "/assets/clouds/cloud_7.webp",
+  "/assets/clouds/cloud_8.webp",
+  "/assets/clouds/cloud_9.webp",
+  "/assets/clouds/cloud_10.webp",
+];
+
+// Trộn một lần bằng Fisher–Yates để không phải thử lại khi chọn trùng ảnh mây.
+const cloudAssetOrder = cloudAssets.map((_, index) => index);
+for (let index = cloudAssetOrder.length - 1; index > 0; index--) {
+  const randomIndex = Math.floor(Math.random() * (index + 1));
+  [cloudAssetOrder[index], cloudAssetOrder[randomIndex]] = [cloudAssetOrder[randomIndex], cloudAssetOrder[index]];
+}
 
 const MapLoading = ({ children }: { children?: React.ReactNode }) => {
   const mapReady = useSystemStore((state) => state.mapReady);
 
   return (
     <div
-      className={clsx("MapView-loader", mapReady && "is-exiting")}
+      className={cn("MapView-loader", mapReady && "is-exiting")}
       aria-hidden={mapReady}
     >
       {children ? <div className="relative z-10">{children}</div> : null}

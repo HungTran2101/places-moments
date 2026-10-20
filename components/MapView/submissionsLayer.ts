@@ -1,9 +1,11 @@
-import thoughtBubbleImg from "@/public/assets/thought_bubble.png";
+import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
+import clusterBubbleImg from "@/public/assets/cluster_bubble.webp";
 import { getSubmissions, type Submission } from "@/services/submissions";
 import { Marker, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
 
 const SOURCE_ID = "submissions";
 const IMAGE_ID = "submission-thought-bubble";
+const CLUSTER_IMAGE_ID = "submission-cluster-bubble";
 
 const MARKER_WIDTH = 35;
 const MARKER_ICON_SIZE = MARKER_WIDTH / thoughtBubbleImg.width;
@@ -16,8 +18,8 @@ export const SUBMISSION_MARKER_LAYER = "submission-markers";
 
 const CLUSTER_MAX_ZOOM = 5;
 const CLUSTER_RADIUS = 30;
-const CLUSTER_MIN_WIDTH = 40;
-const CLUSTER_MAX_WIDTH = 60;
+const CLUSTER_MIN_WIDTH = 50;
+const CLUSTER_MAX_WIDTH = 80;
 
 function toFeatureCollection(submissions: Submission[]): GeoJSON.FeatureCollection {
   return {
@@ -34,6 +36,7 @@ export function loadSubmissionAssets(map: MapLibreMap, signal?: AbortSignal) {
   return Promise.all([
     getSubmissions({ signal }),
     map.loadImage(thoughtBubbleImg.src),
+    map.loadImage(clusterBubbleImg.src),
   ]);
 }
 
@@ -52,7 +55,7 @@ export async function addSubmissionLayers({
   isInteractionBlocked,
   assets = loadSubmissionAssets(map),
 }: AddSubmissionLayersOptions) {
-  const [submissions, image] = await assets;
+  const [submissions, image, clusterImage] = await assets;
 
   // Không cập nhật bản đồ nếu component đã unmount trong lúc tải dữ liệu hoặc ảnh.
   if (isCancelled()) return;
@@ -69,10 +72,12 @@ export async function addSubmissionLayers({
     }
     if (map.getSource(SOURCE_ID)) map.removeSource(SOURCE_ID);
     if (map.hasImage(IMAGE_ID)) map.removeImage(IMAGE_ID);
+    if (map.hasImage(CLUSTER_IMAGE_ID)) map.removeImage(CLUSTER_IMAGE_ID);
   };
 
   try {
     map.addImage(IMAGE_ID, image.data);
+    map.addImage(CLUSTER_IMAGE_ID, clusterImage.data);
     map.addSource(SOURCE_ID, {
       type: "geojson",
       // Giữ nguyên ID dạng chuỗi khi MapLibre chuyển dữ liệu sang vector tile.
@@ -90,15 +95,15 @@ export async function addSubmissionLayers({
       source: SOURCE_ID,
       filter: ["has", "point_count"],
       layout: {
-        "icon-image": IMAGE_ID,
+        "icon-image": CLUSTER_IMAGE_ID,
         // Cụm càng nhiều suy nghĩ càng lớn, tối đa 60 px và giữ nguyên tỉ lệ ảnh gốc.
         "icon-size": ["/", ["interpolate", ["linear"], ["get", "point_count"],
           2, CLUSTER_MIN_WIDTH,
-          10, 45,
-          25, 50,
-          50, 55,
+          25, 55,
+          50, 65,
+          75, 75,
           100, CLUSTER_MAX_WIDTH,
-        ], thoughtBubbleImg.width],
+        ], clusterBubbleImg.width],
         "icon-anchor": "bottom",
         "icon-allow-overlap": true,
         "icon-ignore-placement": true,

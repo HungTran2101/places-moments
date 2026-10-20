@@ -1,8 +1,8 @@
 "use client";
 
 import { GlassButton } from "@/components/ui/glass-button";
+import { cn } from "@/lib/utils";
 import { getErrorMessageKey, type AppError } from "@/services/shared/errors";
-import clsx from "clsx";
 import { ClockFading, TriangleAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Dialog } from "radix-ui";
@@ -24,7 +24,7 @@ export default function ErrorModal({ open, error, onOpenChange }: ErrorModalProp
         <Dialog.Overlay className="ErrorModal-overlay" />
         <Dialog.Content className="ErrorModal-content liquid-glass2">
           {isRateLimitError ? (
-            <ClockFading className={clsx("ErrorModal-icon", "ErrorModal-icon--rateLimited")} size={32} aria-hidden="true" />
+            <ClockFading className={cn("ErrorModal-icon", "ErrorModal-icon--rateLimited")} size={32} aria-hidden="true" />
           ) : (
             <TriangleAlert className="ErrorModal-icon" size={32} aria-hidden="true" />
           )}

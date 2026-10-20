@@ -1,6 +1,6 @@
 "use client";
 
-import thoughtBubbleImg from "@/public/assets/thought_bubble.png";
+import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import type { ScreenPoint } from "@/store/useSubmissionMapStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";

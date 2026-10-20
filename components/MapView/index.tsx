@@ -1,12 +1,12 @@
 "use client";
 
 import ThoughtModal from "@/components/ThoughtModal";
+import { cn } from "@/lib/utils";
 import type { Submission } from "@/services/submissions";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
 import { useSubmissionMapStore } from "@/store/useSubmissionMapStore";
 import mapStyle from "@/styles/map-style.json";
-import clsx from "clsx";
 import type { Map as MapLibreMap, Point, StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTranslations } from "next-intl";
@@ -108,7 +108,7 @@ export default function MapView() {
       const assets = loadSubmissionAssets(map, controller.signal);
       initialAssetsRef.current = assets;
       // API có thể lỗi trước sự kiện load; lỗi vẫn được effect thêm layer hiển thị sau đó.
-      void assets.catch(() => {});
+      void assets.catch(() => { });
 
       const pin = new maplibre.Marker({
         color: "var(--marker-color)",
@@ -240,7 +240,7 @@ export default function MapView() {
             map.stop();
             // Ghi nhớ từng handler để trả lại đúng trạng thái trước lúc gửi, kể cả bàn phím và cảm ứng.
             const handlers = [map.dragPan, map.scrollZoom, map.boxZoom, map.dragRotate,
-              map.keyboard, map.doubleClickZoom, map.touchZoomRotate, map.touchPitch];
+            map.keyboard, map.doubleClickZoom, map.touchZoomRotate, map.touchPitch];
             const enabledHandlers = handlers.filter((handler) => handler.isEnabled());
             enabledHandlers.forEach((handler) => handler.disable());
             const canvas = map.getCanvasContainer();
@@ -300,7 +300,7 @@ export default function MapView() {
     <div className="MapView-wrapper">
       <div
         ref={containerRef}
-        className={clsx("MapView-map", mapReady && "is-ready")}
+        className={cn("MapView-map", mapReady && "is-ready")}
       />
       <div className="MapView-disclaimer liquid-glass" aria-label="Map disclaimer">
         <p>{t('disclaimer')}</p>
