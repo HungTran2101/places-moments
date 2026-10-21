@@ -1,0 +1,249 @@
+System Overview
+
+The system is built as a single Next.js application that handles both frontend and backend responsibilities.
+
+Primary components:
+
+Next.js frontend UI
+Next.js App Router Route Handlers
+PostgreSQL database
+Prisma ORM
+
+The current external services are map tiles/styles and Open-Meteo for weather. Realtime infrastructure remains optional and is not connected.
+
+Tech Stack
+
+Frontend + Backend Framework
+
+Next.js 16 (App Router)
+React 19
+TypeScript
+next-intl for English and Vietnamese, with a cookie-backed locale
+
+Database
+
+PostgreSQL
+Prisma ORM
+
+Map / Visualization
+
+MapLibre GL for the 2D map, using the local styles/map-style.json style
+Three.js for optional 3D globe
+
+Animation
+
+Framer Motion, GSAP, and browser animation APIs
+
+The UI should prioritize smooth transitions and motion design, especially on desktop.
+
+Frontend Responsibilities
+
+The frontend handles:
+
+map rendering
+marker display
+submission UI
+localized writing guidance and shared error dialogs
+English/Vietnamese language switching
+
+Personal history UI and subtle realtime updates remain outside the connected home-page flow.
+
+Main UI modules:
+
+Map Module
+
+MapView owns the MapLibre instance and the writing pin. It dynamically loads on the client, handles pan/zoom and click-to-place interaction, and mounts ThoughtModal with an explicit open prop.
+
+submissionsLayer loads id/lat/lng positions for the current viewport on initial load and moveend. It normalizes wrapped longitudes, cancels obsolete requests, and skips duplicate bounds. Clicking a cluster expands it; clicking an individual marker opens its thought.
+
+MapLibre clusters the downloaded GeoJSON in the browser (clusterMaxZoom: 5, clusterRadius: 30). Clustering reduces rendering density; it does not reduce the number of positions returned for that viewport.
+
+ThoughtModal fetches the selected thought's description and weather only when opened. It aborts obsolete requests and provides skeleton, retry, and not-found states.
+
+Map cleanup removes request/listener/animation work, overlays, layers, sources, and images when the relevant owner is destroyed or retried.
+
+Submission Module
+
+SubmissionForm accepts a description of up to 600 characters and requires a placed pin. The service sends description, lat, lng, and author_uuid; the server fetches weather before saving. There is no title input in the current flow.
+
+usePinStore holds draft coordinates. useSubmissionMapStore exposes the map operations needed by the form; MapView retains ownership of the map lifecycle.
+
+During submission, the writing pin is hidden and map interactions are paused while the bubble flies. A successful save clears the draft, refreshes viewport positions, and reveals them after arrival. The map then zooms beyond the clustering threshold while preserving a closer existing zoom. A failed save preserves the draft and pin; a refresh failure after saving is reported separately.
+
+Errors are handled through the shared ErrorProvider/ErrorModal and Next.js route/root error boundaries. The empty-description validation remains beside the textarea.
+
+History Module
+
+HistoryPanel currently renders supplied items only. It is not mounted by HomePage, and no author-history query is connected. Author update/delete services and API handlers exist without connected author-management controls.
+
+Realtime Module
+
+Planned module; no WebSocket, SSE, or polling subscription is currently connected. Existing map reloads follow viewport changes or a local submission.
+
+listens for new submissions
+
+Animation Layer
+
+Used to create:
+
+marker appearance animation
+map UI transitions
+popup transitions
+subtle environmental motion
+
+Animations should feel fluid and calm, not flashy.
+
+Backend (Next.js Server)
+
+Backend logic runs inside the Next.js server layer.
+
+Responsibilities:
+
+store submissions
+provide map queries
+enforce rate limits
+fetch weather data
+Future-message create/list scaffolding exists; unlocking is not implemented.
+
+Implemented submission Route Handlers:
+
+POST /api/submissions
+
+Validates description (1–600 characters), coordinates, and author_uuid. The form trims descriptions before sending. A successful create fetches weather, stores the row, and returns it with status 201. Creation is limited to one attempt per IP per 30-second rolling window; invalid attempts also consume the limit.
+
+GET /api/submissions
+
+Requires west, south, east, and north viewport bounds; returns only id, lat, and lng.
+Bounds crossing the international date line are supported.
+
+Invalid bounds return 400. The query has no fixed row cap, and public positions omit author_uuid and timestamps.
+
+GET /api/submissions/:id
+
+Loads a single thought's public description and weather when its modal opens.
+
+Returns id, description, lat, lng, weather_summary, and weather_code; returns 404 when missing. Both public GET handlers use compressedJson to negotiate Brotli/gzip, generally starting at 1 KB, and vary responses by Accept-Encoding.
+
+PATCH /api/submissions/:id
+
+Supports description changes with author_uuid in the request body. It compares the supplied UUID with the stored author_uuid, returning 403 on mismatch and 404 when missing.
+
+DELETE /api/submissions/:id
+
+Checks x-author-uuid against the stored author_uuid and returns 204 after deletion. These mutation handlers are implemented without connected edit/delete UI.
+
+POST /api/locale
+
+Validates vi/en and stores the choice in a one-year locale cookie. The language selector refreshes the page after changing it; Vietnamese is the default.
+
+The following future-message endpoints are create/list scaffolding only; the planned send/unlock experience remains unfinished.
+
+Future message endpoints:
+
+POST /api/future-message
+
+GET /api/future-message
+
+Database
+
+Database: PostgreSQL
+
+ORM: Prisma 7 with the PostgreSQL adapter and a pg connection pool
+
+Current schema models (prisma/schema/):
+
+Submission
+
+id
+
+description
+
+lat
+
+lng
+
+weather_summary
+
+weather_code
+
+created_at
+
+author_uuid
+
+updated_at
+
+Submission uses a cuid ID and a 600-character description column. It has indexes on author_uuid and on the lat/lng pair. weather_summary and weather_code are nullable. There is no title column in the current model.
+
+FutureMessage
+
+id
+
+author_uuid
+
+message
+
+unlock_condition
+
+created_at
+
+unlocked_at
+
+Realtime Layer
+
+Planned design below; no realtime transport is currently active.
+
+Purpose:
+
+Show new markers appearing on the map when someone submits.
+
+Possible implementations:
+
+WebSocket
+Server Sent Events
+short polling
+
+Event payload should be minimal:
+
+submission id
+latitude
+longitude
+
+Clients fetch full data afterward.
+
+Weather Service
+
+Weather data is fetched when a submission is created.
+
+Input:
+
+latitude
+longitude
+
+Output:
+
+weather summary
+weather code
+
+The backend converts weather data into atmospheric narrative text.
+
+The current lookup calls Open-Meteo's forecast endpoint for current weather_code at the chosen coordinates, without a cache (revalidate: 0). It stores the WMO code and an English summary. If lookup fails, creation continues with "Posted on a quiet day." and code 0.
+
+ThoughtModal prefers the localized weather sentence for a known code and falls back to the stored summary otherwise.
+
+Security
+
+Implemented protections:
+
+In-memory, per-process rolling-window rate limiting by the first x-forwarded-for IP for creation routes. Submission creation uses the constants in app/api/constant.ts (one attempt per 30 seconds). This is not a shared limit across server instances.
+
+Zod validation for create/update payloads and viewport bounds, plus the description length limit.
+
+Author UUID comparison for update/delete. Identity remains a browser-local UUID; there are no accounts or authenticated sessions.
+
+Public submission GET routes explicitly select safe fields. Create/update responses return the saved row to the caller.
+
+Writing guidance is implemented in the sidebar. Server-side content moderation is not implemented.
+
+Planned protection:
+
+Optional profanity filter

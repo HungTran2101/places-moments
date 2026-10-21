@@ -44,9 +44,7 @@ next-env.d.ts
 /app/generated/prisma
 .env
 
-# Local AI/editor guidance and project context
+# Local AI/editor guidance
 /.cursorrules
-/AGENTS.md
 /AI.md
-/contexts/
 /.agents/rules/context.md

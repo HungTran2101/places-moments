@@ -30,8 +30,38 @@ export async function generateMetadata(): Promise<Metadata> {
   const messages = await getMessages();
   const meta = messages.meta as { title: string; description: string };
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
     title: meta.title,
     description: meta.description,
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      type: "website",
+      images: [
+        {
+          url: "/favicon/metadata-image.png",
+          width: 1065,
+          height: 356,
+          alt: meta.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta.title,
+      description: meta.description,
+      images: [{ url: "/favicon/metadata-image.png", alt: meta.title }],
+    },
+    icons: {
+      icon: [
+        { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+        { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      ],
+      apple: [
+        { url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      ],
+    },
+    manifest: "/favicon/site.webmanifest",
   };
 }
 
