@@ -5,10 +5,13 @@ import { useSystemStore } from "@/store/systemStore"
 import { useSubmissionMapStore } from "@/store/useSubmissionMapStore"
 import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { useMemo, useRef, useState } from "react"
 import SubmissionForm from "../SubmissionForm"
+import ThoughtGuidelines from "../ThoughtGuidelines"
 
 const Sidebar = () => {
+  const t = useTranslations("guidance");
   const sw = useSystemStore((state) => state.sidebarWidth)
   const glassPrimaryColor = useSystemStore(state => state.primaryColor)
   const mapReady = useSystemStore((state) => state.mapReady);
@@ -107,7 +110,19 @@ const Sidebar = () => {
         }}
         onAnimationComplete={handlePanelAnimationComplete}
       >
-        <SubmissionForm inputRef={descriptionRef} />
+        <div className="sidebar-scroll">
+          <SubmissionForm inputRef={descriptionRef} />
+          <section className="sidebar-guidance" aria-labelledby="guidance-title">
+            <h2 id="guidance-title">{t("title")}</h2>
+            <p>{t("about")}</p>
+            <h3>{t("writingTitle")}</h3>
+            <div className="sidebar-guidance-writing">
+              <p>{t("writing")}</p>
+            </div>
+            <blockquote>{t("example")}</blockquote>
+            <ThoughtGuidelines />
+          </section>
+        </div>
       </motion.div>
       {/* </motion.div> */}
 

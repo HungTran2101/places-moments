@@ -45,6 +45,7 @@ export default function MapView() {
   const setPin = usePinStore((state) => state.setPin);
   const mapReady = useSystemStore((state) => state.mapReady);
   const setMapReady = useSystemStore((state) => state.setMapReady);
+
   const [showLoader, setShowLoader] = useState(true);
   const [submissionsError, setSubmissionsError] = useState(false);
   const [submissionsRetry, setSubmissionsRetry] = useState(0);

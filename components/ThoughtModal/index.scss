@@ -71,12 +71,12 @@
     margin: 1rem 0;
     padding-right: 0.5rem;
     font-size: 1.0625rem;
-    font-weight: 300;
-    line-height: 1.6;
+    line-height: 1.5;
     white-space: pre-wrap;
     overflow: auto;
     overflow-wrap: anywhere;
     overscroll-behavior: contain;
+    color: var(--secondary-color);
   }
 
   &-footer {

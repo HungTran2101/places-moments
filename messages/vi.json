@@ -28,6 +28,34 @@
     "clickMapToSubmitTooltip": "Hãy chọn một địa điểm trên bản đồ mà bạn muốn gửi gắm suy nghĩ này :3",
     "sendingThought": "Tâm tư của bạn đang được gửi đi"
   },
+  "guidance": {
+    "title": "Gửi một chút lòng mình ở lại",
+    "about": "World of Moments là tấm bản đồ của những tâm tư ẩn danh. Bạn có thể dạo qua những lời ai đó để lại, hoặc chọn một nơi trên bản đồ để gửi gắm khoảnh khắc của riêng mình.",
+    "writingTitle": "Mình có thể viết gì?",
+    "writing": "Một ký ức về nơi này, một điều nhỏ vừa bắt gặp, cảm xúc đang mang trong lòng, hay lời chưa kịp nói. Niềm vui, nỗi nhớ, cả những ngày khó khăn đều có chỗ ở đây. Vài dòng thật lòng là đủ rồi.",
+    "example": "“Ngày trước mình hay đi con đường này về nhà cùng với em ấy...”",
+    "care": "Lời bạn viết sẽ hiện công khai, không kèm tên. Đừng chia sẻ thông tin riêng tư, hãy nhẹ nhàng với người tình cờ đọc được, và giữ nơi này đúng với <purpose>mục đích</purpose> của nó nhé.",
+    "rules": {
+      "title": "Giữ một góc nhỏ bình yên",
+      "description": "Nơi này dành cho những tâm tư chân thành gửi lại một địa điểm. Hãy viết điều mà một người xa lạ có thể dừng lại đọc và cảm nhận, giữa một ngày của họ.",
+      "shouldTitle": "Nên",
+      "should": {
+        "personal": "Kể một ký ức, một điều nhỏ vừa bắt gặp, hay gửi lại lời chưa có dịp nói.",
+        "feelings": "Thật lòng với niềm vui, nỗi buồn, sự cô đơn, mất mát hay giận dữ. Những cảm xúc khó khăn cũng có chỗ ở đây.",
+        "place": "Chọn một nơi có ý nghĩa với tâm tư của bạn, dù lúc này bạn đang ở rất xa.",
+        "care": "Viết từ trải nghiệm của mình và tôn trọng những cảm nhận khác biệt."
+      },
+      "avoidTitle": "Không nên",
+      "avoid": {
+        "privacy": "Để lại tên, thông tin liên lạc, địa chỉ riêng hay chi tiết có thể nhận diện bạn hoặc người khác.",
+        "attacks": "Xúc phạm, quấy rối, miệt thị, đe dọa hay bêu xấu một người hoặc một nhóm người.",
+        "harm": "Đăng nội dung tình dục rõ ràng, bạo lực ghê rợn, hoặc cổ súy việc làm hại bản thân hay người khác.",
+        "spam": "Quảng cáo, chào bán, gắn liên kết quảng bá hay gửi lặp lại cùng một nội dung."
+      },
+      "close": "Đóng hướng dẫn viết tâm tư",
+      "dismiss": "Mình hiểu rồi"
+    }
+  },
   "errorBoundary": {
     "title": "Ôi thôi chết, đã có lỗi ngoài ý muốn xảy ra :(",
     "description": "Xin lỗi vì đã làm gián đoạn trải nghiệm chia sẻ của bạn. Bạn hãy thử lại hoặc báo lỗi để mình khắc phục sớm nhất có thể nhé!",

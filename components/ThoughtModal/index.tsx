@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Dialog } from "radix-ui";
 import { useEffect, useState, type CSSProperties } from "react";
+import { useSystemStore } from "@/store/systemStore";
 
 interface ThoughtModalProps {
   open: boolean;
@@ -40,6 +41,7 @@ export default function ThoughtModal({ open, submissionId, origin, onOpenChange,
   const weather = useTranslations("weather");
   const [detail, setDetail] = useState<DetailState | null>(null);
   const [retry, setRetry] = useState(0);
+  const primaryColor = useSystemStore((state) => state.primaryColor);
 
   useEffect(() => {
     if (!open || !submissionId) return;
@@ -121,6 +123,9 @@ export default function ThoughtModal({ open, submissionId, origin, onOpenChange,
             )}
             <Dialog.Close asChild>
               <GlassButton
+                style={{
+                  '--glass-color': primaryColor
+                } as React.CSSProperties}
                 type="button"
                 className="thoughtModal-return"
               >

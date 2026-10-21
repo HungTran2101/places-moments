@@ -37,6 +37,7 @@ function submissionErrorKey(error: unknown, stage: SubmissionStage): ErrorMessag
 
 export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormProps) {
   const t = useTranslations("submission");
+
   const [description, setDescription] = useState("");
   const [hasDescriptionError, setHasDescriptionError] = useState(false);
   const [isDescriptionFlashing, setIsDescriptionFlashing] = useState(false);
@@ -48,6 +49,7 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
   } | null>(null);
   const [isWaiting, setIsWaiting] = useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
   const localDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const descriptionRef = inputRef ?? localDescriptionRef;
   const suffixRef = useRef<HTMLSpanElement>(null);
@@ -57,12 +59,22 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
     saved: boolean;
     resolveAnimation: () => void;
   } | null>(null);
+
+  const setSidebarOpen = useSystemStore((state) => state.setSidebarOpen);
+  const sidebarOpen = useSystemStore((state) => state.sidebarOpen);
   const { showError } = useError();
   const submissionMap = useSubmissionMapStore((state) => state.map);
   const isSubmitting = useSubmissionMapStore((state) => state.isSubmitting);
   const { lat, lng } = usePinStore();
   const isPlaced = usePinStore((state) => state.isPlaced);
+
   const isSubmitDisabled = isSubmitting || !isPlaced || !submissionMap;
+  const canShowLocationTooltip = sidebarOpen && !isSubmitting && !isPlaced;
+
+  useEffect(() => {
+    // Xóa yêu cầu mở cũ để tooltip không hiện lại khi gửi xong và ghim được bỏ đi.
+    if (!canShowLocationTooltip) setIsTooltipOpen(false);
+  }, [canShowLocationTooltip]);
 
   useEffect(() => usePinStore.subscribe((state) => {
     if (!state.isPlaced || !useSystemStore.getState().sidebarOpen
@@ -94,7 +106,6 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
       window.requestAnimationFrame(() => setIsDescriptionFlashing(true));
       return;
     }
-
     let stage: SubmissionStage = "map";
     let run: typeof activeRunRef.current = null;
     try {
@@ -128,25 +139,23 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
       const signal = controller.signal;
       // Hai API vẫn chạy trong lúc bubble bay; chỉ đưa dữ liệu mới lên bản đồ sau khi đến ghim.
       stage = "create";
-      const zoomDone = submissionMap.zoomToPin(signal);
-      // Zoom và lưu chạy song song; lỗi zoom vẫn được xử lý sau khi biết bài đã lưu hay chưa.
-      void zoomDone.catch(() => { });
       await createSubmission(
         { description: description.trim(), lat, lng, author_uuid },
         { reportGlobalError: false, signal },
       );
+      setSidebarOpen(false);
       currentRun.saved = true;
       signal.throwIfAborted();
       stage = "refresh";
       // Bài đã lưu thì xóa bản nháp, kể cả khi tải marker lỗi, tránh gửi trùng khi thử lại.
       setDescription("");
       // Chụp viewport sau khi zoom xong để tải đúng vị trí của suy nghĩ vừa gửi.
-      await zoomDone;
       const revealMarkers = await submissionMap.prepareMarkerRefresh(signal);
       refreshReady = true;
       await animationDone;
       signal.throwIfAborted();
       await revealMarkers();
+      submissionMap.zoomToPin(signal);
       // Bỏ bubble đã đến nơi trước khi di chuyển bản đồ để ảnh không đứng lại giữa màn hình.
       setFlight(null);
       setIsWaiting(false);
@@ -198,8 +207,8 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
         )}
       </label>
       <Tooltip
-        open={!isPlaced ? isTooltipOpen : false}
-        onOpenChange={setIsTooltipOpen}
+        open={canShowLocationTooltip && isTooltipOpen}
+        onOpenChange={(open) => setIsTooltipOpen(canShowLocationTooltip && open)}
       >
         <TooltipTrigger asChild>
           <div className="w-full">

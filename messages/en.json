@@ -28,6 +28,34 @@
     "clickMapToSubmitTooltip": "Please select a location on the map where you want to leave this thought :3",
     "sendingThought": "Your thought is being sent"
   },
+  "guidance": {
+    "title": "A little of you, left somewhere",
+    "about": "World of Moments is a quiet map of anonymous thoughts. Wander through words left by others, or choose a place on the map and leave a moment of your own.",
+    "writingTitle": "What can I write?",
+    "writing": "A memory of this place, something small you noticed, a feeling you’re carrying, or words you never said. Joy, longing, and hard days all belong here. A few honest lines are enough.",
+    "example": "“I used to take this road home. Today, the rain brought it all back.”",
+    "care": "Your words are public, with no name attached. Leave out personal details, write with care for whoever finds them, and keep this space true to its <purpose>purpose</purpose>.",
+    "rules": {
+      "title": "Keep a quiet corner of the world",
+      "description": "This is a place for small, honest thoughts tied to places. Write something another person can pause with, wherever they are in their day.",
+      "shouldTitle": "What belongs here",
+      "should": {
+        "personal": "Share a memory, a small observation, or words you never found a chance to say.",
+        "feelings": "Write honestly about joy, sadness, loneliness, grief, or anger. Difficult feelings are welcome too.",
+        "place": "Choose a place that holds meaning for your thought, even if you are far from it now.",
+        "care": "Speak from your own experience and leave room for others to feel differently."
+      },
+      "avoidTitle": "What to leave out",
+      "avoid": {
+        "privacy": "Names, contact details, private addresses, or anything that could identify you or someone else.",
+        "attacks": "Insults, harassment, hate, threats, or words aimed at shaming a person or group.",
+        "harm": "Sexually explicit content, graphic violence, or anything that encourages harm to yourself or others.",
+        "spam": "Ads, sales pitches, promotional links, or repeated messages."
+      },
+      "close": "Close writing guidelines",
+      "dismiss": "I understand"
+    }
+  },
   "errorBoundary": {
     "title": "Oh no! We hit an unexpected problem :(",
     "description": "The page ran into an error we could not recover from automatically. Please try again, or send us the details so we can fix it.",
