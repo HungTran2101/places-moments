@@ -53,6 +53,7 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
   const localDescriptionRef = useRef<HTMLTextAreaElement>(null);
   const descriptionRef = inputRef ?? localDescriptionRef;
   const suffixRef = useRef<HTMLSpanElement>(null);
+  const hasPlacedPinRef = useRef(false);
   const activeRunRef = useRef<{
     controller: AbortController;
     finish: (saved: boolean) => void;
@@ -77,12 +78,20 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
   }, [canShowLocationTooltip]);
 
   useEffect(() => usePinStore.subscribe((state) => {
-    if (!state.isPlaced || !useSystemStore.getState().sidebarOpen
-      || useSubmissionMapStore.getState().isSubmitting) return;
+    if (!state.isPlaced || useSubmissionMapStore.getState().isSubmitting) return;
+
+    const isFirstPlacement = !hasPlacedPinRef.current;
+    hasPlacedPinRef.current = true;
+
+    if (!useSystemStore.getState().sidebarOpen) {
+      // Chỉ tự mở ở lần đặt ghim đầu tiên; những lần sau tôn trọng việc người dùng đóng panel.
+      if (isFirstPlacement) setSidebarOpen(true);
+      return;
+    }
 
     // Focus ngay khi đặt hoặc di chuyển ghim, kể cả khi chọn lại cùng tọa độ.
     descriptionRef.current?.focus({ preventScroll: true });
-  }), [descriptionRef]);
+  }), [descriptionRef, setSidebarOpen]);
 
   useEffect(() => () => {
     // Hủy request và mở lại bản đồ khi form bị tháo giữa lúc gửi.

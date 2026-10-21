@@ -76,7 +76,7 @@ const Sidebar = () => {
     <motion.aside
       className="sidebar"
       style={{
-        padding: closing ? '0' : undefined
+        padding: closing && !sidebarOpen ? '0' : undefined
       }}
       initial={{ width: "0px", opacity: 0 }}
       animate={mapReady ? { ...asideAnim, opacity: 1 } : {
