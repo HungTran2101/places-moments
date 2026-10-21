@@ -11,6 +11,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { useEffect, useState, type CSSProperties } from "react";
 import { useSystemStore } from "@/store/systemStore";
 import { Skeleton } from "../shared/Skeleton";
+import TextTyping from "../shared/TextTyping";
 
 interface ThoughtModalProps {
   open: boolean;
@@ -101,14 +102,16 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
               ? (
                 <>
                   <span className="visually-hidden">{t("loading")}</span>
-                  <Skeleton row={2} />
+                  <Skeleton row={1} />
                 </>
               )
               : currentDetail.status === "error"
                 ? t(currentDetail.notFound
                   ? "notFound"
                   : "loadError")
-                : submission?.description}
+                : (
+                  <TextTyping text={submission?.description || ''} />
+                )}
           </Dialog.Description>
           {currentDetail?.status === "error" && !currentDetail.notFound && (
             <GlassButton type="button" onClick={() => setRetry((value) => value + 1)}>
