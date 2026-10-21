@@ -19,18 +19,13 @@
   }
 
   &-overlay {
-    position: fixed;
     z-index: 50;
-    inset: 0;
     background: #ffffff3d;
     backdrop-filter: blur(4px);
   }
 
   &-content {
-    position: fixed;
     z-index: 51;
-    top: 50%;
-    left: 50%;
     display: flex;
     flex-direction: column;
     width: min(36rem, calc(100% - 2rem));
@@ -39,7 +34,6 @@
     border: 1px solid rgb(255 255 255 / 85%);
     border-radius: 1.5rem;
     color: var(--color-text);
-    transform: translate(-50%, -50%);
   }
 
   &-header {

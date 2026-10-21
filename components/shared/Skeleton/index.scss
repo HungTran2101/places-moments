@@ -1,0 +1,35 @@
+.Skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625em;
+  width: 100%;
+  padding-block: 0.25em;
+  animation: skeleton-pulse 2s ease-in-out infinite;
+
+  &-row {
+    display: block;
+    width: 100%;
+    height: 1em;
+    border-radius: 0.375em;
+    background: color-mix(in srgb, var(--primary-color) 22%, transparent);
+
+    &:last-child:not(:first-child) {
+      width: 72%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}

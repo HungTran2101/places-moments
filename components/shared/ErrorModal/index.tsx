@@ -5,7 +5,8 @@ import { cn } from "@/lib/utils";
 import { getErrorMessageKey, type AppError } from "@/services/shared/errors";
 import { ClockFading, TriangleAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Dialog } from "radix-ui";
+import { Dialog } from "@/components/ui/dialog";
+import { useState } from "react";
 
 interface ErrorModalProps {
   open: boolean;
@@ -15,8 +16,13 @@ interface ErrorModalProps {
 
 export default function ErrorModal({ open, error, onOpenChange }: ErrorModalProps) {
   const t = useTranslations("errors");
+  const [lastError, setLastError] = useState(error);
 
-  const isRateLimitError = error?.status === 429;
+  // Provider xóa lỗi ngay khi đóng; giữ nội dung cũ đến hết hiệu ứng thoát để không nháy chữ.
+  if (open && lastError !== error) setLastError(error);
+  const visibleError = open ? error : lastError;
+
+  const isRateLimitError = visibleError?.status === 429;
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -30,7 +36,7 @@ export default function ErrorModal({ open, error, onOpenChange }: ErrorModalProp
           )}
           <Dialog.Title className="ErrorModal-title">{isRateLimitError ? t('rateLimitedTitle') : t("title")}</Dialog.Title>
           <Dialog.Description className="ErrorModal-description">
-            {t(error ? getErrorMessageKey(error) : "unexpected")}
+            {t(visibleError ? getErrorMessageKey(visibleError) : "unexpected")}
           </Dialog.Description>
           <Dialog.Close asChild>
             <GlassButton primaryColor="blue" type="button">{t("dismiss")}</GlassButton>

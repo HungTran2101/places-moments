@@ -1,21 +1,11 @@
 .thoughtModal {
   &-overlay {
-    position: fixed;
-    inset: 0;
     z-index: 50;
     background: rgb(68 61 94 / 24%);
     backdrop-filter: blur(4px);
-    animation: thought-overlay-in 180ms ease-out both;
-
-    &[data-state="closed"] {
-      animation: thought-overlay-out 140ms ease-in both;
-    }
   }
 
   &-content {
-    position: fixed;
-    top: 50%;
-    left: 50%;
     z-index: 51;
     display: flex;
     flex-direction: column;
@@ -27,13 +17,7 @@
     outline: none;
     color: var(--color-text);
     font-family: var(--font-mitr), sans-serif;
-    transform: translate(-50%, -50%);
     overflow: hidden;
-    animation: thought-modal-in 250ms ease-out both;
-
-    &[data-state="closed"] {
-      animation: thought-modal-out 200ms ease-in both;
-    }
   }
 
   &-header {
@@ -136,62 +120,5 @@
     &-return {
       align-self: stretch;
     }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &-overlay,
-    &-content {
-      animation-duration: 0.01ms;
-    }
-  }
-}
-
-@keyframes thought-overlay-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes thought-overlay-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes thought-modal-in {
-  from {
-    opacity: 0;
-
-    // Dịch tâm hộp thoại đến điểm nhấn rồi phóng lên, chỉ animate transform và opacity.
-    transform: translate(calc(-50% + var(--thought-origin-x, 50vw) - 50vw),
-        calc(-50% + var(--thought-origin-y, 50vh) - 50vh)) scale(0.08);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
-@keyframes thought-modal-out {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  to {
-    opacity: 0;
-
-    // Thu nhỏ về đúng điểm nhấn đã dùng khi mở hộp thoại.
-    transform: translate(calc(-50% + var(--thought-origin-x, 50vw) - 50vw),
-        calc(-50% + var(--thought-origin-y, 50vh) - 50vh)) scale(0.08);
   }
 }

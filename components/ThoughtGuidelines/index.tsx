@@ -3,7 +3,7 @@
 import { GlassButton } from "@/components/ui/glass-button";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Dialog } from "radix-ui";
+import { Dialog } from "@/components/ui/dialog";
 
 const ruleKeys = ["personal", "feelings", "place", "care"] as const;
 const avoidKeys = ["privacy", "attacks", "harm", "spam"] as const;

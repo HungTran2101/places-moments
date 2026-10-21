@@ -42,7 +42,7 @@ export function loadSubmissionAssets(map: MapLibreMap) {
 interface AddSubmissionLayersOptions {
   map: MapLibreMap;
   isCancelled: () => boolean;
-  onSubmissionClick: (submissionId: string, origin: { x: number; y: number }) => void;
+  onSubmissionClick: (submissionId: string) => void;
   onLoadError: (hasError: boolean) => void;
   isInteractionBlocked: () => boolean;
   isEntryReady: () => boolean;
@@ -314,11 +314,7 @@ export async function addSubmissionLayers({
     const id = event.features?.[0]?.properties.submissionId;
     if (typeof id !== "string" || isCancelled()) return;
     clearOverlays(true);
-    // Lưu tọa độ chuột trong viewport để hiệu ứng mở bắt đầu đúng nơi vừa nhấn.
-    onSubmissionClick(id, {
-      x: event.originalEvent.clientX,
-      y: event.originalEvent.clientY,
-    });
+    onSubmissionClick(id);
   }));
 
   const clearOverlays = (restoreIcons: boolean) => {

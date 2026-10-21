@@ -1,6 +1,6 @@
 "use client";
 
-import { useError } from "@/components/ErrorProvider";
+import { useError } from "@/components/shared/ErrorProvider";
 import { getOrCreateUUID } from "@/lib/uuid";
 import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import { ApiError, RUNTIME_ERROR_STATUS, type ErrorMessageKey } from "@/services/shared/errors";

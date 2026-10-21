@@ -16,8 +16,25 @@ const eslintConfig = defineConfig([
   {
     rules: {
       "react-hooks/set-state-in-effect": "off",
-      "@typescript-eslint/ban-ts-comment": "off"
+      "@typescript-eslint/ban-ts-comment": "off",
+      "no-restricted-imports": ["error", {
+        paths: [
+          {
+            name: "radix-ui",
+            importNames: ["Dialog"],
+            message: "Import Dialog from @/components/ui/dialog for shared modal motion.",
+          },
+          {
+            name: "@radix-ui/react-dialog",
+            message: "Import Dialog from @/components/ui/dialog for shared modal motion.",
+          },
+        ],
+      }],
     },
+  },
+  {
+    files: ["components/ui/dialog.tsx"],
+    rules: { "no-restricted-imports": "off" },
   },
 ]);
 

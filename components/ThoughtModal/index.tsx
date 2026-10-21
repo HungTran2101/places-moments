@@ -7,14 +7,14 @@ import { ApiError } from "@/services/shared/errors";
 import { ArrowLeft, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSun, Snowflake, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { Dialog } from "radix-ui";
+import { Dialog } from "@/components/ui/dialog";
 import { useEffect, useState, type CSSProperties } from "react";
 import { useSystemStore } from "@/store/systemStore";
+import { Skeleton } from "../shared/Skeleton";
 
 interface ThoughtModalProps {
   open: boolean;
   submissionId: string | null;
-  origin: { x: number; y: number } | null;
   onOpenChange: (open: boolean) => void;
   onReturnFocus: () => void;
 }
@@ -36,7 +36,7 @@ type DetailState =
   | { id: string; status: "ready"; submission: Submission }
   | { id: string; status: "error"; notFound: boolean };
 
-export default function ThoughtModal({ open, submissionId, origin, onOpenChange, onReturnFocus }: ThoughtModalProps) {
+export default function ThoughtModal({ open, submissionId, onOpenChange, onReturnFocus }: ThoughtModalProps) {
   const t = useTranslations("popup");
   const weather = useTranslations("weather");
   const [detail, setDetail] = useState<DetailState | null>(null);
@@ -70,17 +70,11 @@ export default function ThoughtModal({ open, submissionId, origin, onOpenChange,
     : submission?.weather_summary;
 
   return (
-    <Dialog.Root modal={false} open={open} onOpenChange={onOpenChange}>
+    <Dialog.Root key={submissionId} modal={false} open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        {/* <Dialog.Overlay className="thoughtModal-overlay" /> */}
         <Dialog.Content
-          key={submissionId}
           className="liquid-glass2 thoughtModal-content"
           style={{
-            ...(origin ? {
-              "--thought-origin-x": `${origin.x}px`,
-              "--thought-origin-y": `${origin.y}px`,
-            } : {}),
             '--blur-size': '10px',
           } as CSSProperties}
           // Chỉ chặn thao tác tự đóng của dialog, không chặn sự kiện chuột kéo bản đồ.
@@ -103,9 +97,17 @@ export default function ThoughtModal({ open, submissionId, origin, onOpenChange,
           </div>
 
           <Dialog.Description className="thoughtModal-thought" aria-live="polite" aria-busy={loading}>
-            {loading ? t("loading")
+            {loading
+              ? (
+                <>
+                  <span className="visually-hidden">{t("loading")}</span>
+                  <Skeleton row={2} />
+                </>
+              )
               : currentDetail.status === "error"
-                ? t(currentDetail.notFound ? "notFound" : "loadError")
+                ? t(currentDetail.notFound
+                  ? "notFound"
+                  : "loadError")
                 : submission?.description}
           </Dialog.Description>
           {currentDetail?.status === "error" && !currentDetail.notFound && (
@@ -115,12 +117,10 @@ export default function ThoughtModal({ open, submissionId, origin, onOpenChange,
           )}
 
           <div className="thoughtModal-footer">
-            {atmosphere && (
-              <p className="thoughtModal-weather">
-                <WeatherIcon code={Number(weatherKey || -1)} />
-                <span>{atmosphere}</span>
-              </p>
-            )}
+            <p className="thoughtModal-weather">
+              <WeatherIcon code={Number(weatherKey || -1)} />
+              <span>{atmosphere}</span>
+            </p>
             <Dialog.Close asChild>
               <GlassButton
                 style={{

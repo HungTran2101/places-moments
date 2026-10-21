@@ -51,11 +51,9 @@ export default function MapView() {
   const [submissionsRetry, setSubmissionsRetry] = useState(0);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<string | null>(null);
   const [thoughtModalOpen, setThoughtModalOpen] = useState(false);
-  const [thoughtOrigin, setThoughtOrigin] = useState<{ x: number; y: number } | null>(null);
 
-  const handleSubmissionClick = useCallback((submissionId: string, origin: { x: number; y: number }) => {
+  const handleSubmissionClick = useCallback((submissionId: string) => {
     setSelectedSubmissionId(submissionId);
-    setThoughtOrigin(origin);
     setThoughtModalOpen(true);
   }, []);
 
@@ -352,7 +350,6 @@ export default function MapView() {
       <ThoughtModal
         open={thoughtModalOpen}
         submissionId={selectedSubmissionId}
-        origin={thoughtOrigin}
         onOpenChange={setThoughtModalOpen}
         onReturnFocus={() => mapRef.current?.getCanvas().focus({ preventScroll: true })}
       />

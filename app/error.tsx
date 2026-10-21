@@ -1,6 +1,7 @@
 "use client";
 
-import ErrorFallback from "@/components/ErrorFallback";
+import ErrorFallback from "@/components/shared/ErrorFallback";
+
 
 export default function AppError({
   error,

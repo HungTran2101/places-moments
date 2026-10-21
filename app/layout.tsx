@@ -1,4 +1,4 @@
-import { ErrorProvider } from "@/components/ErrorProvider";
+import { ErrorProvider } from "@/components/shared/ErrorProvider";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
@@ -8,6 +8,7 @@ import { Lemonada, Mitr, Geist } from "next/font/google";
 import "../styles/import.scss";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { DialogMotionProvider } from "@/components/ui/dialog";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -55,11 +56,13 @@ export default async function RootLayout({
     <html lang={locale} className={cn("font-sans", geist.variable)}>
       <body className={cn(mitr.variable, lemonada.variable)}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <ErrorProvider>
-            <TooltipProvider>
-              {children}
-            </TooltipProvider>
-          </ErrorProvider>
+          <DialogMotionProvider>
+            <ErrorProvider>
+              <TooltipProvider>
+                {children}
+              </TooltipProvider>
+            </ErrorProvider>
+          </DialogMotionProvider>
         </NextIntlClientProvider>
         {/* <a href='https://pngtree.com/freepng/cloud-weather-climate_8186751.html'>png image from pngtree.com/</a> */}
       </body>

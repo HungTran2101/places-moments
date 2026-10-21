@@ -1,6 +1,6 @@
 "use client";
 
-import { GlobalErrorFallback } from "@/components/ErrorFallback";
+import { GlobalErrorFallback } from "@/components/shared/ErrorFallback";
 
 export default function GlobalError({
   error,

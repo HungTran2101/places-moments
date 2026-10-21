@@ -4,10 +4,10 @@ import enMessages from "@/messages/en.json";
 import viMessages from "@/messages/vi.json";
 import { Mail, RotateCcw, TriangleAlert } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { GlassButton } from "../ui/glass-button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { GlassButton } from "@/components/ui/glass-button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components//ui/tooltip";
 import { Locale } from "@/i18n/config";
-import MapLoading from "../MapView/MapLoading";
+import MapLoading from "@/components/MapView/MapLoading";
 
 interface ErrorFallbackProps {
   error: Error & { digest?: string };
