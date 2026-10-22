@@ -27,6 +27,16 @@ activity or popularity.
 - Keep realtime behavior subtle; new markers may animate quietly without sounds or
   pop-up notifications.
 
+## Code linting
+
+- When writing or editing `.ts` or `.tsx` files, follow the project's ESLint rules.
+  The `lint:script` script is `eslint "**/*.tsx" --fix`.
+- When writing or editing `.css` or `.scss` files, follow the project's Stylelint
+  rules. The `lint:style` script is `stylelint "**/*.scss" --fix`.
+- Run the relevant linter with `--fix` on changed files before completing the task.
+  Include `.ts` and `.css` files explicitly when needed, since the scripts above
+  only target `.tsx` and `.scss` files.
+
 ## Code comments
 
 - Write comments explaining important logic in Vietnamese, especially data loading,

@@ -56,7 +56,7 @@ html,
 body {
   height: 100%;
   font-family: var(--font-sans);
-  background: var(--color-bg);
+  background: var(--map-loading-background);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

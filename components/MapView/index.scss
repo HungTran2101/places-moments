@@ -95,9 +95,7 @@
     position: absolute;
     inset: 0;
     isolation: isolate;
-    background:
-      radial-gradient(circle at 50% 42%, rgb(230 236 247 / 90%), transparent 28%),
-      linear-gradient(180deg, #c4c8f2 0%, #d8dff3 36%, #edf3f8 72%, #f8fafc 100%);
+    background: var(--map-loading-background);
     perspective: 1400px;
     transform-style: preserve-3d;
     overflow: hidden;
