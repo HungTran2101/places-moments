@@ -17,7 +17,8 @@ export default function ThoughtGuidelines() {
       <p className="sidebar-guidance-care">
         {t.rich("care", {
           purpose: (chunks) => (
-            <Dialog.Trigger asChild>
+            // Dialog chỉ có một bản trên trang; giữ liên kết ARIA ổn định qua SSR và hydrate.
+            <Dialog.Trigger asChild aria-controls="thought-guidelines-dialog">
               <button type="button" className="thoughtGuidelines-trigger">{chunks}</button>
             </Dialog.Trigger>
           ),
@@ -28,7 +29,7 @@ export default function ThoughtGuidelines() {
         <RefractiveGlass
           brightness={1.1}
         >
-          <Dialog.Content className="thoughtGuidelines-content">
+          <Dialog.Content id="thought-guidelines-dialog" className="thoughtGuidelines-content">
             <div className="thoughtGuidelines-header">
               <Dialog.Title className="thoughtGuidelines-title">{t("rules.title")}</Dialog.Title>
               <Dialog.Close asChild>

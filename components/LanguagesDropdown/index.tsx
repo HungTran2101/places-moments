@@ -26,14 +26,15 @@ const LanguagesDropdown = () => {
     <div className="fixed z-10 top-2 right-2">
       <DropdownMenu>
         <RefractiveGlass>
-          <DropdownMenuTrigger asChild>
+          {/* Menu chỉ có một bản trên trang; dùng ID cố định để tránh lỗi useId khi hydrate ở Next.js 16.1. */}
+          <DropdownMenuTrigger asChild id="languages-menu-trigger" aria-controls="languages-menu-content">
             <Button variant={"link"}>
               <Languages />
             </Button>
           </DropdownMenuTrigger>
         </RefractiveGlass>
         <RefractiveGlass>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent id="languages-menu-content" aria-labelledby="languages-menu-trigger" align="end">
             {locales.map((itemLocale) => (
               <DropdownMenuItem
                 key={itemLocale}

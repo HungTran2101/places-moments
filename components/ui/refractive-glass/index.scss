@@ -7,10 +7,12 @@
   pointer-events: none;
 }
 
-// Tạo ngữ cảnh xếp lớp cho mặt kính âm, vẫn giữ z-index riêng của modal và menu.
-:where([data-refractive-glass]) {
-  position: relative;
-  z-index: 0;
+// Đặt mặc định trong layer base để utility z-index của menu vẫn được ưu tiên.
+@layer base {
+  :where([data-refractive-glass]) {
+    position: relative;
+    z-index: 0;
+  }
 }
 
 // Chỉ ghi đè khi SVG đã sẵn sàng; fallback dùng nguyên CSS của liquid-glass2.
