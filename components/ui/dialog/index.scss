@@ -12,7 +12,7 @@
 
     // Chỉ đổi transform khi phóng/thu để lớp kính luôn lấy được nền bản đồ trong lúc chuyển động.
     &[data-state="open"] {
-      animation: modal-zoom-in 500ms cubic-bezier(.4, .41, 0, 1.14) both;
+      animation: modal-zoom-in 500ms cubic-bezier(.31, .39, 0, 1.19) both;
     }
 
     &[data-state="closed"] {

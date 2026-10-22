@@ -33,7 +33,7 @@ const LanguagesDropdown = () => {
           </DropdownMenuTrigger>
         </RefractiveGlass>
         <RefractiveGlass>
-          <DropdownMenuContent align="end" className="bg-transparent">
+          <DropdownMenuContent align="end">
             {locales.map((itemLocale) => (
               <DropdownMenuItem
                 key={itemLocale}

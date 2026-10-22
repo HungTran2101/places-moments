@@ -2,6 +2,7 @@
 
 import { Dialog } from "@/components/ui/dialog";
 import { GlassButton } from "@/components/ui/glass-button";
+import { rgbToHex } from "@/lib/utils";
 import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import { ApiError } from "@/services/shared/errors";
 import { getSubmissionById, type Submission } from "@/services/submissions";
@@ -10,7 +11,7 @@ import { ArrowLeft, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, Cl
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Skeleton } from "../shared/Skeleton";
+import { LoadingDots } from "../shared/LoadingDots";
 import TextTyping from "../shared/TextTyping";
 import { RefractiveGlass } from "@/components/ui/refractive-glass";
 
@@ -43,7 +44,9 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
   const weather = useTranslations("weather");
   const [detail, setDetail] = useState<DetailState | null>(null);
   const [retry, setRetry] = useState(0);
+
   const primaryColor = useSystemStore((state) => state.primaryColor);
+  const secondaryColor = useSystemStore((state) => state.secondaryColor);
 
   useEffect(() => {
     if (!open || !submissionId) return;
@@ -106,7 +109,7 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
                 ? (
                   <>
                     <span className="visually-hidden">{t("loading")}</span>
-                    <Skeleton row={1} />
+                    <LoadingDots color={rgbToHex(secondaryColor)} />
                   </>
                 )
                 : currentDetail?.status === "error"
