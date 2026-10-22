@@ -1,17 +1,18 @@
 "use client";
 
+import { Dialog } from "@/components/ui/dialog";
 import { GlassButton } from "@/components/ui/glass-button";
 import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
-import { getSubmissionById, type Submission } from "@/services/submissions";
 import { ApiError } from "@/services/shared/errors";
+import { getSubmissionById, type Submission } from "@/services/submissions";
+import { useSystemStore } from "@/store/systemStore";
 import { ArrowLeft, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSun, Snowflake, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { Dialog } from "@/components/ui/dialog";
-import { useEffect, useState, type CSSProperties } from "react";
-import { useSystemStore } from "@/store/systemStore";
+import { useEffect, useState } from "react";
 import { Skeleton } from "../shared/Skeleton";
 import TextTyping from "../shared/TextTyping";
+import { RefractiveGlass } from "@/components/ui/refractive-glass";
 
 interface ThoughtModalProps {
   open: boolean;
@@ -73,71 +74,75 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
   return (
     <Dialog.Root key={submissionId} modal={false} open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Content
-          className="liquid-glass2 thoughtModal-content"
-          style={{
-            '--blur-size': '10px',
-          } as CSSProperties}
-          // Chỉ chặn thao tác tự đóng của dialog, không chặn sự kiện chuột kéo bản đồ.
-          onInteractOutside={(event) => event.preventDefault()}
-          onEscapeKeyDown={(event) => event.preventDefault()}
-          onCloseAutoFocus={(event) => {
-            // Ghim WebGL không có Dialog.Trigger; trả focus về canvas để tiếp tục khám phá bản đồ.
-            event.preventDefault();
-            if (!open) onReturnFocus();
-          }}
+        <RefractiveGlass
+          bezelWidth={50}
         >
-          <div className="thoughtModal-header">
-            <Image className="thoughtModal-bubble" src={thoughtBubbleImg} alt="" sizes="44px" />
-            <Dialog.Title className="thoughtModal-title">{t("title")}</Dialog.Title>
-            {/* <Dialog.Close asChild>
-              <GlassButton type="button" size="icon" className="thoughtModal-close" aria-label={t("close")}>
-                <X aria-hidden="true" />
-              </GlassButton>
-            </Dialog.Close> */}
-          </div>
+          <Dialog.Content
+            className="thoughtModal-content"
+            // style={{
+            //   '--blur-size': '10px',
+            // } as CSSProperties}
+            // Chỉ chặn thao tác tự đóng của dialog, không chặn sự kiện chuột kéo bản đồ.
+            onInteractOutside={(event) => event.preventDefault()}
+            onEscapeKeyDown={(event) => event.preventDefault()}
+            onCloseAutoFocus={(event) => {
+              // Ghim WebGL không có Dialog.Trigger; trả focus về canvas để tiếp tục khám phá bản đồ.
+              event.preventDefault();
+              if (!open) onReturnFocus();
+            }}
+          >
+            <div className="thoughtModal-header">
+              <Image className="thoughtModal-bubble" src={thoughtBubbleImg} alt="" sizes="44px" />
+              <Dialog.Title className="thoughtModal-title">{t("title")}</Dialog.Title>
+              {/* <Dialog.Close asChild>
+                <GlassButton type="button" size="icon" className="thoughtModal-close" aria-label={t("close")}>
+                  <X aria-hidden="true" />
+                </GlassButton>
+              </Dialog.Close> */}
+            </div>
 
-          <Dialog.Description className="thoughtModal-thought" aria-live="polite" aria-busy={loading}>
-            {loading
-              ? (
-                <>
-                  <span className="visually-hidden">{t("loading")}</span>
-                  <Skeleton row={1} />
-                </>
-              )
-              : currentDetail.status === "error"
-                ? t(currentDetail.notFound
-                  ? "notFound"
-                  : "loadError")
-                : (
-                  <TextTyping text={submission?.description || ''} />
-                )}
-          </Dialog.Description>
-          {currentDetail?.status === "error" && !currentDetail.notFound && (
-            <GlassButton type="button" onClick={() => setRetry((value) => value + 1)}>
-              {t("retry")}
-            </GlassButton>
-          )}
-
-          <div className="thoughtModal-footer">
-            <p className="thoughtModal-weather">
-              <WeatherIcon code={Number(weatherKey || -1)} />
-              <span>{atmosphere}</span>
-            </p>
-            <Dialog.Close asChild>
-              <GlassButton
-                style={{
-                  '--glass-color': primaryColor
-                } as React.CSSProperties}
-                type="button"
-                className="thoughtModal-return"
-              >
-                <ArrowLeft aria-hidden="true" />
-                {t("backToMap")}
+            <Dialog.Description className="thoughtModal-thought" aria-live="polite" aria-busy={loading}>
+              {loading
+                ? (
+                  <>
+                    <span className="visually-hidden">{t("loading")}</span>
+                    <Skeleton row={1} />
+                  </>
+                )
+                : currentDetail?.status === "error"
+                  ? t(currentDetail.notFound
+                    ? "notFound"
+                    : "loadError")
+                  : (
+                    <TextTyping text={submission?.description || ''} />
+                  )}
+            </Dialog.Description>
+            {currentDetail?.status === "error" && !currentDetail.notFound && (
+              <GlassButton type="button" onClick={() => setRetry((value) => value + 1)}>
+                {t("retry")}
               </GlassButton>
-            </Dialog.Close>
-          </div>
-        </Dialog.Content>
+            )}
+
+            <div className="thoughtModal-footer">
+              <p className="thoughtModal-weather">
+                <WeatherIcon code={Number(weatherKey || -1)} />
+                <span>{atmosphere}</span>
+              </p>
+              <Dialog.Close asChild>
+                <GlassButton
+                  style={{
+                    '--glass-color': primaryColor
+                  } as React.CSSProperties}
+                  type="button"
+                  className="thoughtModal-return"
+                >
+                  <ArrowLeft aria-hidden="true" />
+                  {t("backToMap")}
+                </GlassButton>
+              </Dialog.Close>
+            </div>
+          </Dialog.Content>
+        </RefractiveGlass>
       </Dialog.Portal>
     </Dialog.Root>
   );

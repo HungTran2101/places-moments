@@ -3,7 +3,6 @@
 @use "./page";
 @use "./keyframes";
 @use "./custom";
-@use "./ui/dialog";
 
 // Components
 @use "../components/MapView";
@@ -15,4 +14,6 @@
 @use "../components/ThoughtModal";
 @use "../components/ThoughtGuidelines";
 @use "../components/shared/ErrorModal";
-@use "../components/shared/Skeleton"
+@use "../components/shared/Skeleton";
+@use "../components/ui/refractive-glass";
+@use "../components/ui/dialog";

@@ -1,35 +1,3 @@
-.liquid-glass {
-  --glass-color: 255, 255, 255;
-
-  position: relative;
-  box-shadow: 0 6px 24px rgb(0 0 0 / 20%);
-}
-
-.liquid-glass:focus {
-  outline: none;
-}
-
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  box-shadow: inset 0 0 13px -2px rgb(var(--glass-color));
-  background-color: rgb(var(--glass-color), 0.17);
-}
-
-.liquid-glass::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  backdrop-filter: blur(2px);
-  filter: url("#glass-distortion");
-  will-change: backdrop-filter;
-}
-
 .liquid-glass2 {
   --glass-color: 255, 255, 255;
   --blur-size: 6px;
@@ -53,14 +21,6 @@
   border-radius: inherit;
   box-shadow: inset 0 0 13px -2px rgb(var(--glass-color));
   background-color: rgb(var(--glass-color), 0.17);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .liquid-glass {
-    &::after {
-      filter: none;
-    }
-  }
 }
 
 .gradient-text {

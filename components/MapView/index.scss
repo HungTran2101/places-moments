@@ -76,6 +76,15 @@
     transform-origin: bottom right;
     transition: all 0.3s ease;
 
+    // Opacity của nhãn tạo backdrop root; lọc trên chính nhãn để vẫn lấy được nền bản đồ.
+    &[data-refractive-glass='active'] {
+      backdrop-filter: var(--refraction-filter) saturate(1.08);
+
+      &::after {
+        backdrop-filter: none;
+      }
+    }
+
     &:hover {
       transform: scale(1);
       opacity: 1;

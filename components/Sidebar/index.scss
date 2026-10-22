@@ -17,6 +17,18 @@
     height: 100%;
     overflow: hidden;
 
+    // clip-path và opacity tạo backdrop root, khiến ::after không lấy được nền bản đồ.
+    // Lọc ngay trên panel để giữ khúc xạ trong suốt chuyển động mở/đóng hình tròn.
+    @media (prefers-reduced-motion: no-preference) {
+      &[data-refractive-glass='active'] {
+        backdrop-filter: var(--refraction-filter) saturate(1.08);
+
+        &::after {
+          backdrop-filter: none;
+        }
+      }
+    }
+
     // transition-property: clip-path, opacity;
     // transition-duration: 0.5s;
     // transition-timing-function: ease-in-out;
@@ -94,7 +106,7 @@
       }
     }
 
-    .liquid-glass {
+    &-glass {
       width: 50px;
       height: 50px;
       border-radius: 100%;

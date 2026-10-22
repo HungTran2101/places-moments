@@ -1,6 +1,7 @@
 "use client";
 
 import ThoughtModal from "@/components/ThoughtModal";
+import { RefractiveGlass } from "@/components/ui/refractive-glass";
 import { cn } from "@/lib/utils";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
@@ -335,16 +336,20 @@ export default function MapView() {
         ref={containerRef}
         className={cn("MapView-map", mapReady && "is-ready")}
       />
-      <div className="MapView-disclaimer liquid-glass" aria-label="Map disclaimer">
-        <p>{t('disclaimer')}</p>
-      </div>
-      {submissionsError && (
-        <div className="MapView-submissionsError liquid-glass" role="status">
-          <p>{t("submissionsLoadError")}</p>
-          <button type="button" onClick={() => setSubmissionsRetry((value) => value + 1)}>
-            {t("retry")}
-          </button>
+      <RefractiveGlass>
+        <div className="MapView-disclaimer" aria-label="Map disclaimer">
+          <p>{t('disclaimer')}</p>
         </div>
+      </RefractiveGlass>
+      {submissionsError && (
+        <RefractiveGlass>
+          <div className="MapView-submissionsError" role="status">
+            <p>{t("submissionsLoadError")}</p>
+            <button type="button" onClick={() => setSubmissionsRetry((value) => value + 1)}>
+              {t("retry")}
+            </button>
+          </div>
+        </RefractiveGlass>
       )}
       {showLoader && <MapLoading />}
       <ThoughtModal

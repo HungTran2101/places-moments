@@ -9,11 +9,11 @@ import { useTranslations } from "next-intl"
 import { useMemo, useRef, useState } from "react"
 import SubmissionForm from "../SubmissionForm"
 import ThoughtGuidelines from "../ThoughtGuidelines"
+import { RefractiveGlass } from "../ui/refractive-glass"
 
 const Sidebar = () => {
   const t = useTranslations("guidance");
   const sw = useSystemStore((state) => state.sidebarWidth)
-  const glassPrimaryColor = useSystemStore(state => state.primaryColor)
   const mapReady = useSystemStore((state) => state.mapReady);
   const sidebarOpen = useSystemStore((state) => state.sidebarOpen);
   const setSidebarOpen = useSystemStore((state) => state.setSidebarOpen);
@@ -88,43 +88,38 @@ const Sidebar = () => {
         delay: sidebarOpen ? 0 : 0.6
       }}
     >
-      {/* <motion.div
-        className="liquid-glass absolute inset-[0_0_0_20px] rounded-lg"
-        animate={{
-          opacity: open ? 1 : 0
-        }}
-        transition={{
-          delay: open ? 1.3 : 0
-        }}
-      > */}
-      <motion.div
-        className="sidebar-content liquid-glass2"
-        initial={{
-          clipPath: "circle(1px at calc(100% - 20px) calc(100% - 20px))",
-          opacity: 0.5
-        }}
-        animate={panelAnim}
-        transition={{
-          duration: 0.6,
-          delay: sidebarOpen ? 0.7 : 0
-        }}
-        onAnimationComplete={handlePanelAnimationComplete}
+      <RefractiveGlass
+        blur={5}
+        bezelWidth={50}
       >
-        <div className="sidebar-scroll">
-          <SubmissionForm inputRef={descriptionRef} />
-          <section className="sidebar-guidance" aria-labelledby="guidance-title">
-            <h2 id="guidance-title">{t("title")}</h2>
-            <p>{t("about")}</p>
-            <h3>{t("writingTitle")}</h3>
-            <div className="sidebar-guidance-writing">
-              <p>{t("writing")}</p>
-            </div>
-            <blockquote>{t("example")}</blockquote>
-            <ThoughtGuidelines />
-          </section>
-        </div>
-      </motion.div>
-      {/* </motion.div> */}
+        <motion.div
+          className="sidebar-content"
+          initial={{
+            clipPath: "circle(1px at calc(100% - 20px) calc(100% - 20px))",
+            opacity: 0.5
+          }}
+          animate={panelAnim}
+          transition={{
+            duration: 0.6,
+            delay: sidebarOpen ? 0.7 : 0
+          }}
+          onAnimationComplete={handlePanelAnimationComplete}
+        >
+          <div className="sidebar-scroll">
+            <SubmissionForm inputRef={descriptionRef} />
+            <section className="sidebar-guidance" aria-labelledby="guidance-title">
+              <h2 id="guidance-title">{t("title")}</h2>
+              <p>{t("about")}</p>
+              <h3>{t("writingTitle")}</h3>
+              <div className="sidebar-guidance-writing">
+                <p>{t("writing")}</p>
+              </div>
+              <blockquote>{t("example")}</blockquote>
+              <ThoughtGuidelines />
+            </section>
+          </div>
+        </motion.div>
+      </RefractiveGlass>
 
       <motion.span
         className="sidebar-button"
@@ -140,19 +135,19 @@ const Sidebar = () => {
         style={{ offsetPath: path }}
         onAnimationComplete={handleAsideAnimationComplete}
       >
-        <motion.div
-          style={{
-            '--glass-color': glassPrimaryColor
-          } as React.CSSProperties}
-          className="liquid-glass"
-          animate={{ scale: sidebarOpen ? 0.8 : 1 }}
-          transition={{ delay: sidebarOpen ? 0.7 : 0.4 }}
-        />
+        <RefractiveGlass
+          brightness={0.95}
+        >
+          <motion.div
+            className="sidebar-button-glass"
+            animate={{ scale: sidebarOpen ? 0.8 : 1 }}
+            transition={{ delay: sidebarOpen ? 0.7 : 0.4 }}
+          />
+        </RefractiveGlass>
 
         <ChevronRight
           className="icon"
           color="#fff"
-          // color={open ? "#eaa6ff" : "#fff"}
           style={{ transition: "stroke 1.5s ease" }}
         />
       </motion.span>

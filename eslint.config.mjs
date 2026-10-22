@@ -33,7 +33,7 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ["components/ui/dialog.tsx"],
+    files: ["components/ui/dialog/index.tsx"],
     rules: { "no-restricted-imports": "off" },
   },
 ]);

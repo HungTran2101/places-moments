@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { RefractiveGlass } from "@/components/ui/refractive-glass";
 
 const LanguagesDropdown = () => {
   const t = useTranslations("nav");
@@ -24,23 +25,27 @@ const LanguagesDropdown = () => {
   return (
     <div className="fixed z-10 top-2 right-2">
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant={"link"} className="liquid-glass2">
-            <Languages />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="bg-transparent liquid-glass2">
-          {locales.map((itemLocale) => (
-            <DropdownMenuItem
-              key={itemLocale}
-              active={locale === itemLocale}
-              className="text-[12px] cursor-pointer"
-              onClick={() => handleChangeLanguage(itemLocale)}
-            >
-              {itemLocale === "vi" ? "🇻🇳" : "🇺🇸"} <span>{t(itemLocale)}</span>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
+        <RefractiveGlass>
+          <DropdownMenuTrigger asChild>
+            <Button variant={"link"}>
+              <Languages />
+            </Button>
+          </DropdownMenuTrigger>
+        </RefractiveGlass>
+        <RefractiveGlass>
+          <DropdownMenuContent align="end" className="bg-transparent">
+            {locales.map((itemLocale) => (
+              <DropdownMenuItem
+                key={itemLocale}
+                active={locale === itemLocale}
+                className="text-[12px] cursor-pointer"
+                onClick={() => handleChangeLanguage(itemLocale)}
+              >
+                {itemLocale === "vi" ? "🇻🇳" : "🇺🇸"} <span>{t(itemLocale)}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </RefractiveGlass>
       </DropdownMenu>
     </div>
   );

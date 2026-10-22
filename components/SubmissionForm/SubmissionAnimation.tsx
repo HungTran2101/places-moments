@@ -1,6 +1,7 @@
 "use client";
 
 import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
+import { RefractiveGlass } from "@/components/ui/refractive-glass";
 import type { ScreenPoint } from "@/store/useSubmissionMapStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
@@ -99,21 +100,23 @@ export default function SubmissionAnimation({ origin, getDestination, subscribeT
       </div>
       <AnimatePresence>
         {waiting && (
-          <motion.div
-            className="SubmissionFlight-notification liquid-glass"
-            role="status"
-            initial={{ y: "calc(100% + 2rem)", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "calc(100% + 2rem)", opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <span>{t("sendingThought")}</span>
-            <span className="SubmissionFlight-dots" aria-hidden="true">
-              <span>.</span>
-              <span>.</span>
-              <span>.</span>
-            </span>
-          </motion.div>
+          <RefractiveGlass>
+            <motion.div
+              className="SubmissionFlight-notification"
+              role="status"
+              initial={{ y: "calc(100% + 2rem)", opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: "calc(100% + 2rem)", opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <span>{t("sendingThought")}</span>
+              <span className="SubmissionFlight-dots" aria-hidden="true">
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+              </span>
+            </motion.div>
+          </RefractiveGlass>
         )}
       </AnimatePresence>
     </>,

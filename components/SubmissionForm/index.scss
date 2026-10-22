@@ -112,6 +112,15 @@
     font-size: 0.875rem;
     text-align: center;
     pointer-events: none;
+
+    // Lọc trên chính thông báo để opacity khi xuất hiện/biến mất không chặn nền bản đồ.
+    &[data-refractive-glass='active'] {
+      backdrop-filter: var(--refraction-filter) saturate(1.08);
+
+      &::after {
+        backdrop-filter: none;
+      }
+    }
   }
 
   &-dots {
