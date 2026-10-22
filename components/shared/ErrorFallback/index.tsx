@@ -5,6 +5,7 @@ import viMessages from "@/messages/vi.json";
 import { Mail, RotateCcw, TriangleAlert } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { GlassButton } from "@/components/ui/glass-button";
+import { RefractiveGlass } from "@/components/ui/refractive-glass";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components//ui/tooltip";
 import { Locale } from "@/i18n/config";
 import MapLoading from "@/components/MapView/MapLoading";
@@ -82,110 +83,111 @@ export default function ErrorFallback({ error, onRetry }: ErrorFallbackProps) {
             padding: "16px",
           }}
         >
-          <div
-            style={{
-              width: "min(100%, 460px)",
-              borderRadius: "28px",
-              padding: "24px",
-              textAlign: "center",
-            }}
-            className="liquid-glass2"
-          >
+          <RefractiveGlass>
             <div
               style={{
-                width: "72px",
-                height: "72px",
-                borderRadius: "999px",
-                margin: "0 auto 20px",
-                display: "grid",
-                placeItems: "center",
-                background: "linear-gradient(135deg, var(--primary-color), var(--secondary-color))",
-                color: "#fff",
-                boxShadow: "0 12px 30px rgba(var(--primary-color-var), 0.35)",
+                width: "min(100%, 460px)",
+                borderRadius: "28px",
+                padding: "24px",
+                textAlign: "center",
               }}
             >
-              <TriangleAlert size={34} strokeWidth={2.2} />
-            </div>
-
-            <h1
-              style={{
-                margin: 0,
-                fontSize: "clamp(1.2rem, 2.6vw, 1.8rem)",
-                lineHeight: 1.3,
-                color: "#24324a",
-              }}
-            >
-              {copy.title}
-            </h1>
-
-            <p
-              style={{
-                margin: "14px auto 0",
-                maxWidth: "42ch",
-                fontSize: "1rem",
-                lineHeight: 1.75,
-                color: "#51607f",
-              }}
-            >
-              {copy.description}
-            </p>
-
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "center",
-                gap: "12px",
-                marginTop: "28px",
-              }}
-            >
-              <GlassButton onClick={onRetry} className="px-8 py-5 rounded-full min-w-[170px]" >
-                <RotateCcw size={18} />
-                {copy.retry}
-              </GlassButton>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <GlassButton
-                    onClick={handleReport}
-                    disabled={!canReport}
-                    title={!canReport ? copy.reportUnavailable : undefined}
-                    className="px-8 py-5 rounded-full min-w-[170px]"
-                    primaryColor="blue"
-                  >
-                    <Mail size={18} />
-                    {copy.report}
-                  </GlassButton>
-                </TooltipTrigger>
-                <TooltipContent className="text-center">
-                  {copy.reportTooltip}
-                </TooltipContent>
-              </Tooltip>
-            </div>
-
-            {!canReport ? (
-              <p
+              <div
                 style={{
-                  marginTop: "14px",
-                  fontSize: "0.92rem",
-                  color: "#6d7894",
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "999px",
+                  margin: "0 auto 20px",
+                  display: "grid",
+                  placeItems: "center",
+                  background: "linear-gradient(135deg, var(--primary-color), var(--secondary-color))",
+                  color: "#fff",
+                  boxShadow: "0 12px 30px rgba(var(--primary-color-var), 0.35)",
                 }}
               >
-                {copy.reportUnavailable}
-              </p>
-            ) : null}
-            {reportClicked ? (
-              <p
+                <TriangleAlert size={34} strokeWidth={2.2} />
+              </div>
+
+              <h1
                 style={{
-                  marginTop: "14px",
-                  fontSize: "0.92rem",
-                  color: "#00a011",
+                  margin: 0,
+                  fontSize: "clamp(0.6rem, 2vw, 1.6rem)",
+                  lineHeight: 1.3,
+                  color: "#24324a",
                 }}
               >
-                {copy.reportThanks}
+                {copy.title}
+              </h1>
+
+              <p
+                style={{
+                  margin: "14px auto 0",
+                  maxWidth: "42ch",
+                  fontSize: "1rem",
+                  lineHeight: 1.75,
+                  color: "#51607f",
+                }}
+              >
+                {copy.description}
               </p>
-            ) : null}
-          </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  gap: "12px",
+                  marginTop: "28px",
+                }}
+              >
+                <GlassButton onClick={onRetry} className="px-8 py-5 rounded-full min-w-[170px]" >
+                  <RotateCcw size={18} />
+                  {copy.retry}
+                </GlassButton>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <GlassButton
+                      onClick={handleReport}
+                      disabled={!canReport}
+                      title={!canReport ? copy.reportUnavailable : undefined}
+                      className="px-8 py-5 rounded-full min-w-[170px]"
+                      primaryColor="blue"
+                    >
+                      <Mail size={18} />
+                      {copy.report}
+                    </GlassButton>
+                  </TooltipTrigger>
+                  <TooltipContent className="text-center">
+                    {copy.reportTooltip}
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+
+              {!canReport ? (
+                <p
+                  style={{
+                    marginTop: "14px",
+                    fontSize: "0.92rem",
+                    color: "#6d7894",
+                  }}
+                >
+                  {copy.reportUnavailable}
+                </p>
+              ) : null}
+              {reportClicked ? (
+                <p
+                  style={{
+                    marginTop: "14px",
+                    fontSize: "0.92rem",
+                    color: "#00a011",
+                  }}
+                >
+                  {copy.reportThanks}
+                </p>
+              ) : null}
+            </div>
+          </RefractiveGlass>
         </section>
       </MapLoading>
     </TooltipProvider>

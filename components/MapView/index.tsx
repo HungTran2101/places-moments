@@ -219,6 +219,9 @@ export default function MapView() {
           focus() {
             if (!cancelled) map.getCanvas().focus({ preventScroll: true });
           },
+          openThought(submissionId) {
+            if (!cancelled) handleSubmissionClick(submissionId);
+          },
           async zoomToPin(signal) {
             signal.throwIfAborted();
             const pin = pinRef.current;

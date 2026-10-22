@@ -117,6 +117,7 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
     }
     let stage: SubmissionStage = "map";
     let run: typeof activeRunRef.current = null;
+    let submissionId: string | null = null;
     try {
       if (!submissionMap || !suffixRef.current) {
         showError(new Error("Map is not ready"), { messageKey: "mapUnavailable" });
@@ -148,26 +149,26 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
       const signal = controller.signal;
       // Hai API vẫn chạy trong lúc bubble bay; chỉ đưa dữ liệu mới lên bản đồ sau khi đến ghim.
       stage = "create";
-      await createSubmission(
+      const submission = await createSubmission(
         { description: description.trim(), lat, lng, author_uuid },
         { reportGlobalError: false, signal },
       );
+      submissionId = submission.id;
       setSidebarOpen(false);
       currentRun.saved = true;
       signal.throwIfAborted();
       stage = "refresh";
       // Bài đã lưu thì xóa bản nháp, kể cả khi tải marker lỗi, tránh gửi trùng khi thử lại.
       setDescription("");
-      // Chụp viewport sau khi zoom xong để tải đúng vị trí của suy nghĩ vừa gửi.
       const revealMarkers = await submissionMap.prepareMarkerRefresh(signal);
       refreshReady = true;
       await animationDone;
       signal.throwIfAborted();
       await revealMarkers();
-      submissionMap.zoomToPin(signal);
       // Bỏ bubble đã đến nơi trước khi di chuyển bản đồ để ảnh không đứng lại giữa màn hình.
       setFlight(null);
       setIsWaiting(false);
+      await submissionMap.zoomToPin(signal);
       await submissionMap.waitForMarkerAnimations(signal);
       stage = "complete";
       onSuccess?.();
@@ -183,7 +184,11 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
         setFlight(null);
         setIsWaiting(false);
         // Chỉ trả focus sau khi bubble bay, marker tải xong, zoom kết thúc và bản đồ đã mở khóa.
-        if (stage === "complete") submissionMap?.focus();
+        if (stage === "complete") {
+          submissionMap?.focus();
+          // Mở suy nghĩ vừa lưu sau khi zoom và hiệu ứng marker xong, tránh giành focus với modal.
+          if (submissionId) submissionMap?.openThought(submissionId);
+        }
       }
     }
   }
