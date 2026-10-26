@@ -10,7 +10,6 @@ import { Toolbar as ToolbarPrimitive } from "radix-ui";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
@@ -74,16 +73,20 @@ export default function Toolbar() {
               align="start"
               sideOffset={10}
             >
-              {locales.map((itemLocale) => (
-                <DropdownMenuItem
-                  key={itemLocale}
-                  active={locale === itemLocale}
-                  onClick={() => handleChangeLanguage(itemLocale)}
-                >
-                  <span aria-hidden="true">{itemLocale === "vi" ? "🇻🇳" : "🇺🇸"}</span>
-                  <span>{nav(itemLocale)}</span>
-                </DropdownMenuItem>
-              ))}
+              <DropdownMenuRadioGroup
+                value={locale}
+                onValueChange={(value) => {
+                  const nextLocale = locales.find((itemLocale) => itemLocale === value);
+                  if (nextLocale) void handleChangeLanguage(nextLocale);
+                }}
+              >
+                {locales.map((itemLocale) => (
+                  <DropdownMenuRadioItem key={itemLocale} value={itemLocale}>
+                    <span aria-hidden="true">{itemLocale === "vi" ? "🇻🇳" : "🇺🇸"}</span>
+                    <span>{nav(itemLocale)}</span>
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </RefractiveGlass>
         </DropdownMenu>

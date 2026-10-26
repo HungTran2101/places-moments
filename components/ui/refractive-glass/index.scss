@@ -53,3 +53,53 @@
     will-change: auto;
   }
 }
+
+// Scale3d và opacity trên phần tử cha làm lớp kính con ngừng lấy nền trong Chromium.
+// Giữ chuyển động 2D và đổi bộ lọc ngay khi SVG sẵn sàng để nền kính luôn liên tục.
+[data-refractive-glass]:is([data-slot='dropdown-menu-content'], [data-slot='dropdown-menu-sub-content']) {
+  transition-property: none;
+
+  &[data-state='open'] {
+    animation-name: glass-menu-enter;
+  }
+
+  &[data-state='closed'] {
+    animation-name: glass-menu-exit;
+    animation-fill-mode: forwards;
+
+    // Lọc ngay trên menu khi fade để không tạo backdrop root ngăn lớp kính con lấy nền.
+    &[data-refractive-glass='active'] {
+      backdrop-filter: var(--refraction-filter) saturate(1.08);
+
+      &::after {
+        backdrop-filter: none;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 0.01ms;
+  }
+}
+
+@keyframes glass-menu-enter {
+  from {
+    transform: translate(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0)) scale(var(--tw-enter-scale, 1));
+  }
+
+  to {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes glass-menu-exit {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  to {
+    transform: translate(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0)) scale(var(--tw-exit-scale, 1));
+    opacity: 0;
+  }
+}

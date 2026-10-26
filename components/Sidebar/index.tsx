@@ -137,6 +137,8 @@ const Sidebar = () => {
       >
         <RefractiveGlass
           brightness={0.95}
+          bezelWidth={10}
+          glassThickness={50}
         >
           <motion.div
             className="sidebar-button-glass"

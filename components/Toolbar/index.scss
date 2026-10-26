@@ -40,6 +40,11 @@
     }
   }
 
+  &-menu [data-slot='dropdown-menu-radio-group'] {
+    display: grid;
+    gap: 4px;
+  }
+
   &-menu :is([data-slot='dropdown-menu-item'], [data-slot='dropdown-menu-radio-item']) {
     gap: 0.5rem;
     padding: 0.5rem 0.625rem;
