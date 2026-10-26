@@ -113,6 +113,8 @@ export default function MapView() {
         style: getTimeMapStyle(timeStage),
         center: [0, 0],
         zoom: INITIAL_MAP_ZOOM,
+        // Chỉ hiển thị một thế giới; MapLibre tự giới hạn zoom theo kích thước viewport.
+        renderWorldCopies: false,
         attributionControl: false,
       });
 
