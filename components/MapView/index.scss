@@ -181,3 +181,31 @@
   color: var(--secondary-color);
   text-shadow: 1px 1px 1px rgb(0 0 0 / 20%);
 }
+
+// Hai ảnh giữ nguyên độ đục; chỉ vùng tròn của ảnh mới được mở rộng ra ngoài.
+:root[data-map-time-reveal] {
+  &::view-transition {
+    pointer-events: none;
+  }
+
+  &::view-transition-group(root),
+  &::view-transition-old(root),
+  &::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  &::view-transition-old(root) {
+    z-index: 1;
+  }
+
+  &::view-transition-new(root) {
+    z-index: 2;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

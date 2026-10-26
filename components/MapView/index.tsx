@@ -11,7 +11,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import MapLoading from "./MapLoading";
-import { getMapPaintProperties, getTimeMapStyle, resolveMapTimeStage } from "./timeStyle";
+import { getTimeMapStyle, resolveMapTimeStage } from "./timeStyle";
+import { createTimeReveal } from "./timeReveal";
 import {
   addSubmissionLayers,
   CLUSTER_MAX_ZOOM,
@@ -28,7 +29,6 @@ const SUBMISSION_ZOOM_DURATION_MS = 700;
 const MARKER_ROTATION_RESET_MS = 400;
 const MAX_MARKER_ROTATION = 90;
 const MIN_ROTATION_DELTA = 2;
-const TIME_STYLE_TRANSITION_MS = 1000;
 
 export default function MapView() {
   const t = useTranslations("map");
@@ -104,7 +104,7 @@ export default function MapView() {
       if (destroyed) return;
 
       // Đọc giờ ngay trước khi tạo map để khung hình đầu đã dùng đúng bảng màu.
-      let timeStage = resolveMapTimeStage(useSystemStore.getState().mapTimeMode, new Date());
+      const timeStage = resolveMapTimeStage(useSystemStore.getState().mapTimeMode, new Date());
       document.documentElement.dataset.mapTime = timeStage;
       // Class trên html giúp chữ và icon trong portal cũng dùng đúng bảng màu ban đêm.
       document.documentElement.classList.toggle("dark", timeStage === "nighttime");
@@ -118,38 +118,27 @@ export default function MapView() {
         attributionControl: false,
       });
 
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const timeReveal = createTimeReveal(map, timeStage);
       let timeCheckTimeout: number;
       let timeStyleReady = false;
-      const syncTimeStyle = () => {
+      const syncTimeStyle = (animate = true) => {
         window.clearTimeout(timeCheckTimeout);
         if (destroyed) return;
         const now = new Date();
         const mode = useSystemStore.getState().mapTimeMode;
         const nextStage = resolveMapTimeStage(mode, now);
-        if (nextStage !== timeStage && timeStyleReady) {
-          const duration = reducedMotion.matches ? 0 : TIME_STYLE_TRANSITION_MS;
-          // Chỉ đổi paint của basemap, không setStyle để giữ nguồn, bubble và camera.
-          for (const { layerId, paint } of getMapPaintProperties(nextStage)) {
-            for (const [property, value] of Object.entries(paint)) {
-              map.setPaintProperty(layerId, `${property}-transition`, { duration, delay: 0 });
-              map.setPaintProperty(layerId, property, value);
-            }
-          }
-          timeStage = nextStage;
-          document.documentElement.dataset.mapTime = nextStage;
-          document.documentElement.classList.toggle("dark", nextStage === "nighttime");
-        }
+        if (timeStyleReady) timeReveal.setStage(nextStage, animate);
         // Chỉ theo dõi đồng hồ ở Auto; chế độ thủ công giữ nguyên đến khi được đổi lại.
         if (mode === "auto") {
           const delay = 60_000 - (now.getSeconds() * 1000 + now.getMilliseconds());
-          timeCheckTimeout = window.setTimeout(syncTimeStyle, delay);
+          timeCheckTimeout = window.setTimeout(() => syncTimeStyle(), delay);
         }
       };
       const onVisibilityChange = () => {
         if (document.visibilityState === "visible") syncTimeStyle();
       };
-      window.addEventListener("focus", syncTimeStyle);
+      const onFocus = () => syncTimeStyle();
+      window.addEventListener("focus", onFocus);
       document.addEventListener("visibilitychange", onVisibilityChange);
       // Đăng ký riêng lựa chọn thời gian để đổi paint ngay mà không khởi tạo lại map.
       const unsubscribeTimeMode = useSystemStore.subscribe((state, previous) => {
@@ -157,8 +146,9 @@ export default function MapView() {
       });
       clearTimeStyle = () => {
         window.clearTimeout(timeCheckTimeout);
+        timeReveal.destroy();
         unsubscribeTimeMode();
-        window.removeEventListener("focus", syncTimeStyle);
+        window.removeEventListener("focus", onFocus);
         document.removeEventListener("visibilitychange", onVisibilityChange);
       };
       syncTimeStyle();
@@ -177,7 +167,7 @@ export default function MapView() {
 
       map.once("load", () => {
         timeStyleReady = true;
-        syncTimeStyle();
+        syncTimeStyle(false);
         setMapReady(true);
         map.easeTo({
           zoom: MAP_ENTRY_ZOOM,

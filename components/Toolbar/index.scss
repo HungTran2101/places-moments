@@ -45,6 +45,12 @@
     gap: 4px;
   }
 
+  // Không giữ ảnh menu đang đóng trong snapshot của lần đổi thời gian.
+  &-menu#time-menu-content[data-state='closed'] {
+    visibility: hidden;
+    animation: none;
+  }
+
   &-menu :is([data-slot='dropdown-menu-item'], [data-slot='dropdown-menu-radio-item']) {
     gap: 0.5rem;
     padding: 0.5rem 0.625rem;
