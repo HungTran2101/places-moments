@@ -14,7 +14,7 @@
     "label": "Map toolbar",
     "language": "Language",
     "time": "Map time",
-    "auto": "Auto (browser time)",
+    "auto": "Auto",
     "daytime": "Day time",
     "evening": "Evening",
     "nighttime": "Night time"

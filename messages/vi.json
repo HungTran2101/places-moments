@@ -13,8 +13,8 @@
   "toolbar": {
     "label": "Thanh công cụ bản đồ",
     "language": "Ngôn ngữ",
-    "time": "Thời gian trên bản đồ",
-    "auto": "Tự động (giờ trên thiết bị)",
+    "time": "Thời gian",
+    "auto": "Tự động",
     "daytime": "Ban ngày",
     "evening": "Hoàng hôn",
     "nighttime": "Ban đêm"
