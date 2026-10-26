@@ -54,6 +54,8 @@ Map Module
 
 MapView owns the MapLibre instance and the writing pin. It dynamically loads on the client, handles pan/zoom and click-to-place interaction, and mounts ThoughtModal with an explicit open prop.
 
+The glass Toolbar has two icon actions, each opening its own dropdown: language and map time (Auto, daytime, evening, and nighttime). Its time choice lives in useSystemStore and is saved in localStorage as pm_map_time_mode. MapView restores valid saved choices before map creation; a fresh page uses Auto when the saved value is missing, invalid, or storage is unavailable. Auto uses the browser's local time: daytime 06:00–14:59, evening 15:00–17:59, and nighttime 18:00–05:59. MapView rechecks each minute in Auto and on focus/visibility return; manual choices hold until changed. Switching modes changes only basemap paint colors with a 1.5-second transition (immediate for reduced motion). A browser-owned data-map-time attribute strengthens light glass backing for evening and nighttime, including portaled panels, without switching the interface to dark mode.
+
 submissionsLayer loads id/lat/lng positions for the current viewport on initial load and moveend. It normalizes wrapped longitudes, cancels obsolete requests, and skips duplicate bounds. Clicking a cluster expands it; clicking an individual marker opens its thought.
 
 MapLibre clusters the downloaded GeoJSON in the browser (clusterMaxZoom: 5, clusterRadius: 30). Clustering reduces rendering density; it does not reduce the number of positions returned for that viewport.

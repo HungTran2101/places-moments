@@ -1,0 +1,84 @@
+.Toolbar {
+  position: fixed;
+  z-index: 10;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.0625rem;
+  border-radius: 1.125rem;
+  transition: opacity 0.3s ease;
+
+  &-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: var(--primary-color-dark);
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+      stroke-width: 1.7;
+    }
+
+    &:hover,
+    &[data-state='open'] {
+      background: rgb(var(--primary-color-var), 0.12);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--primary-color-dark);
+      outline-offset: 1px;
+    }
+  }
+
+  &-menu :is([data-slot='dropdown-menu-item'], [data-slot='dropdown-menu-radio-item']) {
+    gap: 0.5rem;
+    padding: 0.5rem 0.625rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+
+  &-menu [data-slot='dropdown-menu-radio-item'] {
+    padding-right: 2rem;
+
+    &[data-state='checked'] {
+      color: var(--primary-color-dark);
+      background: rgb(var(--primary-color-var), 0.22);
+    }
+  }
+
+  @media (width <=640px) {
+    // Đặt rail dưới tiêu đề để các nút không chồng chữ trên màn hình hẹp.
+    top: 5.5rem;
+
+    // Làm dịu toolbar khi soạn bài nhưng vẫn giữ các thao tác sử dụng được.
+    &[data-sidebar-open='true'] {
+      opacity: 0;
+      pointer-events: none;
+
+      // Opacity tạo backdrop root; lọc ngay trên rail để giữ khúc xạ của nền kính.
+      &[data-refractive-glass='active'] {
+        backdrop-filter: var(--refraction-filter) saturate(1.08);
+
+        &::after {
+          backdrop-filter: none;
+        }
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &-action {
+      transition: none;
+    }
+  }
+}

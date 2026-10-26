@@ -13,7 +13,7 @@ const MARKER_WIDTH = 35;
 const MARKER_ICON_SIZE = MARKER_WIDTH / thoughtBubbleImg.width;
 const MARKER_HOVER_SCALE = 1.1;
 const MARKER_HOVER_DURATION_MS = 180;
-const MARKER_OPACITY = 0.5;
+const MARKER_OPACITY = 0.8;
 
 export const SUBMISSION_CLUSTER_LAYER = "submission-clusters";
 export const SUBMISSION_MARKER_LAYER = "submission-markers";

@@ -10,6 +10,15 @@
     "vi": "Tiếng việt",
     "en": "Tiếng anh"
   },
+  "toolbar": {
+    "label": "Thanh công cụ bản đồ",
+    "language": "Ngôn ngữ",
+    "time": "Thời gian trên bản đồ",
+    "auto": "Tự động (giờ trên thiết bị)",
+    "daytime": "Ban ngày",
+    "evening": "Hoàng hôn",
+    "nighttime": "Ban đêm"
+  },
   "map": {
     "submissionsLoadError": "Không thể tải các suy nghĩ trên bản đồ.",
     "retry": "Thử lại",

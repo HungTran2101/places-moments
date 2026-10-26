@@ -89,7 +89,7 @@ const Sidebar = () => {
       }}
     >
       <RefractiveGlass
-        blur={5}
+        blur={3}
         bezelWidth={50}
       >
         <motion.div

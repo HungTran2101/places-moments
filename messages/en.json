@@ -10,6 +10,15 @@
     "vi": "Vietnamese",
     "en": "English"
   },
+  "toolbar": {
+    "label": "Map toolbar",
+    "language": "Language",
+    "time": "Map time",
+    "auto": "Auto (browser time)",
+    "daytime": "Day time",
+    "evening": "Evening",
+    "nighttime": "Night time"
+  },
   "map": {
     "submissionsLoadError": "Could not load thoughts on the map.",
     "retry": "Try again",
