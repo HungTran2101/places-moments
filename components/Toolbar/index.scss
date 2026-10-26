@@ -8,7 +8,7 @@
   align-items: center;
   padding: 0.0625rem;
   border-radius: 1.125rem;
-  transition: opacity 0.3s ease;
+  transition: opacity, top 0.3s ease;
 
   &-action {
     display: inline-flex;

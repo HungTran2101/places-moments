@@ -147,7 +147,7 @@ const Sidebar = () => {
 
         <ChevronRight
           className="icon"
-          color="#fff"
+          color="var(--color-sidebar-icon)"
           style={{ transition: "stroke 1.5s ease" }}
         />
       </motion.span>

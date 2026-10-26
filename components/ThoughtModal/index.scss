@@ -55,9 +55,13 @@
     margin: 1rem 0;
     padding-right: 0.5rem;
     font-size: 1.0625rem;
+    font-weight: 500;
     line-height: 1.5;
     white-space: pre-wrap;
-    color: var(--secondary-color);
+    color: var(--primary-color);
+
+    // Bóng mỏng quanh chữ tách nội dung khỏi marker và đường biên phía sau mà không đổi kính.
+    text-shadow: 0 1px 4px var(--color-thought-text-shadow), 0 0 4px var(--color-thought-text-shadow);
   }
 
   &-footer {

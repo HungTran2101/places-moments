@@ -16,6 +16,11 @@
 }
 
 // Chỉ ghi đè khi SVG đã sẵn sàng; fallback dùng nguyên CSS của liquid-glass2.
+[data-refractive-glass='fallback'] {
+  // Nền utility của menu không được che mất kính mờ khi trình duyệt không dùng SVG.
+  background: transparent;
+}
+
 [data-refractive-glass='active'] {
   background: transparent;
   backdrop-filter: none;
@@ -41,40 +46,10 @@
 
   &::after {
     z-index: -1;
-    background: rgb(var(--glass-backing-color, var(--glass-color, 255, 255, 255)), var(--glass-backing-opacity, 0.16));
+    background: rgb(var(--glass-color, 255, 255, 255), 0.16);
     box-shadow: none;
     filter: none;
     backdrop-filter: var(--refraction-filter) saturate(1.08);
     will-change: auto;
   }
-}
-
-// Kính sáng giữ chữ dễ đọc trên bảng màu chiều và đêm, kể cả nội dung qua portal.
-// Chỉ áp dụng cho mặt kính chứa nội dung, không làm đổi màu các nút kính lồng bên trong.
-html:is([data-map-time='evening'], [data-map-time='nighttime']) :is(
-  .sidebar-content,
-  .sidebar-button-glass,
-  .title [data-refractive-glass],
-  .Toolbar,
-  [data-slot='dropdown-menu-content'][data-refractive-glass],
-  .Modal-content[data-refractive-glass],
-  .MapView-disclaimer,
-  .MapView-submissionsError
-) {
-  --glass-backing-color: 255, 255, 255;
-  --glass-backing-opacity: 0.92;
-
-  // Không truyền nền trắng của panel xuống những nút dùng màu kính riêng.
-  > * {
-    --glass-backing-color: initial;
-    --glass-backing-opacity: initial;
-  }
-}
-
-html:is([data-map-time='evening'], [data-map-time='nighttime']) .MapView-disclaimer {
-  opacity: 1;
-}
-
-html:is([data-map-time='evening'], [data-map-time='nighttime']) .sidebar-button .icon {
-  stroke: var(--primary-color-dark);
 }

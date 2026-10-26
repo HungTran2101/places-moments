@@ -2,11 +2,9 @@
 
 import { Dialog } from "@/components/ui/dialog";
 import { GlassButton } from "@/components/ui/glass-button";
-import { rgbToHex } from "@/lib/utils";
 import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import { ApiError } from "@/services/shared/errors";
 import { getSubmissionById, type Submission } from "@/services/submissions";
-import { useSystemStore } from "@/store/systemStore";
 import { ArrowLeft, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSun, Snowflake, Sun } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -45,9 +43,6 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
   const [detail, setDetail] = useState<DetailState | null>(null);
   const [retry, setRetry] = useState(0);
 
-  const primaryColor = useSystemStore((state) => state.primaryColor);
-  const secondaryColor = useSystemStore((state) => state.secondaryColor);
-
   useEffect(() => {
     if (!open || !submissionId) return;
     const controller = new AbortController();
@@ -78,7 +73,7 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
     <Dialog.Root key={submissionId} modal={false} open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <RefractiveGlass
-          bezelWidth={50}
+          blur={2.5}
         >
           <Dialog.Content
             className="thoughtModal-content"
@@ -109,7 +104,7 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
                 ? (
                   <>
                     <span className="visually-hidden">{t("loading")}</span>
-                    <LoadingDots color={rgbToHex(secondaryColor)} />
+                    <LoadingDots color="var(--secondary-color)" />
                   </>
                 )
                 : currentDetail?.status === "error"
@@ -133,9 +128,7 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
               </p>
               <Dialog.Close asChild>
                 <GlassButton
-                  style={{
-                    '--glass-color': primaryColor
-                  } as React.CSSProperties}
+                  primaryColor="blue"
                   type="button"
                   className="thoughtModal-return"
                 >

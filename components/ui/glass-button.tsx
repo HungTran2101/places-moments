@@ -18,9 +18,9 @@ interface GlassButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 const glassColors = {
-  purple: '209, 122, 255',
-  blue: '102, 153, 255',
-  darkBlue: '124, 127, 178'
+  purple: { tint: '209, 122, 255', text: 'var(--color-button-purple)' },
+  blue: { tint: '102, 153, 255', text: 'var(--color-button-blue)' },
+  darkBlue: { tint: '124, 127, 178', text: 'var(--color-button-dark-blue)' }
 }
 
 function GlassButton({ children,
@@ -35,12 +35,13 @@ function GlassButton({ children,
       size={size}
       asChild={asChild}
       style={{
-        '--glass-color': glassColors[primaryColor]
+        '--glass-color': glassColors[primaryColor].tint,
+        '--glass-button-text': glassColors[primaryColor].text
       } as React.CSSProperties}
       className={cn(
         size === 'lg' && 'text-base has-[>svg]:px-6',
         suffix && 'justify-between',
-        'relative inline-flex shrink-0 rounded-lg bg-transparent! bg-clip-padding text-[rgb(var(--glass-color))] shadow-md',
+        'relative inline-flex shrink-0 rounded-lg bg-transparent! bg-clip-padding text-(--glass-button-text) shadow-md',
 
         // Glass effect
         `bg-linear-to-l from-[rgba(var(--glass-color),0.15)] to-[rgba(var(--glass-color),0.25)] backdrop-blur-sm`,

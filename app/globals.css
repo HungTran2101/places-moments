@@ -1,40 +1,30 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
-
+@custom-variant dark (&:where(.dark, .dark *));
 @variant data-open (&[data-state="open"]);
 @variant data-closed (&[data-state="closed"]);
 
 @theme {
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(222.2 84% 4.9%);
-
-  --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(222.2 84% 4.9%);
-
-  --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(222.2 84% 4.9%);
-
+  --color-background: var(--color-surface);
+  --color-foreground: var(--color-text);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text);
+  --color-popover: var(--color-surface);
+  --color-popover-foreground: var(--color-text);
   --color-primary: var(--primary-color);
   --color-primary-foreground: var(--color-text-inverted);
-
   --color-secondary: var(--secondary-color);
-  --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
-
-  --color-muted: hsl(210 40% 96.1%);
-  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
-
-  --color-accent: hsl(210 40% 96.1%);
-  --color-accent-foreground: hsl(222.2 47.4% 11.2%);
-
-  --color-destructive: hsl(0 84.2% 60.2%);
-  --color-destructive-foreground: hsl(210 40% 98%);
-
+  --color-secondary-foreground: var(--color-text);
+  --color-muted: var(--color-surface-alt);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-accent: var(--color-surface-alt);
+  --color-accent-foreground: var(--color-text);
+  --color-destructive: hsl(0deg 84.2% 60.2%);
+  --color-destructive-foreground: hsl(210deg 40% 98%);
   --color-border: var(--color-border);
-  --color-input: hsl(214.3 31.8% 91.4%);
-  --color-ring: hsl(222.2 84% 4.9%);
-
+  --color-input: hsl(214.3deg 31.8% 91.4%);
+  --color-ring: hsl(222.2deg 84% 4.9%);
   --radius: 0.5rem;
-
   --font-lemonada: var(--font-lemonada), sans-serif;
   --font-mitr: var(--font-mitr), sans-serif;
 }

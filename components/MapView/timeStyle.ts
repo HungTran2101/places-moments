@@ -11,7 +11,7 @@ const PALETTES = {
     land: "#d7c7a6",
     residential: "#6b5b64",
     greenery: "#6b5b64",
-    water: "#b69f99",
+    water: "#c2a69d",
     shoreline: "#ccad57",
     road: "#ccad57",
     casing: "#833317",

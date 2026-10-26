@@ -50,7 +50,7 @@
     max-width: calc(100% - 2rem);
     padding: 0.75rem 1rem;
     border-radius: 0.75rem;
-    color: #45465f;
+    color: var(--color-map-notice-text);
     font-size: 0.875rem;
     text-align: center;
     transform: translateX(-50%);
@@ -69,7 +69,7 @@
     max-width: min(22rem, calc(100% - 2rem));
     padding: 0.2rem 0.4rem;
     border-radius: 0.75rem;
-    color: #5f6176;
+    color: var(--color-map-disclaimer-text);
     opacity: 0.5;
     font-size: 0.7rem;
     transform: scale(0.5);

@@ -97,6 +97,7 @@ export default function MapView() {
     let destroyed = false;
     let clearTimeStyle: (() => void) | undefined;
     const previousTimeStage = document.documentElement.getAttribute("data-map-time");
+    const previousDarkMode = document.documentElement.classList.contains("dark");
 
     (async () => {
       const maplibre = await import("maplibre-gl");
@@ -105,6 +106,8 @@ export default function MapView() {
       // Đọc giờ ngay trước khi tạo map để khung hình đầu đã dùng đúng bảng màu.
       let timeStage = resolveMapTimeStage(useSystemStore.getState().mapTimeMode, new Date());
       document.documentElement.dataset.mapTime = timeStage;
+      // Class trên html giúp chữ và icon trong portal cũng dùng đúng bảng màu ban đêm.
+      document.documentElement.classList.toggle("dark", timeStage === "nighttime");
       const map = new maplibre.Map({
         container: containerRef.current!,
         style: getTimeMapStyle(timeStage),
@@ -133,6 +136,7 @@ export default function MapView() {
           }
           timeStage = nextStage;
           document.documentElement.dataset.mapTime = nextStage;
+          document.documentElement.classList.toggle("dark", nextStage === "nighttime");
         }
         // Chỉ theo dõi đồng hồ ở Auto; chế độ thủ công giữ nguyên đến khi được đổi lại.
         if (mode === "auto") {
@@ -231,6 +235,7 @@ export default function MapView() {
       clearTimeStyle?.();
       if (previousTimeStage === null) delete document.documentElement.dataset.mapTime;
       else document.documentElement.setAttribute("data-map-time", previousTimeStage);
+      document.documentElement.classList.toggle("dark", previousDarkMode);
       initialAssetsRef.current = null;
       clearPinRotationTimeout();
       mapRef.current?.remove();

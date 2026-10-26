@@ -22,6 +22,10 @@
   --color-text-inverted: #f6f4f1;
   --color-text-muted: #717178;
   --color-text-subtle: #9a96b2;
+  --color-thought-text-shadow: rgb(255 255 255 / 65%);
+  --color-map-notice-text: #45465f;
+  --color-map-disclaimer-text: #5f6176;
+  --color-sidebar-icon: #fff;
 
   /* Accent (lavender theme) */
   --primary-color-var: 124, 127, 178;
@@ -31,6 +35,11 @@
   --primary-color-glow: rgb(124 127 178 / 20%);
   --primary-color-dark: #666aa0;
   --color-glass-border-var: 255, 255, 255;
+
+  /* Glass button text */
+  --color-button-purple: #d17aff;
+  --color-button-blue: #69f;
+  --color-button-dark-blue: var(--primary-color);
 
   /* Inputs */
   --color-input-bg: #f6f5fb;
@@ -65,30 +74,46 @@
   --color-surface-alt: #262634;
 
   /* Borders */
-  --color-border: rgb(255 255 255 / 8%);
+  --color-border: rgb(216 211 245 / 35%);
 
   /* Map */
-  --color-map-bg: #1b1b25;
+  --color-map-bg-var: 27, 27, 37;
+  --color-map-bg: rgb(var(--color-map-bg-var));
 
   /* Text */
-  --color-text: #f3f4f6;
-  --color-text-muted: #b6b4c8;
-  --color-text-subtle: #8e8ba8;
+  --color-text: #f6f3fb;
+  --color-text-inverted: #252235;
+  --color-text-muted: #e1dce9;
+  --color-text-subtle: #cfc8df;
+  --color-thought-text-shadow: rgb(30 33 41 / 80%);
+  --color-map-notice-text: var(--color-text);
+  --color-map-disclaimer-text: var(--color-text-muted);
+  --color-sidebar-icon: var(--primary-color-dark);
 
   /* Accent */
-  --primary-color: #8f93d6;
-  --primary-color-glow: rgb(143 147 214 / 25%);
-  --primary-color-dark: #7478c9;
+  --primary-color-var: 216, 211, 245;
+  --primary-color: rgb(var(--primary-color-var));
+  --secondary-color-var: 238, 213, 250;
+  --secondary-color: rgb(var(--secondary-color-var));
+  --primary-color-glow: rgb(216 211 245 / 25%);
+  --primary-color-dark: #e9e4ff;
+  --color-glass-border-var: 255, 255, 255;
+
+  /* Glass button text */
+  --color-button-purple: #ecd2ff;
+  --color-button-blue: #d0e2ff;
+  --color-button-dark-blue: var(--primary-color-dark);
 
   /* Inputs */
-  --color-input-bg: #20202b;
+  --color-input-bg: #202332;
 
   /* Marker */
   --marker-color: #8f93d6;
 
   /* States */
-  --color-success: #4ec9a6;
-  --color-error: #ff6b7a;
+  --color-success: #88d9bf;
+  --color-error: #ffa8b9;
+  --color-warning: #f0d590;
 }
 
 @property --button-angle {
