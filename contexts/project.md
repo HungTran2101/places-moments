@@ -31,6 +31,7 @@ Public viewers do not see timestamps.
 Current Implementation
 
 - The home page mounts a 2D MapLibre map, a writing sidebar, the title, and a language selector.
+- Zooming out smoothly reveals a satellite globe with an atmospheric rim and stars. Zooming back in restores the themed map and its labels without replacing the map or clearing a draft pin.
 - Clicking an empty map location places or moves the writing pin. The form accepts a description of up to 600 characters; a title is not part of the current submission flow.
 - Submitting creates the browser UUID if needed, saves the thought with weather context, and animates a thought bubble toward the selected pin. Refreshed markers are revealed after the bubble arrives, and the map zooms to show the submitted thought outside the clustering threshold.
 - Map positions load for the current viewport after the camera stops. Nearby thoughts are clustered in the browser; clicking a cluster zooms into it.

@@ -1,5 +1,6 @@
 import mapStyle from "@/styles/map-style.json";
 import type { StyleSpecification } from "maplibre-gl";
+import { withSpaceStyle } from "./spaceStyle";
 
 export type MapTimeStage = "daytime" | "evening" | "nighttime";
 export type MapTimeMode = "auto" | MapTimeStage;
@@ -105,5 +106,5 @@ export function getTimeMapStyle(stage: MapTimeStage): StyleSpecification {
   style.layers.forEach((layer, index) => {
     Object.assign(layer.paint ??= {}, paints[index].paint);
   });
-  return style;
+  return withSpaceStyle(style);
 }

@@ -27,8 +27,8 @@ Prisma ORM
 
 Map / Visualization
 
-MapLibre GL for the 2D map, using the local styles/map-style.json style
-Three.js for optional 3D globe
+MapLibre GL for the map and adaptive globe, using the local styles/map-style.json style
+EOX Sentinel-2 cloudless 2016 raster tiles for the globe surface, with a Canvas 2D star field
 
 Animation
 
@@ -53,6 +53,8 @@ Main UI modules:
 Map Module
 
 MapView owns the MapLibre instance and the writing pin. It dynamically loads on the client, handles pan/zoom and click-to-place interaction, and mounts ThoughtModal with an explicit open prop.
+
+Zooming out reveals an EOX satellite globe, atmospheric rim, and camera-linked star field. SPACE_FADE_START_ZOOM and SPACE_FADE_END_ZOOM in spaceStyle.ts define the shared transition range. The same map interpolates from a spherical projection to Mercator while satellite imagery, atmosphere, stars, and labels blend into the themed basemap, retaining the camera, sources, and writing pin. The raster source's maximum zoom follows the rounded-up fade end. The minimum zoom adapts on resize to keep the Earth near 65% of the viewport's shorter side. Thought bubbles, clusters, hover overlays, and the draft pin use 45% size through the fade start, then smoothly reach full size at the fade end; DOM visuals and WebGL hit areas share the same scale. Marker opacity uses an 8% multiplier at the viewport-dependent minimum zoom and returns to normal at the fade start, with the same curve for WebGL points, DOM bubbles, clusters, hover overlays, and the draft pin. Resizing updates both DOM and WebGL opacity bounds. Labels fade at world scale; covered DOM markers are hidden behind the Earth. Clicking space cannot place a pin. The space background uses bright semantic text/icon tokens while retaining the selected map-time palette and glass. Stars redraw only when the camera or viewport changes; listeners are removed before map destruction. EOX imagery attribution is visible in the map disclaimer.
 
 The glass Toolbar has two icon actions, each opening its own dropdown: language and map time (Auto, daytime, evening, and nighttime). Its time choice lives in useSystemStore and is saved in localStorage as pm_map_time_mode. MapView restores valid saved choices before map creation; a fresh page uses Auto when the saved value is missing, invalid, or storage is unavailable. Auto uses the browser's local time: daytime 06:00–14:59, evening 15:00–17:59, and nighttime 18:00–05:59. MapView rechecks each minute in Auto and on focus/visibility return; manual choices hold until changed. Effective stage changes use a one-second circular reveal from the toolbar time icon across the whole viewport, including themed text and controls. The new palette appears inside the expanding circle while the old palette remains outside. A radial alpha mask blends only a 24px feathered boundary, keeping the map and text sharp. Its registered radius uses fast–slow–fast easing and expands far enough for the opaque interior to cover every viewport corner before completion, without fading the whole page. MapView changes basemap paint colors with zero transition duration, synchronizes data-map-time and the html .dark class, and redraws the map before capturing the new view. The map instance, camera, sources, and markers are retained. Initial load, reduced motion, unsupported browsers, hidden pages, and failed transitions switch immediately; unchanged stages do not animate. Rapid selections settle on the latest choice, and resize/unmount cancels the reveal. Nighttime uses the dark text/icon tokens in styles/_variables.scss; daytime and evening use the light tokens. Glass keeps the same transparent backing and refraction in every stage, including portaled panels and fallback glass. Shared buttons, loading dots, and map notices read these CSS tokens rather than separate store colors.
 

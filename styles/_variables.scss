@@ -67,7 +67,8 @@
   --header-height: 56px;
 }
 
-.dark {
+.dark,
+:root[data-map-space] {
   /* Base */
   --color-bg: #16161d;
   --color-surface: #1e1e28;

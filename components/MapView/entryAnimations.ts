@@ -93,11 +93,11 @@ export function addEntryAnimations({
       bubble.src = image.src;
       bubble.alt = "";
       bubble.draggable = false;
-      bubble.style.cssText = `display:block;width:${width}px;height:auto;aspect-ratio:${image.width}/${image.height};opacity:${opacity};transform:scale(${entry.settled ? 1 : 0.05});transform-origin:bottom center`;
+      bubble.style.cssText = `display:block;width:calc(${width}px * var(--map-marker-scale, 1));height:auto;aspect-ratio:${image.width}/${image.height};opacity:calc(${opacity} * var(--map-detail-opacity, 1));transform:scale(${entry.settled ? 1 : 0.05});transform-origin:bottom center`;
       element.append(bubble);
 
       const wrappedLng = lng + 360 * Math.round((map.getCenter().lng - lng) / 360);
-      const marker = new Marker({ element, anchor: "bottom", subpixelPositioning: true })
+      const marker = new Marker({ element, anchor: "bottom", subpixelPositioning: true, opacityWhenCovered: "0" })
         .setLngLat([wrappedLng, lat]).addTo(map);
       entry.marker = marker;
       if (entry.settled) continue;

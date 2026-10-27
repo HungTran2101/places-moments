@@ -2,8 +2,9 @@ import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
 import clusterBubbleImg from "@/public/assets/cluster_bubble.webp";
 import { normalizeSubmissionBounds } from "@/lib/submissionBounds";
 import { getSubmissions, type SubmissionPin } from "@/services/submissions";
-import { Marker, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
+import { Marker, type ExpressionSpecification, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";
 import { addEntryAnimations, CLUSTER_WIDTH_STOPS } from "./entryAnimations";
+import { FLAT_MAP_ZOOM, GLOBE_MARKER_MIN_OPACITY, GLOBE_MARKER_SCALE, GLOBE_ZOOM, SPACE_FADE_START_ZOOM } from "./spaceStyle";
 
 const SOURCE_ID = "submissions";
 const IMAGE_ID = "submission-thought-bubble";
@@ -64,6 +65,17 @@ export async function addSubmissionLayers({
   if (isCancelled()) return;
 
   const subscriptions: { unsubscribe: () => void }[] = [];
+  const getMarkerOpacity = (): ExpressionSpecification => {
+    const opacity: ExpressionSpecification = ["case",
+      ["boolean", ["feature-state", "hover"], false], 0,
+      ["boolean", ["feature-state", "entered"], false], MARKER_OPACITY,
+      0,
+    ];
+    return ["interpolate", ["linear"], ["zoom"],
+      map.getMinZoom(), ["*", GLOBE_MARKER_MIN_OPACITY, opacity],
+      SPACE_FADE_START_ZOOM, opacity,
+    ];
+  };
   const removeLayers = () => {
     if (!map.getStyle()) return;
     // Xóa layer trước nguồn và ảnh để MapLibre không giữ tham chiếu tới tài nguyên đã mất.
@@ -76,6 +88,9 @@ export async function addSubmissionLayers({
   };
 
   try {
+    const clusterIconSize: ExpressionSpecification = ["/", ["interpolate", ["linear"], ["get", "point_count"],
+      ...CLUSTER_WIDTH_STOPS,
+    ], clusterBubbleImg.width];
     map.addImage(IMAGE_ID, image.data);
     map.addImage(CLUSTER_IMAGE_ID, clusterImage.data);
     map.addSource(SOURCE_ID, {
@@ -97,9 +112,10 @@ export async function addSubmissionLayers({
       layout: {
         "icon-image": CLUSTER_IMAGE_ID,
         // Cụm càng nhiều suy nghĩ càng lớn, tối đa 80 px và giữ nguyên tỉ lệ ảnh gốc.
-        "icon-size": ["/", ["interpolate", ["linear"], ["get", "point_count"],
-          ...CLUSTER_WIDTH_STOPS,
-        ], clusterBubbleImg.width],
+        // Vùng hit-test WebGL thu nhỏ cùng ảnh DOM khi camera còn ở chế độ globe.
+        "icon-size": ["interpolate", ["linear"], ["zoom"],
+          GLOBE_ZOOM, ["*", GLOBE_MARKER_SCALE, clusterIconSize], FLAT_MAP_ZOOM, clusterIconSize,
+        ],
         "icon-anchor": "bottom",
         "icon-allow-overlap": true,
         "icon-ignore-placement": true,
@@ -118,18 +134,16 @@ export async function addSubmissionLayers({
       layout: {
         "icon-image": IMAGE_ID,
         // Thu phóng đồng đều để ảnh rộng 35 px, chiều cao tự thay đổi theo tỉ lệ gốc.
-        "icon-size": MARKER_ICON_SIZE,
+        "icon-size": ["interpolate", ["linear"], ["zoom"],
+          GLOBE_ZOOM, MARKER_ICON_SIZE * GLOBE_MARKER_SCALE, FLAT_MAP_ZOOM, MARKER_ICON_SIZE,
+        ],
         "icon-anchor": "bottom",
         "icon-allow-overlap": true,
         "icon-ignore-placement": true,
       },
       paint: {
         // Tạm ẩn ảnh WebGL khi ảnh DOM ở cùng vị trí đang chạy hiệu ứng hover.
-        "icon-opacity": ["case",
-          ["boolean", ["feature-state", "hover"], false], 0,
-          ["boolean", ["feature-state", "entered"], false], MARKER_OPACITY,
-          0,
-        ],
+        "icon-opacity": getMarkerOpacity(),
         "icon-opacity-transition": { duration: 0 },
       },
     });
@@ -138,6 +152,11 @@ export async function addSubmissionLayers({
     removeLayers();
     throw error;
   }
+
+  // Min zoom thay đổi theo viewport; cập nhật cùng đường cong với bubble DOM khi resize.
+  subscriptions.push(map.on("resize", () => {
+    map.setPaintProperty(SUBMISSION_MARKER_LAYER, "icon-opacity", getMarkerOpacity());
+  }));
 
   const entryAnimations = addEntryAnimations({
     map,
@@ -290,12 +309,12 @@ export async function addSubmissionLayers({
     bubble.alt = "";
     bubble.draggable = false;
     // Giữ sẵn tỉ lệ ảnh để marker không lệch vị trí trong lúc trình duyệt giải mã ảnh.
-    bubble.style.cssText = `display:block;width:${MARKER_WIDTH}px;height:auto;aspect-ratio:${thoughtBubbleImg.width}/${thoughtBubbleImg.height};opacity:${MARKER_OPACITY};transform-origin:bottom center`;
+    bubble.style.cssText = `display:block;width:calc(${MARKER_WIDTH}px * var(--map-marker-scale, 1));height:auto;aspect-ratio:${thoughtBubbleImg.width}/${thoughtBubbleImg.height};opacity:calc(${MARKER_OPACITY} * var(--map-detail-opacity, 1));transform-origin:bottom center`;
     element.append(bubble);
 
     const [lng, lat] = feature.geometry.coordinates;
     const wrappedLng = lng + 360 * Math.round((event.lngLat.lng - lng) / 360);
-    const marker = new Marker({ element, anchor: "bottom", subpixelPositioning: true })
+    const marker = new Marker({ element, anchor: "bottom", subpixelPositioning: true, opacityWhenCovered: "0" })
       .setLngLat([wrappedLng, lat]).addTo(map);
     // Animate transform trên ảnh con để không ghi đè transform định vị của MapLibre.
     const animation = bubble.animate(

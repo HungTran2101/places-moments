@@ -11,8 +11,8 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import MapLoading from "./MapLoading";
-import { getTimeMapStyle, resolveMapTimeStage } from "./timeStyle";
-import { createTimeReveal } from "./timeReveal";
+import { createSpaceScene } from "./spaceScene";
+import { getSpaceMinZoom, SPACE_DETAIL_MIN_ZOOM } from "./spaceStyle";
 import {
   addSubmissionLayers,
   CLUSTER_MAX_ZOOM,
@@ -20,10 +20,13 @@ import {
   SUBMISSION_CLUSTER_LAYER,
   SUBMISSION_MARKER_LAYER,
 } from "./submissionsLayer";
+import { createTimeReveal } from "./timeReveal";
+import { getTimeMapStyle, resolveMapTimeStage } from "./timeStyle";
 
 const LOADER_EXIT_DELAY_MS = 2100;
-const INITIAL_MAP_ZOOM = 1;
-const MAP_ENTRY_ZOOM = 3;
+const INITIAL_MAP_CENTER: [number, number] = [106, 16];
+const INITIAL_MAP_ZOOM = 5.5;
+const MAP_ENTRY_ZOOM = INITIAL_MAP_ZOOM + 0.5;
 const MAP_ENTRY_ANIMATION_MS = 2500;
 const SUBMISSION_ZOOM_DURATION_MS = 700;
 const MARKER_ROTATION_RESET_MS = 400;
@@ -34,6 +37,7 @@ export default function MapView() {
   const t = useTranslations("map");
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const spaceRef = useRef<HTMLCanvasElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const pinRef = useRef<import("maplibre-gl").Marker | null>(null);
   const pinAddedRef = useRef(false);
@@ -96,6 +100,7 @@ export default function MapView() {
 
     let destroyed = false;
     let clearTimeStyle: (() => void) | undefined;
+    let clearSpaceScene: (() => void) | undefined;
     const previousTimeStage = document.documentElement.getAttribute("data-map-time");
     const previousDarkMode = document.documentElement.classList.contains("dark");
 
@@ -112,12 +117,14 @@ export default function MapView() {
       const map = new maplibre.Map({
         container: containerRef.current!,
         style: getTimeMapStyle(timeStage),
-        center: [0, 0],
+        center: INITIAL_MAP_CENTER,
         zoom: INITIAL_MAP_ZOOM,
-        // Chỉ hiển thị một thế giới; MapLibre tự giới hạn zoom theo kích thước viewport.
+        minZoom: getSpaceMinZoom(containerRef.current!.clientWidth, containerRef.current!.clientHeight),
+        // Giữ một thế giới khi trở về Mercator; globe vẫn cho phép lùi camera ra không gian.
         renderWorldCopies: false,
         attributionControl: false,
       });
+      if (spaceRef.current) clearSpaceScene = createSpaceScene(map, spaceRef.current);
 
       const timeReveal = createTimeReveal(map, timeStage);
       let timeCheckTimeout: number;
@@ -165,7 +172,8 @@ export default function MapView() {
       const pin = new maplibre.Marker({
         color: "var(--marker-color)",
         className: "main-marker",
-      }).setLngLat([0, 0]);
+        opacityWhenCovered: "0",
+      }).setLngLat(INITIAL_MAP_CENTER);
       pinRef.current = pin;
 
       map.once("load", () => {
@@ -182,8 +190,11 @@ export default function MapView() {
 
       map.on("click", (event) => {
         if (useSubmissionMapStore.getState().isSubmitting) return;
+        // Unproject ngoài đường chân trời vẫn trả tọa độ; không cho nhấn vào sao để đặt ghim.
+        if (!map.transform.isPointOnMapSurface(event.point)) return;
         // Nhấn vào cụm hoặc suy nghĩ có sẵn không được di chuyển ghim soạn bài.
-        const submissionLayers = [SUBMISSION_CLUSTER_LAYER, SUBMISSION_MARKER_LAYER]
+        const submissionLayers = (map.getZoom() > SPACE_DETAIL_MIN_ZOOM
+          ? [SUBMISSION_CLUSTER_LAYER, SUBMISSION_MARKER_LAYER] : [])
           .filter((layer) => map.getLayer(layer));
         if (submissionLayers.length && map.queryRenderedFeatures(event.point, {
           layers: submissionLayers,
@@ -228,6 +239,7 @@ export default function MapView() {
     return () => {
       destroyed = true;
       clearTimeStyle?.();
+      clearSpaceScene?.();
       if (previousTimeStage === null) delete document.documentElement.dataset.mapTime;
       else document.documentElement.setAttribute("data-map-time", previousTimeStage);
       document.documentElement.classList.toggle("dark", previousDarkMode);
@@ -264,7 +276,8 @@ export default function MapView() {
       isCancelled: () => cancelled,
       onSubmissionClick: handleSubmissionClick,
       onLoadError: setSubmissionsError,
-      isInteractionBlocked: () => useSubmissionMapStore.getState().isSubmitting,
+      isInteractionBlocked: () => useSubmissionMapStore.getState().isSubmitting
+        || map.getZoom() <= SPACE_DETAIL_MIN_ZOOM,
       isEntryReady: () => entryAnimationsReadyRef.current,
       assets,
     })
@@ -392,6 +405,7 @@ export default function MapView() {
 
   return (
     <div className="MapView-wrapper">
+      <canvas ref={spaceRef} className="MapView-space" aria-hidden="true" />
       <div
         ref={containerRef}
         className={cn("MapView-map", mapReady && "is-ready")}
@@ -411,6 +425,13 @@ export default function MapView() {
                 </a>
               ),
             })}
+          </p>
+          <p>
+            <a href="https://cloudless.eox.at" target="_blank" rel="noopener noreferrer">EOxCloudless</a>
+            {" by "}
+            <a href="https://maps.eox.at" target="_blank" rel="noopener noreferrer">EOX IT Services GmbH</a>
+            {" (Contains modified Copernicus Sentinel data 2016) · "}
+            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
           </p>
           <p>{t("disclaimer")}</p>
         </div>

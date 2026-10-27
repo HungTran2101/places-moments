@@ -49,6 +49,8 @@ A small observation, a memory, words you never said. Joy, longing, grief, and ha
 
 The experience begins with a 2D map. English and Vietnamese copy, soft transitions, and a small writing flow keep the focus on the moment.
 
+Zoom out to see the Earth against a quiet star field, with satellite imagery from [EOX::Maps](https://maps.eox.at/). Zoom back in to return to the map and keep exploring.
+
 <details>
 <summary><strong>A look at the tools</strong></summary>
 
