@@ -84,7 +84,7 @@ export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
           }, {
             duration: REVEAL_DURATION_MS,
             // Mở nhanh, chậm lại ở giữa rồi tăng tốc để phủ hết viewport.
-            easing: "cubic-bezier(0.15, 0.85, 0.85, 0.15)",
+            easing: "cubic-bezier(0,.28,1,-0.13)",
             fill: "both",
             pseudoElement: "::view-transition-new(root)",
           });
