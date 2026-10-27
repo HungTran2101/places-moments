@@ -68,8 +68,6 @@
   }
 
   @media (width <=640px) {
-    // Đặt rail dưới tiêu đề để các nút không chồng chữ trên màn hình hẹp.
-    top: 5.5rem;
 
     // Làm dịu toolbar khi soạn bài nhưng vẫn giữ các thao tác sử dụng được.
     &[data-sidebar-open='true'] {
