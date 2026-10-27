@@ -10,7 +10,7 @@ function createStars(): Star[] {
     return seed / 4294967296;
   };
   // Phân bố trên thiên cầu, thêm một dải sao mờ thay vì lặp lại texture hay chấm theo lưới.
-  return Array.from({ length: 9000 }, (_, index) => {
+  return Array.from({ length: 1000 }, (_, index) => {
     const longitude = random() * Math.PI * 2;
     const latitude = index < 6000
       ? Math.asin(random() * 2 - 1)
@@ -31,7 +31,7 @@ function createStars(): Star[] {
 
 export function createSpaceScene(map: MapLibreMap, canvas: HTMLCanvasElement) {
   const context = canvas.getContext("2d");
-  if (!context) return () => {};
+  if (!context) return () => { };
   const stars = createStars();
   const root = document.documentElement;
   const previousSpace = root.getAttribute("data-map-space");

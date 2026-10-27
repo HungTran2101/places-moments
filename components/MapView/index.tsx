@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
 import { useSubmissionMapStore } from "@/store/useSubmissionMapStore";
+import { Info } from "lucide-react";
 import type { Map as MapLibreMap, Point } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useTranslations } from "next-intl";
@@ -410,31 +411,40 @@ export default function MapView() {
         ref={containerRef}
         className={cn("MapView-map", mapReady && "is-ready")}
       />
-      <RefractiveGlass>
-        <div className="MapView-disclaimer" role="note" aria-label={t("disclaimerLabel")}>
-          <p>
-            {t.rich("attribution", {
-              osm: (chunks) => (
-                <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">
-                  {chunks}
-                </a>
-              ),
-              carto: (chunks) => (
-                <a href="https://carto.com/attribution/" target="_blank" rel="noopener noreferrer">
-                  {chunks}
-                </a>
-              ),
-            })}
-          </p>
-          <p>
-            <a href="https://cloudless.eox.at" target="_blank" rel="noopener noreferrer">EOxCloudless</a>
-            {" by "}
-            <a href="https://maps.eox.at" target="_blank" rel="noopener noreferrer">EOX IT Services GmbH</a>
-            {" (Contains modified Copernicus Sentinel data 2016) · "}
-            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
-          </p>
-          <p>{t("disclaimer")}</p>
-        </div>
+      <RefractiveGlass
+        glassThickness={20}
+        bezelWidth={10}
+      >
+        <details className="MapView-disclaimer">
+          <summary aria-label={t("disclaimerLabel")}>
+            <span>© OpenStreetMap · CARTO · EOX</span>
+            <Info size={12} aria-hidden="true" />
+          </summary>
+          <div className="MapView-disclaimerContent" role="note" aria-label={t("disclaimerLabel")}>
+            <p>
+              {t.rich("attribution", {
+                osm: (chunks) => (
+                  <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">
+                    {chunks}
+                  </a>
+                ),
+                carto: (chunks) => (
+                  <a href="https://carto.com/attribution/" target="_blank" rel="noopener noreferrer">
+                    {chunks}
+                  </a>
+                ),
+              })}
+            </p>
+            <p>
+              <a href="https://cloudless.eox.at" target="_blank" rel="noopener noreferrer">EOxCloudless</a>
+              {" by "}
+              <a href="https://maps.eox.at" target="_blank" rel="noopener noreferrer">EOX IT Services GmbH</a>
+              {" (Contains modified Copernicus Sentinel data 2016) · "}
+              <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
+            </p>
+            <p>{t("disclaimer")}</p>
+          </div>
+        </details>
       </RefractiveGlass>
       {submissionsError && (
         <RefractiveGlass>

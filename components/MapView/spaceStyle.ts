@@ -36,7 +36,7 @@ export function withSpaceStyle(style: StyleSpecification): StyleSpecification {
     "sky-color": "transparent",
     "horizon-color": "transparent",
     "fog-color": "transparent",
-    "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], SPACE_FADE_START_ZOOM, 0.85, SPACE_FADE_END_ZOOM, 0],
+    "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], SPACE_FADE_START_ZOOM, 0.2, SPACE_FADE_END_ZOOM, 0],
   };
   style.light = { anchor: "map", position: [1.5, 90, 70] };
   for (const layer of style.layers) {
