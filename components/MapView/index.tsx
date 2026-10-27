@@ -397,8 +397,22 @@ export default function MapView() {
         className={cn("MapView-map", mapReady && "is-ready")}
       />
       <RefractiveGlass>
-        <div className="MapView-disclaimer" aria-label="Map disclaimer">
-          <p>{t('disclaimer')}</p>
+        <div className="MapView-disclaimer" role="note" aria-label={t("disclaimerLabel")}>
+          <p>
+            {t.rich("attribution", {
+              osm: (chunks) => (
+                <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">
+                  {chunks}
+                </a>
+              ),
+              carto: (chunks) => (
+                <a href="https://carto.com/attribution/" target="_blank" rel="noopener noreferrer">
+                  {chunks}
+                </a>
+              ),
+            })}
+          </p>
+          <p>{t("disclaimer")}</p>
         </div>
       </RefractiveGlass>
       {submissionsError && (

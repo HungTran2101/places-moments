@@ -24,7 +24,9 @@
     "retry": "Thử lại",
     "dropPin": "Kéo ghim đến nơi bạn muốn để lại suy nghĩ",
     "loading": "Đang tải thế giới…",
-    "disclaimer": "Dữ liệu bản đồ © Những người đóng góp cho OpenStreetMap.\nRanh giới và tên gọi có thể không phản ánh vị trí chính thức."
+    "disclaimerLabel": "Nguồn dữ liệu và lưu ý về bản đồ",
+    "attribution": "© <osm>OpenStreetMap contributors</osm> · © <carto>CARTO</carto>",
+    "disclaimer": "Chỉ tham khảo; không xác lập biên giới, chủ quyền."
   },
   "submission": {
     "titleLabel": "Tiêu đề",

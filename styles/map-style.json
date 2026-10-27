@@ -4405,7 +4405,22 @@
         ]
       ],
       "layout": {
-        "text-field": "{name}",
+        "text-field": [
+          "case",
+          [
+            "==",
+            [
+              "get",
+              "name_en"
+            ],
+            "South China Sea"
+          ],
+          "Biển đông",
+          [
+            "get",
+            "name"
+          ]
+        ],
         "symbol-placement": "point",
         "text-size": 12,
         "text-font": [
@@ -6598,7 +6613,7 @@
       "id": "vn-disputed-islands-label-mask",
       "type": "circle",
       "source": "vn-disputed-labels",
-      "minzoom": 4,
+      "minzoom": 5,
       "maxzoom": 24,
       "paint": {
         "circle-color": "rgba(230, 232, 240, 0.98)",
@@ -6626,7 +6641,7 @@
       "id": "vn-disputed-islands-labels-hoang-sa",
       "type": "symbol",
       "source": "vn-disputed-labels",
-      "minzoom": 4,
+      "minzoom": 5,
       "maxzoom": 24,
       "filter": [
         "==",
@@ -6678,7 +6693,7 @@
       "id": "vn-disputed-islands-labels-truong-sa",
       "type": "symbol",
       "source": "vn-disputed-labels",
-      "minzoom": 4,
+      "minzoom": 5,
       "maxzoom": 24,
       "filter": [
         "==",

@@ -66,27 +66,34 @@
     position: absolute;
     right: 0.5rem;
     bottom: 0.5rem;
-    max-width: min(22rem, calc(100% - 2rem));
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.75rem;
+    max-width: min(22rem, calc(100% - 1rem));
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
     color: var(--color-map-disclaimer-text);
     opacity: 0.5;
-    font-size: 0.7rem;
-    transform: scale(0.5);
-    transform-origin: bottom right;
+    font-size: 0.5rem;
+    line-height: 1.35;
     transition: all 0.3s ease;
 
-    // Opacity của nhãn tạo backdrop root; lọc trên chính nhãn để vẫn lấy được nền bản đồ.
-    &[data-refractive-glass='active'] {
-      backdrop-filter: var(--refraction-filter) saturate(1.08);
+    p {
+      line-height: inherit;
+    }
 
-      &::after {
-        backdrop-filter: none;
+    p+p {
+      margin-top: 0.125rem;
+    }
+
+    a {
+      text-decoration: underline;
+      text-underline-offset: 0.125rem;
+
+      &:focus-visible {
+        outline: 2px solid currentcolor;
+        outline-offset: 2px;
       }
     }
 
     &:hover {
-      transform: scale(1);
       opacity: 1;
     }
   }
@@ -208,11 +215,9 @@
 
   &::view-transition-new(root) {
     z-index: 2;
-    mask-image: radial-gradient(
-      circle at var(--map-time-reveal-x, 50%) var(--map-time-reveal-y, 50%),
-      #000 max(0px, calc(var(--map-time-reveal-radius) - var(--map-time-reveal-feather, 24px))),
-      transparent var(--map-time-reveal-radius)
-    );
+    mask-image: radial-gradient(circle at var(--map-time-reveal-x, 50%) var(--map-time-reveal-y, 50%),
+        #000 max(0px, calc(var(--map-time-reveal-radius) - var(--map-time-reveal-feather, 24px))),
+        transparent var(--map-time-reveal-radius));
   }
 
   *,
