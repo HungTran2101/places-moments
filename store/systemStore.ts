@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { MapTimeMode } from '@/components/MapView/timeStyle';
+import type { MapTimeMode, MapTimeStage } from '@/components/MapView/timeStyle';
 
 const MAP_TIME_MODE_KEY = 'pm_map_time_mode';
 
@@ -7,11 +7,13 @@ interface SystemState {
   sidebarWidth: number;
   mapReady: boolean;
   mapTimeMode: MapTimeMode;
+  mapTimeStage: MapTimeStage;
   feature: 'moment' | 'message'
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   setMapReady: (ready: boolean) => void;
   setMapTimeMode: (mode: MapTimeMode) => void;
+  setMapTimeStage: (stage: MapTimeStage) => void;
   restoreMapTimeMode: () => void;
   setFeature: (feature: 'moment' | 'message') => void;
 }
@@ -20,10 +22,12 @@ export const useSystemStore = create<SystemState>((set) => ({
   sidebarWidth: 400,
   mapReady: false,
   mapTimeMode: 'auto',
+  mapTimeStage: 'daytime',
   feature: 'moment',
   sidebarOpen: false,
   setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
   setMapReady: (ready: boolean) => set({ mapReady: ready }),
+  setMapTimeStage: (mapTimeStage) => set({ mapTimeStage }),
   setMapTimeMode: (mapTimeMode) => {
     set({ mapTimeMode });
     if (typeof window === 'undefined') return;

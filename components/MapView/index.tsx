@@ -105,6 +105,7 @@ export default function MapView() {
 
       // Đọc giờ ngay trước khi tạo map để khung hình đầu đã dùng đúng bảng màu.
       const timeStage = resolveMapTimeStage(useSystemStore.getState().mapTimeMode, new Date());
+      useSystemStore.getState().setMapTimeStage(timeStage);
       document.documentElement.dataset.mapTime = timeStage;
       // Class trên html giúp chữ và icon trong portal cũng dùng đúng bảng màu ban đêm.
       document.documentElement.classList.toggle("dark", timeStage === "nighttime");
@@ -127,6 +128,8 @@ export default function MapView() {
         const now = new Date();
         const mode = useSystemStore.getState().mapTimeMode;
         const nextStage = resolveMapTimeStage(mode, now);
+        // Chia sẻ khung giờ đã tính để icon Auto luôn khớp lịch đổi màu của map.
+        useSystemStore.getState().setMapTimeStage(nextStage);
         if (timeStyleReady) timeReveal.setStage(nextStage, animate);
         // Chỉ theo dõi đồng hồ ở Auto; chế độ thủ công giữ nguyên đến khi được đổi lại.
         if (mode === "auto") {

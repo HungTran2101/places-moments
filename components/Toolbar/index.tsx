@@ -30,9 +30,11 @@ export default function Toolbar() {
   const locale = useLocale() as Locale;
   const router = useRouter();
   const mapTimeMode = useSystemStore((state) => state.mapTimeMode);
+  const mapTimeStage = useSystemStore((state) => state.mapTimeStage);
   const setMapTimeMode = useSystemStore((state) => state.setMapTimeMode);
   const sidebarOpen = useSystemStore((state) => state.sidebarOpen);
-  const SelectedTimeIcon = TIME_ACTIONS.find((action) => action.value === mapTimeMode)?.icon ?? Clock3;
+  const selectedTimeStage = mapTimeMode === "auto" ? mapTimeStage : mapTimeMode;
+  const SelectedTimeIcon = TIME_ACTIONS.find((action) => action.value === selectedTimeStage)?.icon ?? Sun;
 
   const handleChangeLanguage = async (nextLocale: Locale) => {
     if (nextLocale === locale) return;
