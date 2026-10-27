@@ -182,7 +182,14 @@
   text-shadow: 1px 1px 1px rgb(0 0 0 / 20%);
 }
 
-// Hai ảnh giữ nguyên độ đục; chỉ vùng tròn của ảnh mới được mở rộng ra ngoài.
+// Đăng ký độ dài để bán kính trong radial-gradient được nội suy mượt giữa các khung hình.
+@property --map-time-reveal-radius {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0;
+}
+
+// Chỉ mép mặt nạ hòa hai bảng màu, không làm mờ dần toàn bộ trang.
 :root[data-map-time-reveal] {
   &::view-transition {
     pointer-events: none;
@@ -201,6 +208,11 @@
 
   &::view-transition-new(root) {
     z-index: 2;
+    mask-image: radial-gradient(
+      circle at var(--map-time-reveal-x, 50%) var(--map-time-reveal-y, 50%),
+      #000 max(0px, calc(var(--map-time-reveal-radius) - var(--map-time-reveal-feather, 24px))),
+      transparent var(--map-time-reveal-radius)
+    );
   }
 
   *,

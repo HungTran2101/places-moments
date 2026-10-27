@@ -1,7 +1,8 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { getMapPaintProperties, type MapTimeStage } from "./timeStyle";
 
-const REVEAL_DURATION_MS = 1000;
+const REVEAL_DURATION_MS = 700;
+const REVEAL_FEATHER_PX = 50;
 
 export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
   const root = document.documentElement;
@@ -61,7 +62,7 @@ export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
       const radius = Math.hypot(
         Math.max(x, window.innerWidth - x),
         Math.max(y, window.innerHeight - y),
-      ) + 1;
+      ) + REVEAL_FEATHER_PX + 1;
 
       root.setAttribute("data-map-time-reveal", "");
       // Vẽ lại khung cũ ngay trước snapshot vì WebGL không giữ drawing buffer mặc định.
@@ -74,11 +75,16 @@ export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
             nextTransition.skipTransition();
             return;
           }
+          // Chỉ hòa hai bảng màu trong dải mép 24px; vùng bên trong vẫn giữ nguyên màu mới.
           animation = root.animate({
-            clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`],
+            "--map-time-reveal-radius": ["0px", `${radius}px`],
+            "--map-time-reveal-x": [`${x}px`, `${x}px`],
+            "--map-time-reveal-y": [`${y}px`, `${y}px`],
+            "--map-time-reveal-feather": [`${REVEAL_FEATHER_PX}px`, `${REVEAL_FEATHER_PX}px`],
           }, {
             duration: REVEAL_DURATION_MS,
-            easing: "cubic-bezier(0.2, 0, 0.2, 1)",
+            // Mở nhanh, chậm lại ở giữa rồi tăng tốc để phủ hết viewport.
+            easing: "cubic-bezier(0.15, 0.85, 0.85, 0.15)",
             fill: "both",
             pseudoElement: "::view-transition-new(root)",
           });
