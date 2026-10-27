@@ -33,6 +33,7 @@ export default function Toolbar() {
   const mapTimeStage = useSystemStore((state) => state.mapTimeStage);
   const setMapTimeMode = useSystemStore((state) => state.setMapTimeMode);
   const sidebarOpen = useSystemStore((state) => state.sidebarOpen);
+  const isSpaceView = useSystemStore((state) => state.isSpaceView);
   const selectedTimeStage = mapTimeMode === "auto" ? mapTimeStage : mapTimeMode;
   const SelectedTimeIcon = TIME_ACTIONS.find((action) => action.value === selectedTimeStage)?.icon ?? Sun;
 
@@ -92,43 +93,45 @@ export default function Toolbar() {
             </DropdownMenuContent>
           </RefractiveGlass>
         </DropdownMenu>
-        <DropdownMenu>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild id="time-menu-trigger" aria-controls="time-menu-content">
-                <ToolbarPrimitive.Button className="Toolbar-action" aria-label={t("time")}>
-                  <SelectedTimeIcon aria-hidden="true" />
-                </ToolbarPrimitive.Button>
-              </DropdownMenuTrigger>
-            </TooltipTrigger>
-            <TooltipContent side="left" sideOffset={10}>{t("time")}: {t(mapTimeMode)}</TooltipContent>
-          </Tooltip>
-          <RefractiveGlass>
-            <DropdownMenuContent
-              id="time-menu-content"
-              aria-labelledby="time-menu-trigger"
-              className="Toolbar-menu"
-              side="left"
-              align="start"
-              sideOffset={10}
-            >
-              <DropdownMenuRadioGroup
-                value={mapTimeMode}
-                onValueChange={(value) => {
-                  const action = TIME_ACTIONS.find((item) => item.value === value);
-                  if (action) setMapTimeMode(action.value);
-                }}
+        {!isSpaceView && (
+          <DropdownMenu>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <DropdownMenuTrigger asChild id="time-menu-trigger" aria-controls="time-menu-content">
+                  <ToolbarPrimitive.Button className="Toolbar-action" aria-label={t("time")}>
+                    <SelectedTimeIcon aria-hidden="true" />
+                  </ToolbarPrimitive.Button>
+                </DropdownMenuTrigger>
+              </TooltipTrigger>
+              <TooltipContent side="left" sideOffset={10}>{t("time")}: {t(mapTimeMode)}</TooltipContent>
+            </Tooltip>
+            <RefractiveGlass>
+              <DropdownMenuContent
+                id="time-menu-content"
+                aria-labelledby="time-menu-trigger"
+                className="Toolbar-menu"
+                side="left"
+                align="start"
+                sideOffset={10}
               >
-                {TIME_ACTIONS.map(({ value, icon: Icon }) => (
-                  <DropdownMenuRadioItem key={value} value={value}>
-                    <Icon aria-hidden="true" />
-                    <span>{t(value)}</span>
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </RefractiveGlass>
-        </DropdownMenu>
+                <DropdownMenuRadioGroup
+                  value={mapTimeMode}
+                  onValueChange={(value) => {
+                    const action = TIME_ACTIONS.find((item) => item.value === value);
+                    if (action) setMapTimeMode(action.value);
+                  }}
+                >
+                  {TIME_ACTIONS.map(({ value, icon: Icon }) => (
+                    <DropdownMenuRadioItem key={value} value={value}>
+                      <Icon aria-hidden="true" />
+                      <span>{t(value)}</span>
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </RefractiveGlass>
+          </DropdownMenu>
+        )}
       </ToolbarPrimitive.Root>
     </RefractiveGlass>
   );

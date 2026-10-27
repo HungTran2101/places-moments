@@ -6,12 +6,14 @@ const MAP_TIME_MODE_KEY = 'pm_map_time_mode';
 interface SystemState {
   sidebarWidth: number;
   mapReady: boolean;
+  isSpaceView: boolean;
   mapTimeMode: MapTimeMode;
   mapTimeStage: MapTimeStage;
   feature: 'moment' | 'message'
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   setMapReady: (ready: boolean) => void;
+  setIsSpaceView: (isSpaceView: boolean) => void;
   setMapTimeMode: (mode: MapTimeMode) => void;
   setMapTimeStage: (stage: MapTimeStage) => void;
   restoreMapTimeMode: () => void;
@@ -21,12 +23,14 @@ interface SystemState {
 export const useSystemStore = create<SystemState>((set) => ({
   sidebarWidth: 400,
   mapReady: false,
+  isSpaceView: false,
   mapTimeMode: 'auto',
   mapTimeStage: 'daytime',
   feature: 'moment',
   sidebarOpen: false,
   setSidebarOpen: (open: boolean) => set({ sidebarOpen: open }),
   setMapReady: (ready: boolean) => set({ mapReady: ready }),
+  setIsSpaceView: (isSpaceView: boolean) => set((state) => state.isSpaceView === isSpaceView ? state : { isSpaceView }),
   setMapTimeStage: (mapTimeStage) => set({ mapTimeStage }),
   setMapTimeMode: (mapTimeMode) => {
     set({ mapTimeMode });

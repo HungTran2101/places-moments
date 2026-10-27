@@ -1,3 +1,4 @@
+import { useSystemStore } from "@/store/systemStore";
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { getMapMarkerOpacity, getMapMarkerScale, getSpaceMinZoom, SPACE_FADE_END_ZOOM, SPACE_FADE_START_ZOOM } from "./spaceStyle";
 
@@ -35,6 +36,7 @@ export function createSpaceScene(map: MapLibreMap, canvas: HTMLCanvasElement) {
   const stars = createStars();
   const root = document.documentElement;
   const previousSpace = root.getAttribute("data-map-space");
+  const { isSpaceView: previousSpaceView, setIsSpaceView } = useSystemStore.getState();
   let width = 0;
   let height = 0;
   let previousCamera = "";
@@ -48,7 +50,10 @@ export function createSpaceScene(map: MapLibreMap, canvas: HTMLCanvasElement) {
     map.getContainer().style.setProperty("--map-detail-opacity", String(detailOpacity));
     map.getContainer().style.setProperty("--map-marker-scale", String(getMapMarkerScale(zoom)));
     // Giữ chữ/icon sáng trên nền không gian, độc lập với lựa chọn giờ của bản đồ.
-    root.toggleAttribute("data-map-space", zoom < (SPACE_FADE_START_ZOOM + SPACE_FADE_END_ZOOM) / 2);
+    const isSpaceView = zoom < (SPACE_FADE_START_ZOOM + SPACE_FADE_END_ZOOM) / 2;
+    root.toggleAttribute("data-map-space", isSpaceView);
+    // Toolbar dùng cùng ngưỡng với màu không gian; store chỉ thông báo khi đổi chế độ.
+    setIsSpaceView(isSpaceView);
     if (opacity === 0) return;
 
     const center = map.getCenter();
@@ -109,5 +114,6 @@ export function createSpaceScene(map: MapLibreMap, canvas: HTMLCanvasElement) {
     map.off("resize", resize);
     if (previousSpace === null) root.removeAttribute("data-map-space");
     else root.setAttribute("data-map-space", previousSpace);
+    setIsSpaceView(previousSpaceView);
   };
 }
