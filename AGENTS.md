@@ -1,6 +1,6 @@
-# Places Moments — Agent Guidelines
+# World of Moments — Agent Guidelines
 
-Places Moments is a calm, map-based reflection app built with Next.js, TypeScript,
+World of Moments is a calm, map-based reflection app built with Next.js, TypeScript,
 PostgreSQL, Prisma, MapLibre, Zustand, and Framer Motion.
 
 The experience should feel like discovering quiet messages left around the world,

@@ -72,7 +72,7 @@
     "description": "The page ran into an error we could not recover from automatically. Please try again, or send us the details so we can fix it.",
     "retry": "Try again",
     "report": "Report",
-    "reportSubject": "Places Moments error report",
+    "reportSubject": "World of Moments error report",
     "reportUnavailable": "Set NEXT_PUBLIC_ERROR_REPORT_EMAIL to enable report.",
     "reportTooltip": "The email content will be pre-filled, you just need to send it :3",
     "reportThanks": "Thank you for sending the report! We will look into it and fix it as soon as possible."

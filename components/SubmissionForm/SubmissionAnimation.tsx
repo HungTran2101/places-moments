@@ -1,6 +1,6 @@
 "use client";
 
-import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
+import thoughtBubbleImg from "@/public/assets/thought-note.webp";
 import { RefractiveGlass } from "@/components/ui/refractive-glass";
 import type { ScreenPoint } from "@/store/useSubmissionMapStore";
 import { AnimatePresence, motion } from "framer-motion";

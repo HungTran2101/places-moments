@@ -2,7 +2,7 @@
   <img src="public/favicon/cover-image.png" alt="A hand-drawn world covered in little notes, beneath clouds and sunshine" width="100%" />
 </p>
 
-<h1 align="center">Places Moments</h1>
+<h1 align="center">World of Moments</h1>
 
 <p align="center">
   <em>A quiet map of human thoughts.</em>
@@ -24,7 +24,7 @@
 
 ## A little of you, left somewhere
 
-Places Moments is an anonymous map where people leave small thoughts tied to places around the world. Wander through words left by others, or choose a place that means something to you and leave a moment of your own.
+World of Moments is an anonymous map where people leave small thoughts tied to places around the world. Wander through words left by others, or choose a place that means something to you and leave a moment of your own.
 
 | 🌍 Wander | 📍 Leave a thought | 🌦 Pause a little |
 | :--- | :--- | :--- |
@@ -76,7 +76,7 @@ Zoom out to see the Earth against a quiet star field, with satellite imagery fro
 
 ## Still unfolding
 
-Places Moments is in early development, with map exploration, thought submission, and weather atmosphere at its heart. The roadmap makes room for personal history, letters to your future self, subtle realtime arrivals, and a secondary globe view as the project grows.
+World of Moments is in early development, with map exploration, thought submission, and weather atmosphere at its heart. The roadmap makes room for personal history, letters to your future self, subtle realtime arrivals, and a secondary globe view as the project grows.
 
 ---
 

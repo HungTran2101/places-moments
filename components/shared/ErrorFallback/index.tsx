@@ -31,7 +31,7 @@ function detectLocale(): Locale {
 
 function buildReportBody(error: Error & { digest?: string }) {
   const lines = [
-    "Places Moments error report",
+    "World of Moments error report",
     "",
     `Time: ${new Date().toISOString()}`,
     `Message: ${error.message}`,

@@ -72,7 +72,7 @@
     "description": "Xin lỗi vì đã làm gián đoạn trải nghiệm chia sẻ của bạn. Bạn hãy thử lại hoặc báo lỗi để mình khắc phục sớm nhất có thể nhé!",
     "retry": "Thử lại",
     "report": "Báo lỗi",
-    "reportSubject": "Places Moments error report",
+    "reportSubject": "World of Moments error report",
     "reportUnavailable": "Hãy cấu hình NEXT_PUBLIC_ERROR_REPORT_EMAIL để báo lỗi.",
     "reportTooltip": "Nội dung email sẽ được điền sẵn, bạn chỉ cần gửi đi là xong nhé :3",
     "reportThanks": "Cảm ơn bạn đã gửi báo lỗi! Chúng mình sẽ xem xét và khắc phục sớm nhất có thể."

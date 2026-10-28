@@ -1,5 +1,5 @@
-import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
-import clusterBubbleImg from "@/public/assets/cluster_bubble.webp";
+import thoughtBubbleImg from "@/public/assets/thought-note.webp";
+import clusterBubbleImg from "@/public/assets/cluster-notes.webp";
 import { normalizeSubmissionBounds } from "@/lib/submissionBounds";
 import { getSubmissions, type SubmissionPin } from "@/services/submissions";
 import { Marker, type ExpressionSpecification, type GeoJSONSource, type Map as MapLibreMap } from "maplibre-gl";

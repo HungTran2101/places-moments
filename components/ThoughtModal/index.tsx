@@ -2,7 +2,7 @@
 
 import { Dialog } from "@/components/ui/dialog";
 import { GlassButton } from "@/components/ui/glass-button";
-import thoughtBubbleImg from "@/public/assets/thought_bubble.webp";
+import thoughtBubbleImg from "@/public/assets/thought-note.webp";
 import { ApiError } from "@/services/shared/errors";
 import { getSubmissionById, type Submission } from "@/services/submissions";
 import { ArrowLeft, Cloud, CloudDrizzle, CloudFog, CloudLightning, CloudRain, CloudSun, Snowflake, Sun } from "lucide-react";
