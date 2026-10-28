@@ -6,7 +6,7 @@ import { useSubmissionMapStore } from "@/store/useSubmissionMapStore"
 import { motion } from "framer-motion"
 import { ChevronRight } from "lucide-react"
 import { useTranslations } from "next-intl"
-import { useMemo, useRef, useState } from "react"
+import { CSSProperties, useMemo, useRef, useState } from "react"
 import SubmissionForm from "../SubmissionForm"
 import ThoughtGuidelines from "../ThoughtGuidelines"
 import { RefractiveGlass } from "../ui/refractive-glass"
@@ -136,9 +136,9 @@ const Sidebar = () => {
         onAnimationComplete={handleAsideAnimationComplete}
       >
         <RefractiveGlass
-          brightness={0.95}
-          bezelWidth={10}
+          bezelWidth={20}
           glassThickness={50}
+          style={{ "--glass-color": "118, 95, 248" } as CSSProperties}
         >
           <motion.div
             className="sidebar-button-glass"
