@@ -13,7 +13,7 @@ export const SPACE_DETAIL_MIN_ZOOM = 1.25;
 
 export function getSpaceMinZoom(width: number, height: number) {
   // Giữ đường kính Trái Đất gần 65% cạnh ngắn, thay vì lùi thành một chấm trên màn hình lớn.
-  return Math.max(0.5, Math.min(3, Math.log2(Math.max(1, Math.min(width, height)) * 1 * Math.PI / 512)));
+  return Math.max(0.5, Math.min(3, Math.log2(Math.max(1, Math.min(width, height)) * 0.8 * Math.PI / 512)));
 }
 
 export function getMapMarkerScale(zoom: number) {
