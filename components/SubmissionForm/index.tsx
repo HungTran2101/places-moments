@@ -14,6 +14,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { GlassButton } from "../ui/glass-button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import SubmissionAnimation from "./SubmissionAnimation";
+import { constants } from "@/app/api/constant";
 
 interface SubmissionFormProps {
   onSuccess?: () => void;
@@ -196,24 +197,32 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
   return (
     <form className="SubmissionForm" onSubmit={handleSubmit} aria-busy={isSubmitting}>
       <label className="SubmissionForm-label">
-        {t("descriptionLabel")}
-        <textarea
-          ref={descriptionRef}
-          className={`SubmissionForm-textarea${isDescriptionFlashing ? " SubmissionForm-textarea--flash-error" : ""}`}
-          value={description}
-          onChange={(e) => {
-            const nextDescription = e.target.value;
-            setDescription(nextDescription);
-            if (nextDescription.trim()) setHasDescriptionError(false);
-          }}
+        <span id="description-label">{t("descriptionLabel")}</span>
+        <span
+          className={`SubmissionForm-textarea-wrapper${isDescriptionFlashing ? " SubmissionForm-textarea--flash-error" : ""}`}
           onAnimationEnd={() => setIsDescriptionFlashing(false)}
-          placeholder={t("descriptionPlaceholder")}
-          maxLength={600}
-          rows={4}
-          readOnly={isSubmitting}
-          aria-invalid={hasDescriptionError}
-          aria-describedby={hasDescriptionError ? "description-error" : undefined}
-        />
+        >
+          <textarea
+            ref={descriptionRef}
+            className="SubmissionForm-textarea"
+            value={description}
+            onChange={(e) => {
+              const nextDescription = e.target.value;
+              setDescription(nextDescription);
+              if (nextDescription.trim()) setHasDescriptionError(false);
+            }}
+            placeholder={t("descriptionPlaceholder")}
+            maxLength={constants.MAX_DESCRIPTION_LENGTH}
+            rows={4}
+            readOnly={isSubmitting}
+            aria-labelledby="description-label"
+            aria-invalid={hasDescriptionError}
+            aria-describedby={`description-count${hasDescriptionError ? " description-error" : ""}`}
+          />
+          <span id="description-count" className="SubmissionForm-character-count">
+            {description.length} / {constants.MAX_DESCRIPTION_LENGTH}
+          </span>
+        </span>
         {hasDescriptionError && (
           <div id="description-error" className="SubmissionForm-validation-error" role="alert">
             {t("descriptionRequired")}

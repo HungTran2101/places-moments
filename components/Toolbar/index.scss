@@ -68,7 +68,6 @@
   }
 
   @media (width <=640px) {
-
     // Làm dịu toolbar khi soạn bài nhưng vẫn giữ các thao tác sử dụng được.
     &[data-sidebar-open='true'] {
       opacity: 0;
