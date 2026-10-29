@@ -22,7 +22,8 @@ import {
   SUBMISSION_MARKER_LAYER,
 } from "./submissionsLayer";
 import { createTimeReveal } from "./timeReveal";
-import { getTimeMapStyle, resolveMapTimeStage } from "./timeStyle";
+import { createSunRay } from "./sunRay";
+import { getMapSunPosition, getTimeMapStyle, resolveMapTimeStage } from "./timeStyle";
 
 const LOADER_EXIT_DELAY_MS = 2100;
 const INITIAL_MAP_CENTER: [number, number] = [106, 16];
@@ -39,6 +40,7 @@ export default function MapView() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const spaceRef = useRef<HTMLCanvasElement>(null);
+  const sunRayRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const pinRef = useRef<import("maplibre-gl").Marker | null>(null);
   const pinAddedRef = useRef(false);
@@ -127,18 +129,28 @@ export default function MapView() {
       });
       if (spaceRef.current) clearSpaceScene = createSpaceScene(map, spaceRef.current);
 
-      const timeReveal = createTimeReveal(map, timeStage);
       let timeCheckTimeout: number;
       let timeStyleReady = false;
+      let sunPosition: number | null = null;
+      let animateSun = false;
+      const sunRay = sunRayRef.current ? createSunRay(sunRayRef.current) : undefined;
+      // Chờ snapshot đổi màu kết thúc để người xem thấy trọn đường đi của tia nắng thật.
+      const syncSunRay = () => sunRay?.setPosition(sunPosition, animateSun);
+      const timeReveal = createTimeReveal(map, timeStage, syncSunRay);
       const syncTimeStyle = (animate = true) => {
         window.clearTimeout(timeCheckTimeout);
         if (destroyed) return;
         const now = new Date();
         const mode = useSystemStore.getState().mapTimeMode;
         const nextStage = resolveMapTimeStage(mode, now);
+        // Tia nắng dùng chung nhịp kiểm tra Auto, không tạo thêm đồng hồ hay render lại map.
+        sunPosition = getMapSunPosition(mode, now);
+        animateSun = animate && timeStyleReady;
+        sunRay?.pause();
         // Chia sẻ khung giờ đã tính để icon Auto luôn khớp lịch đổi màu của map.
         useSystemStore.getState().setMapTimeStage(nextStage);
         if (timeStyleReady) timeReveal.setStage(nextStage, animate);
+        else syncSunRay();
         // Chỉ theo dõi đồng hồ ở Auto; chế độ thủ công giữ nguyên đến khi được đổi lại.
         if (mode === "auto") {
           const delay = 60_000 - (now.getSeconds() * 1000 + now.getMilliseconds());
@@ -158,6 +170,7 @@ export default function MapView() {
       clearTimeStyle = () => {
         window.clearTimeout(timeCheckTimeout);
         timeReveal.destroy();
+        sunRay?.destroy();
         unsubscribeTimeMode();
         window.removeEventListener("focus", onFocus);
         document.removeEventListener("visibilitychange", onVisibilityChange);
@@ -411,6 +424,11 @@ export default function MapView() {
         ref={containerRef}
         className={cn("MapView-map", mapReady && "is-ready")}
       />
+      <div ref={sunRayRef} className="MapView-sunRay" aria-hidden="true">
+        <div className="MapView-sunRayLight">
+          <div className="MapView-sunRayGlow" />
+        </div>
+      </div>
       <RefractiveGlass
         glassThickness={20}
         bezelWidth={10}

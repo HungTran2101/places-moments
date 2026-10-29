@@ -51,6 +51,16 @@ export function resolveMapTimeStage(mode: MapTimeMode, date: Date): MapTimeStage
   return mode === "auto" ? getMapTimeStage(date) : mode;
 }
 
+export function getMapSunPosition(mode: MapTimeMode, date: Date): number | null {
+  if (resolveMapTimeStage(mode, date) === "nighttime") return null;
+  if (mode === "daytime") return 100;
+  if (mode === "evening") return 0;
+
+  // Dùng cùng giờ địa phương với Auto: đi từ mép phải lúc 06:00 đến mép trái lúc 18:00.
+  const minutes = date.getHours() * 60 + date.getMinutes();
+  return Math.max(0, Math.min(100, (1 - (minutes - 6 * 60) / (12 * 60)) * 100));
+}
+
 function getLayerColor(layerId: string, property: string, palette: typeof PALETTES.evening): string {
   const isWater = /^(water|vn-disputed-islands-label-mask)/.test(layerId);
   if (property === "text-halo-color") return isWater ? palette.water : palette.land;

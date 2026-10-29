@@ -1,10 +1,10 @@
 import type { Map as MapLibreMap } from "maplibre-gl";
 import { getMapPaintProperties, type MapTimeStage } from "./timeStyle";
 
-const REVEAL_DURATION_MS = 700;
+const REVEAL_DURATION_MS = 600;
 const REVEAL_FEATHER_PX = 50;
 
-export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
+export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage, onSettled?: () => void) {
   const root = document.documentElement;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let currentStage = initialStage;
@@ -43,6 +43,7 @@ export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
     animation?.cancel();
     applyStage();
     root.removeAttribute("data-map-time-reveal");
+    if (!destroyed) onSettled?.();
   };
 
   const schedule = () => {
@@ -83,8 +84,7 @@ export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
             "--map-time-reveal-feather": [`${REVEAL_FEATHER_PX}px`, `${REVEAL_FEATHER_PX}px`],
           }, {
             duration: REVEAL_DURATION_MS,
-            // Mở nhanh, chậm lại ở giữa rồi tăng tốc để phủ hết viewport.
-            easing: "cubic-bezier(0,.28,1,-0.13)",
+            easing: "cubic-bezier(0,.51,1,.11)",
             fill: "both",
             pseudoElement: "::view-transition-new(root)",
           });
@@ -102,6 +102,7 @@ export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
           animation?.cancel();
           animation = undefined;
           root.removeAttribute("data-map-time-reveal");
+          if (requestedStage === currentStage) onSettled?.();
           // Chỉ chạy lựa chọn mới nhất sau khi overlay cũ đã kết thúc hoàn toàn.
           schedule();
         });
@@ -125,6 +126,11 @@ export function createTimeReveal(map: MapLibreMap, initialStage: MapTimeStage) {
     setStage(stage: MapTimeStage, animate = true) {
       if (destroyed) return;
       requestedStage = stage;
+      if (requestedStage === currentStage && !transition) {
+        cancelFrame();
+        onSettled?.();
+        return;
+      }
       if (!animate || reducedMotion.matches || !document.startViewTransition || document.visibilityState !== "visible") {
         settle();
       } else if (transition && requestedStage !== currentStage) {
