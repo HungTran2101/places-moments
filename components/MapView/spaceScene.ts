@@ -1,5 +1,7 @@
 import { useSystemStore } from "@/store/systemStore";
 import type { Map as MapLibreMap } from "maplibre-gl";
+import { createSpaceProjection } from "./spaceProjection";
+import { drawSpaceSun } from "./spaceSun";
 import { getMapMarkerOpacity, getMapMarkerScale, getSpaceMinZoom, SPACE_FADE_END_ZOOM, SPACE_FADE_START_ZOOM } from "./spaceStyle";
 
 type Star = { x: number; y: number; z: number; radius: number; alpha: number; color: string };
@@ -11,7 +13,7 @@ function createStars(): Star[] {
     return seed / 4294967296;
   };
   // Phân bố trên thiên cầu, thêm một dải sao mờ thay vì lặp lại texture hay chấm theo lưới.
-  return Array.from({ length: 1000 }, (_, index) => {
+  return Array.from({ length: 3000 }, (_, index) => {
     const longitude = random() * Math.PI * 2;
     const latitude = index < 6000
       ? Math.asin(random() * 2 - 1)
@@ -57,27 +59,17 @@ export function createSpaceScene(map: MapLibreMap, canvas: HTMLCanvasElement) {
     if (opacity === 0) return;
 
     const center = map.getCenter();
-    const camera = `${center.lng},${center.lat},${map.getBearing()},${map.getPitch()},${width},${height}`;
+    const camera = `${center.lng},${center.lat},${map.getBearing()},${map.getPitch()},${map.getRoll()},${zoom},${width},${height}`;
     if (camera === previousCamera) return;
     previousCamera = camera;
     context.clearRect(0, 0, width, height);
 
-    const longitude = center.lng * Math.PI / 180;
-    const latitude = (center.lat + map.getPitch()) * Math.PI / 180;
-    const bearing = map.getBearing() * Math.PI / 180;
-    const sinLng = Math.sin(longitude);
-    const cosLng = Math.cos(longitude);
-    const sinLat = Math.sin(latitude);
-    const cosLat = Math.cos(latitude);
-    const focalLength = height / (2 * Math.tan(Math.PI / 6));
+    const spaceCamera = createSpaceProjection(map, width, height);
 
     for (const star of stars) {
-      const forward = star.x * cosLat * cosLng + star.y * sinLat + star.z * cosLat * sinLng;
-      if (forward <= 0.1) continue;
-      const east = -star.x * sinLng + star.z * cosLng;
-      const north = -star.x * sinLat * cosLng + star.y * cosLat - star.z * sinLat * sinLng;
-      const x = width / 2 + (east * Math.cos(bearing) + north * Math.sin(bearing)) * focalLength / forward;
-      const y = height / 2 - (north * Math.cos(bearing) - east * Math.sin(bearing)) * focalLength / forward;
+      const position = spaceCamera.project(star);
+      if (!position) continue;
+      const { x, y } = position;
       if (x < -3 || x > width + 3 || y < -3 || y > height + 3) continue;
       if (star.alpha > 0.65) {
         const glow = context.createRadialGradient(x, y, 0, x, y, star.radius * 3.5);
@@ -91,6 +83,8 @@ export function createSpaceScene(map: MapLibreMap, canvas: HTMLCanvasElement) {
       context.arc(x, y, star.radius, 0, Math.PI * 2);
       context.fill();
     }
+    // Canvas ở sau map nên Trái Đất tự che Mặt Trời; dùng chung opacity với nền sao.
+    drawSpaceSun(context, width, height, spaceCamera);
   };
 
   const resize = () => {

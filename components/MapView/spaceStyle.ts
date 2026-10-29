@@ -10,6 +10,8 @@ export const FLAT_MAP_ZOOM = SPACE_FADE_END_ZOOM;
 export const GLOBE_MARKER_SCALE = 0.45;
 export const GLOBE_MARKER_MIN_OPACITY = 0.08;
 export const SPACE_DETAIL_MIN_ZOOM = 1.25;
+// Dùng chung hướng sáng cho khí quyển MapLibre và Mặt Trời trên nền không gian.
+export const SPACE_LIGHT_POSITION: [number, number, number] = [1.5, 90, 70];
 
 export function getSpaceMinZoom(width: number, height: number) {
   // Giữ đường kính Trái Đất gần 65% cạnh ngắn, thay vì lùi thành một chấm trên màn hình lớn.
@@ -38,7 +40,7 @@ export function withSpaceStyle(style: StyleSpecification): StyleSpecification {
     "fog-color": "transparent",
     "atmosphere-blend": ["interpolate", ["linear"], ["zoom"], SPACE_FADE_START_ZOOM, 0.2, SPACE_FADE_END_ZOOM, 0],
   };
-  style.light = { anchor: "map", position: [1.5, 90, 70] };
+  style.light = { anchor: "map", position: SPACE_LIGHT_POSITION };
   for (const layer of style.layers) {
     // Nhãn được vẽ ở pass riêng của MapLibre; làm mờ trước khi nhìn thấy toàn bộ hành tinh.
     if (layer.type !== "symbol") continue;
