@@ -80,3 +80,23 @@
     opacity: 0.2;
   }
 }
+
+@keyframes history-enter {
+  from {
+    transform: translateX(calc(100% + 3rem));
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes history-exit {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(100% + 3rem));
+  }
+}

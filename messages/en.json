@@ -5,8 +5,6 @@
   },
   "nav": {
     "myHistory": "My moments",
-    "writeFuture": "Write to future self",
-    "switchLanguage": "Tiếng Việt",
     "vi": "Vietnamese",
     "en": "English"
   },
@@ -22,15 +20,11 @@
   "map": {
     "submissionsLoadError": "Could not load thoughts on the map.",
     "retry": "Try again",
-    "dropPin": "Drag the pin to where you want to leave a thought",
-    "loading": "Loading the world…",
     "disclaimerLabel": "Map sources and notice",
     "attribution": "© <osm>OpenStreetMap contributors</osm> · © <carto>CARTO</carto>",
     "disclaimer": "For reference; not authoritative on borders or sovereignty."
   },
   "submission": {
-    "titleLabel": "Title",
-    "titlePlaceholder": "Give this moment a name",
     "descriptionLabel": "What are you thinking?",
     "descriptionPlaceholder": "A quiet thought, a feeling, a memory…",
     "descriptionRequired": "Please share what is on your mind",
@@ -79,9 +73,7 @@
   },
   "popup": {
     "title": "A thought left here",
-    "close": "Close thought",
     "backToMap": "Back to the map",
-    "atmosphereSuffix": "",
     "loading": "Loading this thought…",
     "loadError": "Could not load this thought.",
     "notFound": "This thought is no longer here.",
@@ -89,23 +81,19 @@
   },
   "history": {
     "title": "Your moments",
-    "empty": "You haven't left any thoughts yet.",
-    "postedAt": "Posted at",
-    "weather": "Weather at the time"
-  },
-  "futureMessage": {
-    "title": "Write to your future self",
-    "messagePlaceholder": "What do you want your future self to know?",
-    "unlockLabel": "When should this unlock?",
-    "unlockOptions": {
-      "after_days:30": "In 30 days",
-      "after_days:90": "In 3 months",
-      "after_days:365": "In a year",
-      "random": "Surprise me"
-    },
-    "send": "Send to future self",
-    "locked": "Still waiting…",
-    "unlocked": "Open"
+    "sharePrompt": "Share a moment of your own",
+    "close": "Close history",
+    "search": "Search your moments…",
+    "noResults": "No moments match your search.",
+    "loading": "Finding your moments…",
+    "loadError": "Could not load your moments.",
+    "retry": "Try again",
+    "takeMeThere": "Take me there",
+    "pagination": "History pages",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "pageIndicator": "Page {page} of {totalPages}",
+    "pageNumber": "Page {page}"
   },
   "weather": {
     "0": "Posted on a clear, still day",

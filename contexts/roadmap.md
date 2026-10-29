@@ -1,6 +1,6 @@
 Phase 1 — MVP
 
-Current status: the core map and submission flow is implemented. Personal history remains unfinished; its display component is not connected to the home page.
+Current status: the core map, submission flow, and personal history are implemented. History opens from the toolbar with debounced search and 50-item pagination for the saved local UUID.
 
 Goal: core experience working.
 
@@ -11,7 +11,7 @@ click-to-place pin submission — implemented with a description-only form (up t
 view markers — implemented with viewport loading, client-side clustering, and on-demand thought details
 weather atmosphere text — implemented with server-side weather lookup and localized display
 local UUID identity — implemented with browser LocalStorage
-personal history
+personal history — implemented with a floating glass panel, search, and TanStack Query pagination (50 thoughts per page)
 
 Tech goals:
 

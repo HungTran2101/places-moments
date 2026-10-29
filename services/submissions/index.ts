@@ -1,5 +1,6 @@
 import { ApiRequestOptions, apiRequest } from "@/services/shared/api";
 import type { SubmissionBounds } from "@/lib/submissionBounds";
+import type { PaginatedResponse } from "@/services/shared/pagination";
 
 export interface SubmissionPin {
   id: string;
@@ -25,6 +26,25 @@ export interface CreateSubmissionPayload {
 export interface UpdateSubmissionPayload {
   description?: string;
   author_uuid: string;
+}
+
+// Tách cache của DTO mới khỏi các trang còn giữ metadata phẳng khi cập nhật ứng dụng.
+export const submissionHistoryKey = ["submission-history", "metadata"] as const;
+
+export type SubmissionHistoryPage = PaginatedResponse<Submission>;
+
+export function getSubmissionHistory(
+  authorUuid: string,
+  search: string,
+  page: number,
+  options?: ApiRequestOptions,
+) {
+  const query = new URLSearchParams({ search, page: String(page) });
+  return apiRequest<SubmissionHistoryPage>(`/api/submissions/history?${query}`, {
+    ...options,
+    headers: { "x-author-uuid": authorUuid },
+    cache: "no-store",
+  });
 }
 
 export function getSubmissions(bounds: SubmissionBounds, options?: ApiRequestOptions) {

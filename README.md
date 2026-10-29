@@ -76,7 +76,7 @@ Zoom out to see the Earth against a quiet star field, with satellite imagery fro
 
 ## Still unfolding
 
-World of Moments is in early development, with map exploration, thought submission, and weather atmosphere at its heart. The roadmap makes room for personal history, letters to your future self, subtle realtime arrivals, and a secondary globe view as the project grows.
+World of Moments is in early development, with map exploration, thought submission, and weather atmosphere at its heart. Personal history opens from the toolbar, with search and pagination (50 thoughts per page) for thoughts tied to the UUID saved in your browser. The roadmap makes room for letters to your future self, subtle realtime arrivals, and a secondary globe view as the project grows.
 
 ---
 

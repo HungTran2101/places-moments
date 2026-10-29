@@ -37,6 +37,16 @@ activity or popularity.
   Include `.ts` and `.css` files explicitly when needed, since the scripts above
   only target `.tsx` and `.scss` files.
 
+## API pagination
+
+- All paginated list APIs, including future endpoints, return
+  `{ items: T[], metadata: { page, pageSize, total, totalPages } }`.
+- Keep pagination fields inside `metadata`, with domain records in `items`.
+- Reuse `PaginatedResponse<T>` and `PaginationMetadata` from
+  `services/shared/pagination.ts` in Route Handlers and frontend services.
+- Use 1-based pages. An empty result has `items: []`, `metadata.page: 1`,
+  `metadata.total: 0`, and `metadata.totalPages: 1`.
+
 ## Code comments
 
 - Write comments explaining important logic in Vietnamese, especially data loading,

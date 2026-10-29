@@ -5,8 +5,6 @@
   },
   "nav": {
     "myHistory": "Khoảnh khắc của tôi",
-    "writeFuture": "Viết cho tương lai",
-    "switchLanguage": "English",
     "vi": "Tiếng việt",
     "en": "Tiếng anh"
   },
@@ -22,15 +20,11 @@
   "map": {
     "submissionsLoadError": "Không thể tải các suy nghĩ trên bản đồ.",
     "retry": "Thử lại",
-    "dropPin": "Kéo ghim đến nơi bạn muốn để lại suy nghĩ",
-    "loading": "Đang tải thế giới…",
     "disclaimerLabel": "Nguồn dữ liệu và lưu ý về bản đồ",
     "attribution": "© <osm>OpenStreetMap contributors</osm> · © <carto>CARTO</carto>",
     "disclaimer": "Chỉ tham khảo; không xác lập biên giới, chủ quyền."
   },
   "submission": {
-    "titleLabel": "Tiêu đề",
-    "titlePlaceholder": "Đặt tên cho khoảnh khắc này",
     "descriptionLabel": "Bạn đang nghĩ gì?",
     "descriptionPlaceholder": "Một suy nghĩ nhỏ, một cảm xúc, một ký ức…",
     "descriptionRequired": "Hãy điền suy nghĩ của mình nhé",
@@ -79,33 +73,27 @@
   },
   "popup": {
     "title": "Ở đây có tâm tư",
-    "close": "Đóng suy nghĩ",
     "backToMap": "Trở lại bản đồ",
-    "atmosphereSuffix": "",
     "loading": "Đang mở tâm tư…",
     "loadError": "Không thể tải tâm tư này.",
     "notFound": "Tâm tư này không còn ở đây.",
     "retry": "Thử lại"
   },
   "history": {
-    "title": "Khoảnh khắc của bạn",
-    "empty": "Bạn chưa để lại suy nghĩ nào.",
-    "postedAt": "Đăng lúc",
-    "weather": "Thời tiết lúc đó"
-  },
-  "futureMessage": {
-    "title": "Viết cho tương lai của bạn",
-    "messagePlaceholder": "Bạn muốn nói gì với bản thân trong tương lai?",
-    "unlockLabel": "Khi nào sẽ mở khóa?",
-    "unlockOptions": {
-      "after_days:30": "Sau 30 ngày",
-      "after_days:90": "Sau 3 tháng",
-      "after_days:365": "Sau 1 năm",
-      "random": "Bất ngờ tôi đi"
-    },
-    "send": "Gửi cho tương lai",
-    "locked": "Vẫn đang chờ…",
-    "unlocked": "Mở"
+    "title": "Khoảnh khắc của tôi",
+    "sharePrompt": "Hãy chia sẻ khoảnh khắc của bạn",
+    "close": "Đóng lịch sử",
+    "search": "Tìm trong khoảnh khắc của bạn…",
+    "noResults": "Chưa tìm thấy khoảnh khắc phù hợp.",
+    "loading": "Đang tìm lại những khoảnh khắc…",
+    "loadError": "Chưa thể tải các khoảnh khắc của bạn.",
+    "retry": "Thử lại",
+    "takeMeThere": "Đưa tôi đến đó",
+    "pagination": "Phân trang khoảnh khắc",
+    "previousPage": "Trang trước",
+    "nextPage": "Trang sau",
+    "pageIndicator": "Trang {page} / {totalPages}",
+    "pageNumber": "Trang {page}"
   },
   "weather": {
     "0": "Gửi vào một ngày trong vắt, trời quang",

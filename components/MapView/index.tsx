@@ -49,6 +49,7 @@ export default function MapView() {
   const lastPinPositionRef = useRef<Point | null>(null);
   const initialAssetsRef = useRef<ReturnType<typeof loadSubmissionAssets> | null>(null);
   const entryAnimationsReadyRef = useRef(false);
+  const thoughtNavigationRef = useRef<AbortController | null>(null);
 
   const setPin = usePinStore((state) => state.setPin);
   const mapReady = useSystemStore((state) => state.mapReady);
@@ -61,6 +62,8 @@ export default function MapView() {
   const [thoughtModalOpen, setThoughtModalOpen] = useState(false);
 
   const handleSubmissionClick = useCallback((submissionId: string) => {
+    // Chọn marker khác sẽ hủy chuyến đi cũ, tránh modal cũ mở lại sau khi camera dừng.
+    thoughtNavigationRef.current?.abort();
     setSelectedSubmissionId(submissionId);
     setThoughtModalOpen(true);
   }, []);
@@ -281,6 +284,36 @@ export default function MapView() {
 
     let cancelled = false;
     let submissionLayers: Awaited<ReturnType<typeof addSubmissionLayers>>;
+    const zoomToLocation = async (center: { lng: number; lat: number }, signal: AbortSignal) => {
+      signal.throwIfAborted();
+      if (cancelled) throw new Error("Map is no longer available");
+      // Dừng camera cũ trước khi nghe moveend để không nhận nhầm sự kiện của chuyến đi trước.
+      map.stop();
+      const lng = center.lng + 360 * Math.round((map.getCenter().lng - center.lng) / 360);
+      await new Promise<void>((resolve, reject) => {
+        const cleanup = () => {
+          map.off("moveend", onMoveEnd);
+          map.off("remove", onRemove);
+          signal.removeEventListener("abort", onAbort);
+        };
+        const onMoveEnd = () => { cleanup(); resolve(); };
+        const onRemove = () => { cleanup(); reject(new Error("Map was removed")); };
+        const onAbort = () => {
+          cleanup();
+          map.stop();
+          reject(signal.reason);
+        };
+        map.once("moveend", onMoveEnd);
+        map.once("remove", onRemove);
+        signal.addEventListener("abort", onAbort, { once: true });
+        // Dùng chung camera cho ghim vừa gửi và lịch sử; không zoom-out nếu đang xem gần hơn.
+        map.easeTo({
+          center: [lng, center.lat],
+          zoom: Math.max(map.getZoom(), CLUSTER_MAX_ZOOM + 1),
+          duration: SUBMISSION_ZOOM_DURATION_MS,
+        });
+      });
+    };
     const assets = initialAssetsRef.current ?? loadSubmissionAssets(map);
     initialAssetsRef.current = null;
     setSubmissionsError(false);
@@ -306,34 +339,35 @@ export default function MapView() {
           openThought(submissionId) {
             if (!cancelled) handleSubmissionClick(submissionId);
           },
+          async goToThought(submission) {
+            if (cancelled || useSubmissionMapStore.getState().isSubmitting) return;
+            thoughtNavigationRef.current?.abort();
+            const controller = new AbortController();
+            thoughtNavigationRef.current = controller;
+            setThoughtModalOpen(false);
+            try {
+              await zoomToLocation(submission, controller.signal);
+              controller.signal.throwIfAborted();
+              if (cancelled || useSubmissionMapStore.getState().isSubmitting) return;
+              const center = map.getCenter();
+              const lng = submission.lng + 360 * Math.round((center.lng - submission.lng) / 360);
+              // Nếu người dùng ngắt camera giữa đường thì không mở suy nghĩ ở một nơi chưa đến.
+              if (Math.abs(center.lng - lng) > 0.00001 || Math.abs(center.lat - submission.lat) > 0.00001) return;
+              thoughtNavigationRef.current = null;
+              map.getCanvas().focus({ preventScroll: true });
+              handleSubmissionClick(submission.id);
+            } catch (error) {
+              if (!controller.signal.aborted && !cancelled) throw error;
+            } finally {
+              if (thoughtNavigationRef.current === controller) thoughtNavigationRef.current = null;
+            }
+          },
           async zoomToPin(signal) {
             signal.throwIfAborted();
             const pin = pinRef.current;
             if (cancelled || !pin) throw new Error("Pin is not available");
 
-            // Zoom qua ngưỡng gom cụm để suy nghĩ vừa gửi luôn hiện thành marker riêng.
-            await new Promise<void>((resolve, reject) => {
-              const cleanup = () => {
-                map.off("moveend", onMoveEnd);
-                map.off("remove", onRemove);
-                signal.removeEventListener("abort", onAbort);
-              };
-              const onMoveEnd = () => { cleanup(); resolve(); };
-              const onRemove = () => { cleanup(); reject(new Error("Map was removed")); };
-              const onAbort = () => {
-                cleanup();
-                map.stop();
-                reject(signal.reason);
-              };
-              map.once("moveend", onMoveEnd);
-              map.once("remove", onRemove);
-              signal.addEventListener("abort", onAbort, { once: true });
-              map.easeTo({
-                center: pin.getLngLat(),
-                zoom: Math.max(map.getZoom(), CLUSTER_MAX_ZOOM + 1),
-                duration: SUBMISSION_ZOOM_DURATION_MS,
-              });
-            });
+            await zoomToLocation(pin.getLngLat(), signal);
           },
           getPinPosition() {
             const pin = pinRef.current;
@@ -349,6 +383,7 @@ export default function MapView() {
             return () => subscription.unsubscribe();
           },
           beginSubmission() {
+            thoughtNavigationRef.current?.abort();
             const pin = pinRef.current;
             if (!pin || !pinAddedRef.current) throw new Error("Pin is not available");
             const element = pin.getElement();
@@ -392,6 +427,8 @@ export default function MapView() {
 
     return () => {
       cancelled = true;
+      thoughtNavigationRef.current?.abort();
+      thoughtNavigationRef.current = null;
       useSubmissionMapStore.getState().setMap(null);
       // Dọn cả layer và listener trước khi thử lại, tránh nguồn trùng hoặc callback đã bị hủy.
       submissionLayers?.destroy();

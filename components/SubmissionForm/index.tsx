@@ -4,7 +4,8 @@ import { useError } from "@/components/shared/ErrorProvider";
 import { getOrCreateUUID } from "@/lib/uuid";
 import thoughtBubbleImg from "@/public/assets/thought-note.webp";
 import { ApiError, RUNTIME_ERROR_STATUS, type ErrorMessageKey } from "@/services/shared/errors";
-import { createSubmission } from "@/services/submissions";
+import { createSubmission, submissionHistoryKey } from "@/services/submissions";
+import { useQueryClient } from "@tanstack/react-query";
 import { useSystemStore } from "@/store/systemStore";
 import { usePinStore } from "@/store/usePinStore";
 import { useSubmissionMapStore, type ScreenPoint } from "@/store/useSubmissionMapStore";
@@ -38,6 +39,7 @@ function submissionErrorKey(error: unknown, stage: SubmissionStage): ErrorMessag
 
 export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormProps) {
   const t = useTranslations("submission");
+  const queryClient = useQueryClient();
 
   const [description, setDescription] = useState("");
   const [hasDescriptionError, setHasDescriptionError] = useState(false);
@@ -155,6 +157,8 @@ export default function SubmissionForm({ onSuccess, inputRef }: SubmissionFormPr
         { reportGlobalError: false, signal },
       );
       submissionId = submission.id;
+      // Làm mới cả các từ khóa lịch sử sau khi lưu, kể cả khi refresh marker phía sau thất bại.
+      void queryClient.invalidateQueries({ queryKey: [...submissionHistoryKey, author_uuid] });
       setSidebarOpen(false);
       currentRun.saved = true;
       signal.throwIfAborted();

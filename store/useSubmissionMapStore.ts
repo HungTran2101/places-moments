@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import type { SubmissionPin } from "@/services/submissions";
 
 export interface ScreenPoint {
   x: number;
@@ -8,6 +9,7 @@ export interface ScreenPoint {
 export interface SubmissionMap {
   focus: () => void;
   openThought: (submissionId: string) => void;
+  goToThought: (submission: SubmissionPin) => Promise<void>;
   zoomToPin: (signal: AbortSignal) => Promise<void>;
   getPinPosition: () => ScreenPoint;
   subscribeToResize: (listener: () => void) => () => void;
@@ -23,7 +25,7 @@ interface SubmissionMapState {
   setIsSubmitting: (isSubmitting: boolean) => void;
 }
 
-// Chỉ chia sẻ cầu nối cần cho form; vòng đời MapLibre vẫn do MapView quản lý.
+// Chỉ chia sẻ thao tác cần cho form/lịch sử; vòng đời MapLibre vẫn do MapView quản lý.
 export const useSubmissionMapStore = create<SubmissionMapState>((set) => ({
   map: null,
   isSubmitting: false,

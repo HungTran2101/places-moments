@@ -92,11 +92,6 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
             <div className="thoughtModal-header">
               <Image className="thoughtModal-bubble" src={thoughtBubbleImg} alt="" sizes="44px" />
               <Dialog.Title className="thoughtModal-title">{t("title")}</Dialog.Title>
-              {/* <Dialog.Close asChild>
-                <GlassButton type="button" size="icon" className="thoughtModal-close" aria-label={t("close")}>
-                  <X aria-hidden="true" />
-                </GlassButton>
-              </Dialog.Close> */}
             </div>
 
             <Dialog.Description className="thoughtModal-thought" aria-live="polite" aria-busy={loading}>

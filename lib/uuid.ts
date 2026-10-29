@@ -1,4 +1,5 @@
 const UUID_KEY = "pm_author_uuid";
+export const AUTHOR_UUID_CHANGED_EVENT = "pm-author-uuid-changed";
 
 /**
  * Returns the author UUID from LocalStorage.
@@ -15,6 +16,7 @@ export function getOrCreateUUID(): string {
 
   const id = crypto.randomUUID();
   localStorage.setItem(UUID_KEY, id);
+  window.dispatchEvent(new Event(AUTHOR_UUID_CHANGED_EVENT));
   return id;
 }
 
@@ -24,5 +26,10 @@ export function getOrCreateUUID(): string {
  */
 export function getUUID(): string | null {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem(UUID_KEY);
+  try {
+    return localStorage.getItem(UUID_KEY);
+  } catch {
+    // Trình duyệt chặn lưu trữ thì lịch sử hiển thị lời mời chia sẻ thay vì tạo UUID.
+    return null;
+  }
 }
