@@ -89,8 +89,24 @@
     }
   }
 
+  &-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  &-attribution {
+    padding: 0.375rem 0;
+    color: var(--color-text-muted);
+    font-size: 0.6rem;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
   &-return {
-    align-self: flex-end;
+    margin-left: auto;
     gap: 0.5rem;
     height: auto;
     padding: 0.625rem 0.875rem;
@@ -100,6 +116,7 @@
   }
 
   &-close:focus-visible,
+  &-attribution:focus-visible,
   &-return:focus-visible {
     outline: 2px solid var(--primary-color-dark);
     outline-offset: 4px;
@@ -118,8 +135,5 @@
       font-size: 0.875rem;
     }
 
-    &-return {
-      align-self: stretch;
-    }
   }
 }

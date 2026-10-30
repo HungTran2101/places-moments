@@ -121,16 +121,23 @@ export default function ThoughtModal({ open, submissionId, onOpenChange, onRetur
                 <WeatherIcon code={Number(weatherKey || -1)} />
                 <span>{atmosphere}</span>
               </p>
-              <Dialog.Close asChild>
-                <GlassButton
-                  primaryColor="blue"
-                  type="button"
-                  className="thoughtModal-return"
-                >
-                  <ArrowLeft aria-hidden="true" />
-                  {t("backToMap")}
-                </GlassButton>
-              </Dialog.Close>
+              <div className="thoughtModal-actions">
+                {atmosphere && (
+                  <a className="thoughtModal-attribution" href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">
+                    {weather("attribution")}
+                  </a>
+                )}
+                <Dialog.Close asChild>
+                  <GlassButton
+                    primaryColor="blue"
+                    type="button"
+                    className="thoughtModal-return"
+                  >
+                    <ArrowLeft aria-hidden="true" />
+                    {t("backToMap")}
+                  </GlassButton>
+                </Dialog.Close>
+              </div>
             </div>
           </Dialog.Content>
         </RefractiveGlass>

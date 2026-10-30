@@ -94,7 +94,6 @@ export default async function RootLayout({
             </ErrorProvider>
           </DialogMotionProvider>
         </NextIntlClientProvider>
-        {/* <a href='https://pngtree.com/freepng/cloud-weather-climate_8186751.html'>png image from pngtree.com/</a> */}
       </body>
     </html>
   );

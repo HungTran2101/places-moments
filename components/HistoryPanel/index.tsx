@@ -176,6 +176,11 @@ function HistoryContents({ open, onVisit }: { open: boolean; onVisit: (submissio
           </GlassButton>
         </nav>
       )}
+      <div className="HistoryPanel-attribution">
+        <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">
+          {weather("attribution")}
+        </a>
+      </div>
     </>
   );
 }

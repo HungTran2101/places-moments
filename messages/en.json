@@ -20,9 +20,19 @@
   "map": {
     "submissionsLoadError": "Could not load thoughts on the map.",
     "retry": "Try again",
-    "disclaimerLabel": "Map sources and notice",
-    "attribution": "© <osm>OpenStreetMap contributors</osm> · © <carto>CARTO</carto>",
-    "disclaimer": "For reference; not authoritative on borders or sovereignty."
+    "attributionLabel": "Attribution",
+    "attributionDetails": {
+      "description": "Sources and licenses for the map, satellite imagery, weather information, and cloud illustrations.",
+      "close": "Close",
+      "osm": "© <source>OpenStreetMap contributors</source>. Map data is available under the <license>Open Database License (ODbL)</license>.",
+      "carto": "© <source>CARTO</source>, using the <schema>OpenMapTiles</schema> schema. Style code: <codeLicense>BSD 3-Clause</codeLicense>. Map design: <license>CC BY 4.0</license>. Colors and labels have been adapted for World of Moments.",
+      "eox": "<source>EOxCloudless</source> by <provider>EOX IT Services GmbH</provider> (Contains modified Copernicus Sentinel data 2016). Imagery licensed under <license>CC BY 4.0</license>.",
+      "weather": "Weather data by <source>Open-Meteo</source>, licensed under <license>CC BY 4.0</license>. Weather codes are adapted into short atmospheric descriptions.",
+      "clouds": "Cloud images from <source>Pngtree</source>. <license>Image license terms</license>.",
+      "thirdPartyNotices": "Third-party licenses and notices",
+      "disclaimerTitle": "Disclaimer"
+    },
+    "disclaimer": "Map's data is for reference; not authoritative on borders or sovereignty."
   },
   "submission": {
     "descriptionLabel": "What are you thinking?",
@@ -96,6 +106,7 @@
     "pageNumber": "Page {page}"
   },
   "weather": {
+    "attribution": "Weather by Open-Meteo",
     "0": "Posted on a clear, still day",
     "1": "Posted on a mostly clear day",
     "2": "Posted on a partly cloudy afternoon",
