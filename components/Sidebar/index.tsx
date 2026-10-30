@@ -26,12 +26,18 @@ const Sidebar = () => {
   const vh = viewport?.height;
   const vw = viewport?.width;
 
-  // memoized motion path
   const path = useMemo(() => {
     if (!vh || !vw) return undefined;
     const w = Math.min(vw, sw)
-    const leftEnd = vw <= sw ? 65 : 50;
-    return `path('M 20 0 C ${w / 2.5} -300 ${w - 25} ${vh / 4} ${w - leftEnd} ${(vh / 2) - 50}')`
+    const margin = 8;
+    const buttonLeft = 20;
+    const openInset = 30;
+    const panelWidth = Math.min(vw, sw + margin);
+    const panelHeight = vh - margin * 2;
+    // Trừ gốc left/top của nút để tâm khi mở khớp điểm reveal ở góc phải dưới panel.
+    const endX = panelWidth - margin - buttonLeft - openInset;
+    const endY = panelHeight / 2 - openInset;
+    return `path('M 20 0 C ${w / 2.5} -300 ${w - 25} ${vh / 4} ${endX} ${endY}')`
   }, [sw, vh, vw])
 
   const asideAnim = sidebarOpen

@@ -34,13 +34,13 @@
 
   &-textarea-wrapper {
     position: relative;
-    padding: 0 0 1rem;
+    padding: 0 0 1.45rem;
   }
 
   &-textarea {
     display: block;
     width: 100%;
-    padding: 0.625rem 0.875rem;
+    padding: 0.625rem 0.875rem 0;
     border: none;
     border-radius: inherit;
     outline: none;
@@ -58,7 +58,7 @@
   &-character-count {
     position: absolute;
     right: 0.875rem;
-    bottom: 0.4rem;
+    bottom: 0.3rem;
     color: var(--color-text-subtle);
     font-size: 0.6875rem;
     font-variant-numeric: tabular-nums;

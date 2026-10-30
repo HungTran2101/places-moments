@@ -3,10 +3,10 @@
 .sidebar {
   position: absolute;
   z-index: 1;
-  inset: 20px 20px 20px 0;
-  padding: 0 20px;
+  inset: 0.5rem 0.5rem 0.5rem 0;
+  padding: 0 0.5rem;
   width: 100%;
-  max-width: calc(var(--sidebar-width) + 20px);
+  max-width: calc(var(--sidebar-width) + 0.5rem);
   max-height: 100dvh;
 
   .sidebar-content {
